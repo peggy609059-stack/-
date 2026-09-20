@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧日照中心 - 實境模擬參訪系統</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    <style>
+        body { margin: 0; font-family: "Microsoft JhengHei", sans-serif; }
+        #panorama { width: 100vw; height: 100vh; }
+        #title-overlay {
+            position: absolute; top: 20px; left: 20px; z-index: 10;
+            background: rgba(0, 0, 0, 0.75); color: white; padding: 15px 20px; border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        #title-overlay h2 { margin: 0 0 5px 0; font-size: 1.2rem; }
+        #title-overlay p { margin: 0; font-size: 0.9rem; color: #ccc; }
+    </style>
+</head>
+<body>
+
+    <div id="title-overlay">
+        <h2>蘆洲集賢社區長照機構線上參訪系統</h2>
+        <p>💡 提示：點擊畫面中的場景按鈕可自由穿梭各個區域</p>
+    </div>
+
+    <div id="panorama"></div>
+
+    <script>
+    pannellum.viewer('panorama', {
+        "default": {
+            "firstScene": "counter", // 預設從櫃台開始
+            "author": "智慧場域專題",
+            "autoLoad": true,
+            "compass": true
+        },
+
+        "scenes": {
+            /* --- 1. 櫃台 --- */
+            "counter": {
+                "title": "櫃台",
+                "type": "equirectangular",
+                "panorama": "櫃台.jpg",
+                "hotSpots": [
+                    { "pitch": 0, "yaw": 120, "type": "scene", "text": "前往：鞋櫃", "sceneId": "shoes" }
+                ]
+            },
+
+            /* --- 2. 鞋櫃 --- */
+            "shoes": {
+                "title": "鞋櫃",
+                "type": "equirectangular",
+                "panorama": "鞋櫃.jpg",
+                "hotSpots": [
+                    { "pitch": 0, "yaw": 140, "type": "scene", "text": "返回：櫃台", "sceneId": "counter" },
+                    { "pitch": 0, "yaw": 0, "type": "scene", "text": "前往：置物櫃", "sceneId": "locker" }
+                ]
+            },
+
+            /* --- 3. 置物櫃 --- */
+            "locker": {
+                "title": "置物櫃",
+                "type": "equirectangular",
+                "panorama": "櫃子.jpg",
+                "hotSpots": [
+                    { "pitch": 0, "yaw": 90, "type": "scene", "text": "返回：鞋櫃", "sceneId": "shoes" },
+                    { "pitch": 0, "yaw": -90, "type": "scene", "text": "前往：活動區", "sceneId": "activity" },
+                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "前往：走廊", "sceneId": "corridor" }
+                ]
+            },
+
+            /* --- 4. 走廊 (新增) --- */
+            "corridor": {
+                "title": "走廊",
+                "type": "equirectangular",
+                "panorama": "走廊.jpg", // 請確保檔名正確，或依實際情況修改
+                "hotSpots": [
+                    { "pitch": 0, "yaw": 128, "type": "scene", "text": "返回：置物櫃", "sceneId": "locker" },
+                    { "pitch": 0, "yaw": 35, "type": "scene", "text": "前往：平安家", "sceneId": "safe_home" },
+                    { "pitch": 0, "yaw": -30, "type": "scene", "text": "前往：中段", "sceneId": "middle" },
+                    { "pitch": 0, "yaw": -50, "type": "scene", "text": "前往：無障礙廁所", "sceneId": "accessible_toilet" }
+                ]
+            },
+
+            /* --- 5. 中段 (新增) --- */
+            "middle": {
+                "title": "中段",
+                "type": "equirectangular",
+                "panorama": "中段.jpg", // 請依實際圖檔名稱調整
+                "hotSpots": [
+                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "前往：走廊", "sceneId": "corridor" },
+                    { "pitch": 0, "yaw": -50, "type": "scene", "text": "前往：上課區", "sceneId": "Attend class" },
+                    { "pitch": 0, "yaw": 80, "type": "scene", "text": "前往：快樂", "sceneId": "happy" },
+                    { "pitch": 0, "yaw": -130, "type": "scene", "text": "前往：廁所2", "sceneId": "toilet2" },
+                    { "pitch": 0, "yaw": -80, "type": "scene", "text": "前往：廁所1", "sceneId": "toilet1" }
+                ]
+            },
+            /* --- 6. 平安家 (新增) --- */
+            "safe_home": {
+                "title": "平安家",
+                "type": "equirectangular",
+                "panorama": "平安家.jpg", // 請依實際圖檔名稱調整
+                "hotSpots": [
+                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：走廊", "sceneId": "corridor" }
+                ]
+            },
+
+            /* --- 7. 快樂 (新增) --- */
+            "happy": {
+                "title": "快樂",
+                "type": "equirectangular",
+                "panorama": "快樂.jpg", // 請依實際圖檔名稱調整
+                "hotSpots": [
+                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：中段", "sceneId": "middle" }
+                ]
+            },
+            /* --- 8. 無障礙廁所 (新增) --- */
+            "accessible_toilet": {
+                "title": "無障礙廁所",
+                "type": "equirectangular",
+                "panorama": "廁所4.jpg", // 請依實際圖檔名稱調整
+                "hotSpots": [
+                    { "pitch": 0, "yaw": 90, "type": "scene", "text": "返回：走廊", "sceneId": "corridor" }
+                ]
+            },
+
+            /* --- 9. 廁所2 (新增) --- */
+            "toilet2": {
+                "title": "廁所2",
+                "type": "equirectangular",
+                "panorama": "廁所2.jpg", // 請依實際圖檔名稱調整
+                "hotSpots": [
+                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：中段", "sceneId": "middle" }
+                ]
+            },
+
+            /* --- 10. 廁所1 (新增) --- */
+            "toilet1": {
+                "title": "廁所1",
+                "type": "equirectangular",
+                "panorama": "廁所2.jpg", // 請依實際圖檔名稱調整
+                "hotSpots": [
+                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：中段", "sceneId": "middle" }
+                ]
+            },
+
+            /* --- 10. 圓滿 --- */
+            "Perfect": {
+                "title": "圓滿",
+                "type": "equirectangular",
+                "panorama": "圓滿.jpg", // 請依實際圖檔名稱調整
+                "hotSpots": [
+                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：上課區", "sceneId": "middle" }
+                ]
+            },
+
+           /* --- 11. 上課區 --- */
+            "Attend class": {
+                "title": "上課區",
+                "type": "equirectangular",
+                "panorama": "上課區.jpg", // 請依實際圖檔名稱調整
+                "hotSpots": [
+                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：中段", "sceneId": "middle" },
+                    { "pitch": 0, "yaw": 90, "type": "scene", "text": "前往：圓滿", "sceneId": "happy" },
+                ]
+            },
+          
+            /* --- 12. 活動區 --- */
+            "activity": {
+                "title": "活動區",
+                "type": "equirectangular",
+                "panorama": "活動區.jpg", 
+                "hotSpots": [
+                    { "pitch": 0, "yaw": -180, "type": "scene", "text": "返回：置物櫃", "sceneId": "locker" }
+                ]
+            }
+        }
+    });
+    </script>
+
+</body>
+</html>
