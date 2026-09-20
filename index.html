@@ -13,172 +13,208 @@
             position: absolute; top: 20px; left: 20px; z-index: 10;
             background: rgba(0, 0, 0, 0.75); color: white; padding: 15px 20px; border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            max-width: 300px;
         }
         #title-overlay h2 { margin: 0 0 5px 0; font-size: 1.2rem; }
-        #title-overlay p { margin: 0; font-size: 0.9rem; color: #ccc; }
+        #title-overlay p { margin: 0 0 10px 0; font-size: 0.9rem; color: #ccc; }
+        
+        /* 介紹彈跳視窗樣式 */
+        #info-modal {
+            position: absolute; bottom: 20px; left: 20px; z-index: 10;
+            background: rgba(255, 255, 255, 0.95); color: #333; padding: 15px 20px; border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); max-width: 320px; display: none;
+            border-left: 5px solid #007bff;
+        }
+        #info-modal h3 { margin: 0 0 8px 0; font-size: 1.1rem; color: #007bff; }
+        #info-modal p { margin: 0; font-size: 0.9rem; line-height: 1.5; color: #555; }
+        #info-modal .close-btn {
+            position: absolute; top: 8px; right: 10px; background: none; border: none;
+            font-size: 1rem; cursor: pointer; color: #888;
+        }
+        #info-modal .close-btn:hover { color: #333; }
     </style>
 </head>
 <body>
 
     <div id="title-overlay">
         <h2>蘆洲集賢社區長照機構線上參訪系統</h2>
-        <p>提示：點擊畫面中的場景按鈕(↑)可自由穿梭各個區域</p>
+        <p>提示：點擊畫面中的場景按鈕可自由穿梭各個區域並查看介紹</p>
+    </div>
+
+    <!-- 空間介紹彈跳視窗 -->
+    <div id="info-modal">
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+        <h3 id="modal-title">區域名稱</h3>
+        <p id="modal-desc">區域介紹內容...</p>
     </div>
 
     <div id="panorama"></div>
 
     <script>
-    pannellum.viewer('panorama', {
-        "default": {
-            "firstScene": "counter", // 預設從櫃台開始
-            "author": "蘆洲集賢社區長照機構",
-            "autoLoad": true,
-            "compass": true
-        },
-
-        "scenes": {
-            /* --- 1. 櫃台 --- */
+        // 各區域的詳細介紹資料
+        const sceneInfo = {
             "counter": {
-                "title": "櫃台",
-                "type": "equirectangular",
-                "panorama": "櫃台.jpg",
-                "hotSpots": [
-                    { "pitch": 0, "yaw": 120, "type": "scene", "text": "前往：鞋櫃", "sceneId": "shoes" }
-                ]
+                "title": "接待櫃台",
+                "desc": "機構的門面與服務樞紐。提供訪客諮詢、家屬接送登記、日常健康狀況交接與測量體溫血壓等第一線服務。"
             },
-
-            /* --- 2. 鞋櫃 --- */
             "shoes": {
-                "title": "鞋櫃",
-                "type": "equirectangular",
-                "panorama": "鞋櫃.jpg",
-                "hotSpots": [
-                    { "pitch": 0, "yaw": 140, "type": "scene", "text": "返回：櫃台", "sceneId": "counter" },
-                    { "pitch": 0, "yaw": 0, "type": "scene", "text": "前往：置物櫃", "sceneId": "locker" }
-                ]
+                "title": "玄關鞋櫃區",
+                "desc": "落塵區與鞋品置放處。長輩與訪客在此更換室內鞋，保持中心內部地板清潔與衛生安全。"
             },
-
-            /* --- 3. 置物櫃 --- */
             "locker": {
-                "title": "置物櫃",
-                "type": "equirectangular",
-                "panorama": "櫃子.jpg",
-                "hotSpots": [
-                    { "pitch": 0, "yaw": 90, "type": "scene", "text": "返回：鞋櫃", "sceneId": "shoes" },
-                    { "pitch": 0, "yaw": -90, "type": "scene", "text": "前往：活動區", "sceneId": "activity" },
-                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "前往：走廊", "sceneId": "corridor" }
-                ]
+                "title": "個人置物櫃區",
+                "desc": "專屬個人收納空間。提供長輩放置個人衣物、輔具、水杯及常備物品，培養自主管理能力。"
             },
-
-            /* --- 4. 走廊 --- */
             "corridor": {
-                "title": "走廊",
-                "type": "equirectangular",
-                "panorama": "走廊.jpg",
-                "hotSpots": [
-                    { "pitch": 0, "yaw": 128, "type": "scene", "text": "返回：置物櫃", "sceneId": "locker" },
-                    { "pitch": 0, "yaw": 35, "type": "scene", "text": "前往：平安家", "sceneId": "safe_home" },
-                    { "pitch": 0, "yaw": -30, "type": "scene", "text": "前往：中段", "sceneId": "middle" },
-                    { "pitch": 0, "yaw": -50, "type": "scene", "text": "前往：無障礙廁所", "sceneId": "accessible_toilet" }
-                ]
+                "title": "無障礙走廊",
+                "desc": "串聯各個活動空間的主要幹道。兩側皆設有安全扶手，並保持寬敞平坦以利輪椅順暢通行。"
             },
-
-            /* --- 5. 中段 --- */
             "middle": {
-                "title": "中段",
-                "type": "equirectangular",
-                "panorama": "中段.jpg",
-                "hotSpots": [
-                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "前往：走廊", "sceneId": "corridor" },
-                    { "pitch": 0, "yaw": -50, "type": "scene", "text": "前往：上課區", "sceneId": "Attend class" },
-                    { "pitch": 0, "yaw": 80, "type": "scene", "text": "前往：快樂", "sceneId": "happy" },
-                    { "pitch": 0, "yaw": -130, "type": "scene", "text": "前往：廁所2", "sceneId": "toilet2" },
-                    { "pitch": 0, "yaw": -80, "type": "scene", "text": "前往：廁所1", "sceneId": "toilet1" }
-                ]
+                "title": "走廊中段",
+                "desc": "動線交會處與休息節點。方便長輩往返上課區、各家日照室及浴廁之間的樞紐位置。"
             },
-
-            /* --- 6. 平安家 --- */
             "safe_home": {
-                "title": "平安家",
-                "type": "equirectangular",
-                "panorama": "平安家.jpg",
-                "hotSpots": [
-                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：走廊", "sceneId": "corridor" }
-                ]
+                "title": "平安家（日照生活室）",
+                "desc": "營造如家一般的溫馨日照空間。提供長輩日常社交、休憩及小型團體互動的舒適環境。"
             },
-
-            /* --- 7. 快樂 --- */
             "happy": {
-                "title": "快樂",
-                "type": "equirectangular",
-                "panorama": "快樂.jpg",
-                "hotSpots": [
-                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：中段", "sceneId": "middle" }
-                ]
+                "title": "快樂室",
+                "desc": "多功能休閒空間。專為長輩進行趣味桌遊、卡拉OK歡唱與社交互動所設計的歡樂園地。"
             },
-
-            /* --- 8. 無障礙廁所 --- */
             "accessible_toilet": {
-                "title": "無障礙廁所",
-                "type": "equirectangular",
-                "panorama": "廁所4.jpg",
-                "hotSpots": [
-                    { "pitch": 0, "yaw": 90, "type": "scene", "text": "返回：走廊", "sceneId": "corridor" }
-                ]
+                "title": "無障礙浴廁",
+                "desc": "符合無障礙標準的安全浴廁。配備防滑地板、全方位安全扶手及緊急求助鈴，確保如廁安全。"
             },
-
-            /* --- 9. 廁所2 --- */
             "toilet2": {
-                "title": "廁所2",
-                "type": "equirectangular",
-                "panorama": "廁所2.jpg",
-                "hotSpots": [
-                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：中段", "sceneId": "middle" }
-                ]
+                "title": "洗手間（二）",
+                "desc": "提供中段區域長輩就近使用之日常洗手間，維護環境衛生與便利性。"
             },
-
-            /* --- 10. 廁所1 --- */
             "toilet1": {
-                "title": "廁所1",
-                "type": "equirectangular",
-                "panorama": "廁所2.jpg",
-                "hotSpots": [
-                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：中段", "sceneId": "middle" }
-                ]
+                "title": "洗手間（一）",
+                "desc": "標準配置之無障礙衛浴空間，確保高齡長輩日常使用的便利與安全。"
             },
-
-            /* --- 11. 圓滿 --- */
-            "Perfect": {
-                "title": "圓滿",
-                "type": "equirectangular",
-                "panorama": "圓滿.jpg",
-                "hotSpots": [
-                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：上課區", "sceneId": "Attend class" }
-                ]
-            },
-
-            /* --- 12. 上課區 --- */
             "Attend class": {
-                "title": "上課區",
-                "type": "equirectangular",
-                "panorama": "上課區.jpg",
-                "hotSpots": [
-                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：中段", "sceneId": "middle" },
-                    { "pitch": 0, "yaw": 90, "type": "scene", "text": "前往：圓滿", "sceneId": "Perfect" }
-                ]
+                "title": "多功能上課區",
+                "desc": "認知促進與健康促進課程的主要教室。長輩們在此一同參與手作、繪畫、體適能運動等豐富課程。"
             },
-         
-            /* --- 13. 活動區 --- */
+            "Perfect": {
+                "title": "圓滿室",
+                "desc": "專屬的靜態活動與復能訓練空間，協助長輩維持身體機能、延緩老化。"
+            },
             "activity": {
-                "title": "活動區",
-                "type": "equirectangular",
-                "panorama": "活動區.jpg",
-                "hotSpots": [
-                    { "pitch": 0, "yaw": -180, "type": "scene", "text": "返回：置物櫃", "sceneId": "locker" }
-                ]
+                "title": "大活動區",
+                "desc": "寬敞的綜合活動大廳。適合舉辦大型團體康樂活動、節慶慶祝會及家屬座談會。"
+            }
+        };
+
+        const viewer = pannellum.viewer('panorama', {
+            "default": {
+                "firstScene": "counter",
+                "author": "蘆洲集賢社區長照機構",
+                "autoLoad": true,
+                "compass": true
+            },
+            "scenes": {
+                "counter": {
+                    "title": "櫃台", "type": "equirectangular", "panorama": "櫃台.jpg",
+                    "hotSpots": [{ "pitch": 0, "yaw": 120, "type": "scene", "text": "前往：鞋櫃", "sceneId": "shoes" }]
+                },
+                "shoes": {
+                    "title": "鞋櫃", "type": "equirectangular", "panorama": "鞋櫃.jpg",
+                    "hotSpots": [
+                        { "pitch": 0, "yaw": 140, "type": "scene", "text": "返回：櫃台", "sceneId": "counter" },
+                        { "pitch": 0, "yaw": 0, "type": "scene", "text": "前往：置物櫃", "sceneId": "locker" }
+                    ]
+                },
+                "locker": {
+                    "title": "置物櫃", "type": "equirectangular", "panorama": "櫃子.jpg",
+                    "hotSpots": [
+                        { "pitch": 0, "yaw": 90, "type": "scene", "text": "返回：鞋櫃", "sceneId": "shoes" },
+                        { "pitch": 0, "yaw": -90, "type": "scene", "text": "前往：活動區", "sceneId": "activity" },
+                        { "pitch": 0, "yaw": 180, "type": "scene", "text": "前往：走廊", "sceneId": "corridor" }
+                    ]
+                },
+                "corridor": {
+                    "title": "走廊", "type": "equirectangular", "panorama": "走廊.jpg",
+                    "hotSpots": [
+                        { "pitch": 0, "yaw": 128, "type": "scene", "text": "返回：置物櫃", "sceneId": "locker" },
+                        { "pitch": 0, "yaw": 35, "type": "scene", "text": "前往：平安家", "sceneId": "safe_home" },
+                        { "pitch": 0, "yaw": -30, "type": "scene", "text": "前往：中段", "sceneId": "middle" },
+                        { "pitch": 0, "yaw": -50, "type": "scene", "text": "前往：無障礙廁所", "sceneId": "accessible_toilet" }
+                    ]
+                },
+                "middle": {
+                    "title": "中段", "type": "equirectangular", "panorama": "中段.jpg",
+                    "hotSpots": [
+                        { "pitch": 0, "yaw": 180, "type": "scene", "text": "前往：走廊", "sceneId": "corridor" },
+                        { "pitch": 0, "yaw": -50, "type": "scene", "text": "前往：上課區", "sceneId": "Attend class" },
+                        { "pitch": 0, "yaw": 80, "type": "scene", "text": "前往：快樂", "sceneId": "happy" },
+                        { "pitch": 0, "yaw": -130, "type": "scene", "text": "前往：廁所2", "sceneId": "toilet2" },
+                        { "pitch": 0, "yaw": -80, "type": "scene", "text": "前往：廁所1", "sceneId": "toilet1" }
+                    ]
+                },
+                "safe_home": {
+                    "title": "平安家", "type": "equirectangular", "panorama": "平安家.jpg",
+                    "hotSpots": [{ "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：走廊", "sceneId": "corridor" }]
+                },
+                "happy": {
+                    "title": "快樂", "type": "equirectangular", "panorama": "快樂.jpg",
+                    "hotSpots": [{ "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：中段", "sceneId": "middle" }]
+                },
+                "accessible_toilet": {
+                    "title": "無障礙廁所", "type": "equirectangular", "panorama": "廁所4.jpg",
+                    "hotSpots": [{ "pitch": 0, "yaw": 90, "type": "scene", "text": "返回：走廊", "sceneId": "corridor" }]
+                },
+                "toilet2": {
+                    "title": "廁所2", "type": "equirectangular", "panorama": "廁所2.jpg",
+                    "hotSpots": [{ "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：中段", "sceneId": "middle" }]
+                },
+                "toilet1": {
+                    "title": "廁所1", "type": "equirectangular", "panorama": "廁所2.jpg",
+                    "hotSpots": [{ "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：中段", "sceneId": "middle" }]
+                },
+                "Perfect": {
+                    "title": "圓滿", "type": "equirectangular", "panorama": "圓滿.jpg",
+                    "hotSpots": [{ "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：上課區", "sceneId": "Attend class" }]
+                },
+                "Attend class": {
+                    "title": "上課區", "type": "equirectangular", "panorama": "上課區.jpg",
+                    "hotSpots": [
+                        { "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：中段", "sceneId": "middle" },
+                        { "pitch": 0, "yaw": 90, "type": "scene", "text": "前往：圓滿", "sceneId": "Perfect" }
+                    ]
+                },
+                "activity": {
+                    "title": "活動區", "type": "equirectangular", "panorama": "活動區.jpg",
+                    "hotSpots": [{ "pitch": 0, "yaw": -180, "type": "scene", "text": "返回：置物櫃", "sceneId": "locker" }]
+                }
+            }
+        });
+
+        // 監聽場景切換事件，自動顯示對應的空間介紹
+        viewer.on('scenechange', function(sceneId) {
+            showInfo(sceneId);
+        });
+
+        // 顯示介紹視窗的函式
+        function showInfo(sceneId) {
+            const info = sceneInfo[sceneId];
+            if (info) {
+                document.getElementById('modal-title').innerText = info.title;
+                document.getElementById('modal-desc').innerText = info.desc;
+                document.getElementById('info-modal').style.display = 'block';
             }
         }
-    });
+
+        // 關閉介紹視窗的函式
+        function closeModal() {
+            document.getElementById('info-modal').style.display = 'none';
+        }
+
+        // 初始化載入時顯示預設場景（櫃台）的介紹
+        window.onload = function() {
+            showInfo("counter");
+        };
     </script>
 
 </body>
