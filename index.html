@@ -9,15 +9,52 @@
     <style>
         body { margin: 0; font-family: "Microsoft JhengHei", sans-serif; }
         #panorama { width: 100vw; height: 100vh; }
+        
         #title-overlay {
             position: absolute; top: 20px; left: 20px; z-index: 10;
             background: rgba(0, 0, 0, 0.75); color: white; padding: 15px 20px; border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            max-width: 300px;
+            max-width: 320px;
+            transition: all 0.3s ease;
         }
-        #title-overlay h2 { margin: 0 0 5px 0; font-size: 1.8rem; }
-        #title-overlay p { margin: 0 0 10px 0; font-size: 1.7rem; color: #ccc; }
+        #title-overlay h2 { margin: 0 0 5px 0; font-size: 1.2rem; }
+        #title-overlay p { margin: 0 0 10px 0; font-size: 0.9rem; color: #ccc; }
         
+        /* 收合後的精簡按鈕樣式 */
+        #title-overlay.collapsed {
+            padding: 10px 18px;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.85);
+        }
+        #title-overlay.collapsed h2,
+        #title-overlay.collapsed p,
+        #title-overlay.collapsed .toggle-btn {
+            display: none; /* 收合時隱藏內容與關閉按鈕 */
+        }
+        
+        /* 放大後的「關閉/展開」切換按鈕樣式 */
+        .toggle-btn {
+            background: rgba(255, 255, 255, 0.25); 
+            border: 1px solid rgba(255, 255, 255, 0.5); 
+            color: #fff; 
+            font-size: 0.95rem; /* 字體放大 */
+            padding: 6px 14px; /* 增加上下左右內距，讓按鈕變大好按 */
+            border-radius: 6px;
+            cursor: pointer; 
+            float: right; 
+            font-weight: bold;
+        }
+        .toggle-btn:hover { 
+            background: rgba(255, 255, 255, 0.45); 
+        }
+
+        #title-overlay.collapsed::after {
+            content: "💡 展開參訪提示";
+            font-size: 1rem;
+            color: #fff;
+            font-weight: bold;
+        }
+
         /* 介紹彈跳視窗樣式 */
         #info-modal {
             position: absolute; bottom: 20px; left: 20px; z-index: 10;
@@ -25,8 +62,8 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); max-width: 320px; display: none;
             border-left: 5px solid #007bff;
         }
-        #info-modal h3 { margin: 0 0 8px 0; font-size: 1.9rem; color: #007bff; }
-        #info-modal p { margin: 0; font-size: 1.7rem; line-height: 1.8; color: #555; }
+        #info-modal h3 { margin: 0 0 8px 0; font-size: 1.1rem; color: #007bff; }
+        #info-modal p { margin: 0; font-size: 0.9rem; line-height: 1.6; color: #555; }
         #info-modal .close-btn {
             position: absolute; top: 8px; right: 10px; background: none; border: none;
             font-size: 1rem; cursor: pointer; color: #888;
@@ -36,7 +73,8 @@
 </head>
 <body>
 
-    <div id="title-overlay">
+    <div id="title-overlay" onclick="checkToggle(event)">
+        <button class="toggle-btn" onclick="toggleOverlay()">✖ 關閉提示</button>
         <h2>蘆洲集賢社區長照機構線上參訪</h2>
         <p>💡提示：點擊畫面中的場景按鈕(↑)可自由穿梭各個區域</p>
     </div>
@@ -51,7 +89,7 @@
     <div id="panorama"></div>
 
     <script>
-        // 各區域的詳細介紹資料（已修正重複 key 與語法結構）
+        // 各區域的詳細介紹資料
         const sceneInfo = {
             "counter": {
                 "title": "櫃檯｜長輩接送區",
@@ -129,9 +167,9 @@
                 "locker": {
                     "title": "置物櫃", "type": "equirectangular", "panorama": "櫃子.jpg",
                     "hotSpots": [
-                        { "pitch": 0, "yaw": 90, "type": "scene", "text": "返回：鞋櫃", "sceneId": "shoes" },
-                        { "pitch": 0, "yaw": -90, "type": "scene", "text": "前往：活動區", "sceneId": "activity" },
-                        { "pitch": 0, "yaw": 170, "type": "scene", "text": "前往：走廊", "sceneId": "corridor" }
+                        { "pitch": 0, "yaw": -90, "type": "scene", "text": "返回：鞋櫃", "sceneId": "shoes" },
+                        { "pitch": 0, "yaw": 90, "type": "scene", "text": "前往：活動區", "sceneId": "activity" },
+                        { "pitch": 0, "yaw": 50, "type": "scene", "text": "前往：走廊", "sceneId": "corridor" }
                     ]
                 },
                 "corridor": {
@@ -139,7 +177,6 @@
                     "hotSpots": [
                         { "pitch": 0, "yaw": 150, "type": "scene", "text": "返回：置物櫃", "sceneId": "locker" },
                         { "pitch": 0, "yaw": 35, "type": "scene", "text": "前往：平安家", "sceneId": "safe_home" },
-                        { "pitch": 0, "yaw": 50, "type": "scene", "text": "前往：快樂家", "sceneId": "happy" },
                         { "pitch": 0, "yaw": -50, "type": "scene", "text": "前往：中段", "sceneId": "middle" },
                         { "pitch": 0, "yaw": -130, "type": "scene", "text": "前往：無障礙廁所", "sceneId": "accessible_toilet" }
                     ]
@@ -198,6 +235,21 @@
                 }
             }
         });
+
+        // 切換提示框顯示/隱藏的函式
+        function toggleOverlay() {
+            const overlay = document.getElementById('title-overlay');
+            overlay.classList.toggle('collapsed');
+        }
+
+        // 點擊收合後的圖示即可再次展開
+        function checkToggle(event) {
+            const overlay = document.getElementById('title-overlay');
+            // 確保只有在收合狀態下點擊區塊空白處時才展開，避免點擊按鈕時衝突
+            if (overlay.classList.contains('collapsed')) {
+                overlay.classList.remove('collapsed');
+            }
+        }
 
         // 監聽場景切換事件，自動顯示對應的空間介紹
         viewer.on('scenechange', function(sceneId) {
