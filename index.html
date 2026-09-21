@@ -99,7 +99,7 @@
 <body>
 
     <div id="title-overlay" onclick="checkToggle(event)">
-        <button class="toggle-btn" onclick="toggleOverlay()">✖ 關閉提示</button>
+        <button class="toggle-btn" onclick="toggleOverlay(event)">✖ 關閉提示</button>
         <h2>蘆洲集賢社區長照機構線上參訪</h2>
         <p>💡提示：點擊畫面中的場景按鈕(↑)可自由穿梭各個區域</p>
     </div>
@@ -176,7 +176,6 @@
         const viewer = pannellum.viewer('panorama', {
             "default": {
                 "firstScene": "counter",
-                "author": "蘆洲集賢社區長照機構",
                 "autoLoad": true,
                 "compass": true
             },
@@ -265,7 +264,8 @@
         });
 
         // 切換上方提示框顯示/隱藏
-        function toggleOverlay() {
+        function toggleOverlay(event) {
+            if (event) event.stopPropagation();
             const overlay = document.getElementById('title-overlay');
             overlay.classList.toggle('collapsed');
         }
@@ -277,11 +277,9 @@
             }
         }
 
-        // 記錄使用者是否手動關閉過介紹視窗
         let manualClosedInfo = false;
         let currentSceneId = "counter";
 
-        // 切換下方空間介紹視窗顯示/隱藏
         function toggleInfoModal() {
             const modal = document.getElementById('info-modal');
             const toggleBtn = document.getElementById('info-toggle-btn');
@@ -295,14 +293,12 @@
             }
         }
 
-        // 監聽場景切換事件
         viewer.on('scenechange', function(sceneId) {
             currentSceneId = sceneId;
-            manualClosedInfo = false; // 切換新場景時重置手動關閉狀態，自動顯示該場景介紹
+            manualClosedInfo = false;
             showInfo(sceneId, false);
         });
 
-        // 顯示介紹視窗的函式
         function showInfo(sceneId, forced) {
             const info = sceneInfo[sceneId];
             if (info) {
@@ -320,7 +316,6 @@
             }
         }
 
-        // 初始化載入
         window.onload = function() {
             showInfo("counter", true);
         };
