@@ -51,64 +51,63 @@
     <div id="panorama"></div>
 
     <script>
-        // 各區域的詳細介紹資料
+        // 各區域的詳細介紹資料（已修正重複 key 與語法結構）
         const sceneInfo = {
             "counter": {
                 "title": "櫃台",
-                "desc": ""
+                "desc": "歡迎來到蘆洲集賢社區長照機構，這裡是訪客接待與諮詢的櫃台區域。"
             },
             "shoes": {
                 "title": "鞋櫃區",
-                "desc": ""
+                "desc": "進入館內前的鞋櫃區，請在此更換室內鞋。"
             },
             "locker": {
                 "title": "個人置物櫃區",
-                "desc": ""
+                "desc": "提供長輩與訪客放置隨身物品的個人置物空間。"
             },
             "corridor": {
                 "title": "走廊",
-                "desc": ""
+                "desc": "連接各個生活室與公共設施的走廊通道。"
             },
             "middle": {
-                "title": "走廊",
-                "desc": ""
+                "title": "走廊（中段）",
+                "desc": "走廊中段區域，通往上課區、快樂家以及洗手間。"
             },
             "safe_home": {
                 "title": "平安家（日照生活室）",
-                "desc": ""
+                "desc": "提供長輩日常活動與照顧的溫馨生活空間——平安家。"
             },
             "happy": {
                 "title": "快樂家（日照生活室）",
-                "desc": ""
+                "desc": "充滿歡笑與互動的日照生活空間——快樂家。"
             },
             "accessible_toilet": {
                 "title": "無障礙廁所",
-                "desc": ""
+                "desc": "具備安全扶手與寬敞空間的無障礙浴廁設施。"
             },
             "toilet2": {
                 "title": "洗手間（二）",
-                "desc": ""
+                "desc": "性別友善與無障礙兼具的洗手間。"
             },
             "toilet1": {
                 "title": "洗手間（一）",
-                "desc": ""
+                "desc": "館內便利清潔的性別友善洗手間。"
             },
             "Attend class": {
                 "title": "多功能上課區",
-                "desc": ""
+                "desc": "進行健康促進、手作課程與團體活動的多功能上課空間。"
             },
             "Perfect": {
                 "title": "圓滿家（日照生活室）",
-                "desc": ""
+                "desc": "提供舒適環境的日照生活空間——圓滿家。"
             },
-            },
-            "Perfect": {
+            "kitchen": {
                 "title": "廚房",
-                "desc": ""
+                "desc": "為長輩準備營養餐食與點心的專屬廚房區域。"
             },
             "activity": {
                 "title": "活動區",
-                "desc": ""
+                "desc": "多元休閒與體適能活動的寬敞空間。"
             }
         };
 
@@ -182,12 +181,16 @@
                     "title": "圓滿家", "type": "equirectangular", "panorama": "圓滿家.jpg",
                     "hotSpots": [{ "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：上課區", "sceneId": "Attend class" }]
                 },
+                "kitchen": {
+                    "title": "廚房", "type": "equirectangular", "panorama": "廚房.jpg", /* 請確認您的圖片檔名 */
+                    "hotSpots": [{ "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：上課區", "sceneId": "Attend class" }]
+                },
                 "Attend class": {
                     "title": "上課區", "type": "equirectangular", "panorama": "上課區.jpg",
                     "hotSpots": [
                         { "pitch": 0, "yaw": -150, "type": "scene", "text": "返回：走廊2", "sceneId": "middle" },
                         { "pitch": 0, "yaw": -80, "type": "scene", "text": "前往：圓滿家", "sceneId": "Perfect" },
-                        { "pitch": 0, "yaw": 50, "type": "scene", "text": "前往：廚房", "sceneId": "Perfect" },
+                        { "pitch": 0, "yaw": 50, "type": "scene", "text": "前往：廚房", "sceneId": "kitchen" }, /* 已修正 sceneId */
                         { "pitch": 0, "yaw": 90, "type": "scene", "text": "前往：性別友善廁所", "sceneId": "toilet1" }
                     ]
                 },
