@@ -45,25 +45,25 @@
         }
         .return-btn:hover { background: #cc0000; }
 
-        /* 回到上一步按鈕樣式 */
+        /* 快速導覽選單樣式（移至最上方） */
+        #quick-nav-container {
+            position: absolute; top: 20px; right: 20px; z-index: 25;
+        }
+        #quick-nav-select {
+            background: rgba(0, 123, 255, 0.9); color: white; border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 10px 14px; font-size: 1.2rem; border-radius: 6px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); outline: none;
+        }
+        #quick-nav-select option { background: #333; color: white; }
+
+        /* 回到上一步按鈕樣式（移至快速選單下方） */
         .back-step-btn {
-            position: absolute; top: 20px; right: 140px; z-index: 25;
+            position: absolute; top: 75px; right: 20px; z-index: 25;
             background: #6c757d; color: white; border: none; padding: 10px 16px;
             font-size: 1.1rem; border-radius: 6px; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s;
         }
         .back-step-btn:hover { background: #5a6268; }
-
-        /* 快速導覽選單樣式 */
-        #quick-nav-container {
-            position: absolute; top: 20px; right: 285px; z-index: 25;
-        }
-        #quick-nav-select {
-            background: rgba(0, 123, 255, 0.9); color: white; border: 1px solid rgba(255, 255, 255, 0.4);
-            padding: 10px 14px; font-size: 2rem; border-radius: 6px; cursor: pointer; font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4); outline: none;
-        }
-        #quick-nav-select option { background: #333; color: white; }
 
         #title-overlay {
             position: absolute; top: 20px; left: 20px; z-index: 10;
@@ -146,7 +146,6 @@
             background: rgba(0, 123, 255, 1);
         }
 
-        /* 放大 Pannellum 預設的場景與資訊熱點 */
         .pnlm-hotspot-base {
             transform: scale(4);
             transform-origin: center center;
@@ -166,7 +165,7 @@
         <p>💡提示：點擊畫面中的場景按鈕(↑)可自由穿梭各個區域</p>
     </div>
 
-    <!-- 快速導覽選單 -->
+    <!-- 快速導覽選單（調整至右上角最上方） -->
     <div id="quick-nav-container">
         <select id="quick-nav-select" onchange="quickJump(this.value)">
             <option value="" disabled selected>🚀 快速前往區域...</option>
@@ -186,7 +185,7 @@
         </select>
     </div>
 
-    <!-- 回到上一步按鈕 -->
+    <!-- 回到上一步按鈕（調整至快速導覽選單下方） -->
     <button class="back-step-btn" onclick="goBackStep()">⬅ 回到上一步</button>
 
     <!-- 空間介紹彈跳視窗 -->
@@ -311,7 +310,7 @@
                 "middle": {
                     "title": "走廊2", "type": "equirectangular", "panorama": "中段.jpg",
                     "hotSpots": [
-                        { "pitch": 0, "yaw": 155, "type": "scene", "text": "前往：走廊", "sceneId": "corridor" },
+                        { "pitch": 0, "yaw": 155, "type": "scene", "text": "返回：走廊", "sceneId": "corridor" },
                         { "pitch": 0, "yaw": -20, "type": "scene", "text": "前往：上課區", "sceneId": "Attend class" },
                         { "pitch": 0, "yaw": 100, "type": "scene", "text": "前往：快樂家", "sceneId": "happy" },
                         { "pitch": 0, "yaw": -130, "type": "scene", "text": "前往：性別友善廁所與無障礙廁所", "sceneId": "toilet2" },
@@ -360,10 +359,8 @@
             }
         });
 
-        // 歷史軌跡陣列 (用於「回到上一步」功能)
         let navigationHistory = ["counter"];
 
-        // 點擊廚房區熱點時，打開平面圖並將廚房詳細介紹帶入下方面板
         function openKitchenFlatView(event) {
             const container = document.getElementById('flat-view-container');
             document.getElementById('flat-image').src = "廚房.jpg";
@@ -379,7 +376,6 @@
             }
         }
 
-        // 點擊逃生區與洗手台熱點時開啟
         function openEscapeWashFlatView(event) {
             const container = document.getElementById('flat-view-container');
             document.getElementById('flat-image').src = "逃生.jpg";
@@ -395,14 +391,12 @@
             }
         }
 
-        // 關閉平面圖，回到上課區並恢復上課區介紹
         function closeFlatView() {
             const container = document.getElementById('flat-view-container');
             container.style.display = 'none';
             showInfo("Attend class", true);
         }
 
-        // 回到上一步功能實作
         function goBackStep() {
             if (navigationHistory.length > 1) {
                 navigationHistory.pop();
@@ -413,7 +407,6 @@
             }
         }
 
-        // 快速選單跳轉
         function quickJump(value) {
             if (!value) return;
 
@@ -459,7 +452,6 @@
             }
         }
 
-        // 當場景切換時更新歷史紀錄與左下角說明
         viewer.on('scenechange', function(sceneId) {
             currentSceneId = sceneId;
             manualClosedInfo = false;
