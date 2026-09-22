@@ -45,7 +45,7 @@
         }
         .return-btn:hover { background: #cc0000; }
 
-        /* 快速導覽選單樣式（置於右上角最上方） */
+        /* 快速導覽選單樣式（置於右上角最上方，並設定最大寬度縮短） */
         #quick-nav-container {
             position: absolute; top: 20px; right: 20px; z-index: 25;
         }
@@ -53,6 +53,8 @@
             background: rgba(0, 123, 255, 0.9); color: white; border: 1px solid rgba(255, 255, 255, 0.4);
             padding: 10px 14px; font-size: 1.2rem; border-radius: 6px; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); outline: none;
+            max-width: 180px;
+            width: 100%;
         }
         #quick-nav-select option { background: #333; color: white; }
 
@@ -87,18 +89,18 @@
         }
 
         .toggle-btn {
-            background: rgba(255, 255, 255, 0.25); 
-            border: 1px solid rgba(255, 255, 255, 0.5); 
-            color: #fff; 
-            font-size: 1rem; 
-            padding: 6px 14px; 
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: #fff;
+            font-size: 1rem;
+            padding: 6px 14px;
             border-radius: 6px;
-            cursor: pointer; 
-            float: right; 
+            cursor: pointer;
+            float: right;
             font-weight: bold;
         }
-        .toggle-btn:hover { 
-            background: rgba(255, 255, 255, 0.45); 
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.45);
         }
 
         #title-overlay.collapsed::after {
@@ -118,24 +120,24 @@
         #info-modal p { margin: 0; font-size: 1.2rem; line-height: 1.6; color: #555; }
 
         #info-modal .close-btn {
-            background: rgba(0, 123, 255, 0.15); 
-            border: 1px solid rgba(0, 123, 255, 0.3); 
-            color: #007bff; 
-            font-size: 0.95rem; 
-            padding: 5px 12px; 
+            background: rgba(0, 123, 255, 0.15);
+            border: 1px solid rgba(0, 123, 255, 0.3);
+            color: #007bff;
+            font-size: 0.95rem;
+            padding: 5px 12px;
             border-radius: 6px;
-            cursor: pointer; 
+            cursor: pointer;
             float: right;
             font-weight: bold;
         }
-        #info-modal .close-btn:hover { 
-            background: rgba(0, 123, 255, 0.3); 
-            color: #0056b3; 
+        #info-modal .close-btn:hover {
+            background: rgba(0, 123, 255, 0.3);
+            color: #0056b3;
         }
 
         #info-toggle-btn {
             position: absolute; bottom: 20px; left: 20px; z-index: 10;
-            background: rgba(0, 123, 255, 0.9); color: white; 
+            background: rgba(0, 123, 255, 0.9); color: white;
             border: 1px solid rgba(255, 255, 255, 0.4);
             padding: 10px 18px; border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4);
@@ -168,7 +170,7 @@
     <!-- 快速導覽選單 -->
     <div id="quick-nav-container">
         <select id="quick-nav-select" onchange="quickJump(this.value)">
-            <option value="" disabled selected>🚀 快速前往區域...</option>
+            <option value="" disabled selected>🚀 快速導覽</option>
             <option value="counter">櫃檯</option>
             <option value="shoes">鞋櫃</option>
             <option value="locker">櫃子</option>
@@ -204,7 +206,7 @@
     <div id="flat-view-container">
         <button class="return-btn" onclick="closeFlatView()">返回上課區</button>
         <img id="flat-image" src="廚房.jpg" alt="平面圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Flat+Image'">
-        
+
         <div id="flat-detail-panel">
             <h3 id="flat-detail-title">區域名稱</h3>
             <p id="flat-detail-desc">詳細介紹內容...</p>
@@ -275,7 +277,7 @@
             "default": {
                 "firstScene": "counter",
                 "autoLoad": true,
-                "compass": false  // 已將指北針隱關閉
+                "compass": false
             },
             "scenes": {
                 "counter": {
@@ -302,7 +304,7 @@
                     "hotSpots": [
                         { "pitch": 0, "yaw": 150, "type": "scene", "text": "返回：置物櫃", "sceneId": "locker" },
                         { "pitch": 0, "yaw": 35, "type": "scene", "text": "前往：平安家", "sceneId": "safe_home" },
-                         { "pitch": 0, "yaw": 3, "type": "scene", "text": "前往：快樂家", "sceneId": "happy" },
+                        { "pitch": 0, "yaw": 3, "type": "scene", "text": "前往：快樂家", "sceneId": "happy" },
                         { "pitch": 0, "yaw": -50, "type": "scene", "text": "前往：中段", "sceneId": "middle" },
                         { "pitch": 0, "yaw": -130, "type": "scene", "text": "前往：無障礙廁所", "sceneId": "accessible_toilet" }
                     ]
@@ -365,7 +367,7 @@
             const container = document.getElementById('flat-view-container');
             document.getElementById('flat-image').src = "廚房.jpg";
             container.style.display = 'flex';
-            
+
             const info = sceneInfo["kitchen"];
             if(info) {
                 document.getElementById('flat-detail-title').innerText = info.title;
@@ -380,7 +382,7 @@
             const container = document.getElementById('flat-view-container');
             document.getElementById('flat-image').src = "逃生.jpg";
             container.style.display = 'flex';
-            
+
             const info = sceneInfo["escape_wash"];
             if(info) {
                 document.getElementById('flat-detail-title').innerText = info.title;
@@ -455,7 +457,7 @@
         viewer.on('scenechange', function(sceneId) {
             currentSceneId = sceneId;
             manualClosedInfo = false;
-            
+
             if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
                 navigationHistory.push(sceneId);
             }
