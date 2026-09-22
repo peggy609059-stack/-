@@ -65,14 +65,6 @@
         }
         .back-step-btn:hover { background: #5a6268; }
 
-        /* 左下角目前場景標籤樣式 */
-        #current-scene-badge {
-            position: absolute; bottom: 20px; left: 20px; z-index: 10;
-            background: rgba(0, 0, 0, 0.8); color: white; padding: 10px 18px; border-radius: 6px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3); font-size: 1.3rem; font-weight: bold;
-            border-left: 4px solid #007bff;
-        }
-
         .pnlm-hotspot-base {
             transform: scale(4);
             transform-origin: center center;
@@ -85,9 +77,6 @@
     </style>
 </head>
 <body>
-
-    <!-- 左下角動態顯示當前區域名稱的標籤 -->
-    <div id="current-scene-badge">載入中...</div>
 
     <!-- 快速導覽選單 -->
     <div id="quick-nav-container">
@@ -331,30 +320,14 @@
             document.getElementById('quick-nav-select').selectedIndex = 0;
         }
 
-        // 監聽場景切換事件，自動更新左下角標籤文字
+        // 僅保留導覽歷史與場景切換邏輯
         viewer.on('scenechange', function(sceneId) {
             currentSceneId = sceneId;
             
             if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
                 navigationHistory.push(sceneId);
             }
-
-            updateSceneBadge(sceneId);
         });
-
-        function updateSceneBadge(sceneId) {
-            const info = sceneInfo[sceneId];
-            const badge = document.getElementById('current-scene-badge');
-            if (info) {
-                badge.innerText = info.title;
-            } else {
-                badge.innerText = sceneId;
-            }
-        }
-
-        window.onload = function() {
-            updateSceneBadge("counter");
-        };
     </script>
 
 </body>
