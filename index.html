@@ -64,7 +64,6 @@
         #info-modal h3 { margin: 0 0 8px 0; font-size: 1.9rem; color: #007bff; }
         #info-modal p { margin: 0; font-size: 1.5rem; line-height: 1.6; color: #555; }
         
-        /* 放大後的介紹視窗關閉按鈕 */
         #info-modal .close-btn {
             background: rgba(0, 123, 255, 0.15); 
             border: 1px solid rgba(0, 123, 255, 0.3); 
@@ -81,7 +80,6 @@
             color: #0056b3; 
         }
 
-        /* 展開空間介紹按鈕（當彈跳視窗關閉時顯示） */
         #info-toggle-btn {
             position: absolute; bottom: 20px; left: 20px; z-index: 10;
             background: rgba(0, 123, 255, 0.9); color: white; 
@@ -95,32 +93,40 @@
             background: rgba(0, 123, 255, 1);
         }
 
-        /* 平面照片熱點的樣式（固定平面框不變形） */
-        .flat-photo-hotspot {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 5px;
-            border-radius: 6px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s;
+        /* 平面照片彈跳視窗樣式 (點擊教室左右側照片熱點時跳出) */
+        #photo-modal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.8); z-index: 100;
+            display: none; justify-content: center; align-items: center; flex-direction: column;
         }
-        .flat-photo-hotspot:hover {
-            transform: scale(1.05);
+        #photo-modal img {
+            max-width: 80%; max-height: 80vh; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
-        .flat-photo-hotspot img {
-            width: 150px; /* 照片顯示寬度，可自行調整 */
-            height: 100px; /* 照片顯示高度 */
-            object-fit: cover;
-            border-radius: 4px;
-            display: block;
+        #photo-modal .photo-close-btn {
+            margin-top: 15px; background: white; color: #333; border: none;
+            padding: 10px 20px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer;
         }
-        .flat-photo-hotspot span {
-            font-size: 0.8rem;
-            color: #333;
-            margin-top: 3px;
-            display: block;
+        #photo-modal .photo-close-btn:hover {
+            background: #ddd;
+        }
+
+        /* 360畫面中的平面照片按鈕樣式 */
+        .custom-photo-hotspot {
+            background: rgba(40, 167, 69, 0.9);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
             font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            white-space: nowrap;
+            border: 2px solid white;
+            transition: all 0.2s;
+        }
+        .custom-photo-hotspot:hover {
+            background: rgba(33, 136, 56, 1);
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -142,28 +148,15 @@
     <!-- 重新打開空間介紹的按鈕 -->
     <button id="info-toggle-btn" onclick="toggleInfoModal()">ℹ️ 展開空間介紹</button>
 
+    <!-- 平面照片放大預覽燈箱 -->
+    <div id="photo-modal" onclick="closePhotoModal()">
+        <img id="modal-img-src" src="" alt="平面照片">
+        <button class="photo-close-btn">✖ 關閉照片</button>
+    </div>
+
     <div id="panorama"></div>
 
     <script>
-        // 自定義函式：建立平面照片熱點的 HTML
-        function planarImageHotspot(args) {
-            return function(hotSpotDiv, args) {
-                hotSpotDiv.classList.add('flat-photo-hotspot');
-                let img = document.createElement('img');
-                img.src = args.url;
-                let span = document.createElement('span');
-                span.innerHTML = args.caption;
-                hotSpotDiv.appendChild(img);
-                hotSpotDiv.appendChild(span);
-                
-                // 點擊可以做放大或其他互動（此處示範點擊彈出提示）
-                hotSpotDiv.onclick = function() {
-                    alert("您點擊了照片：" + args.caption);
-                }
-            }
-        }
-
-        // 各區域的詳細介紹資料
         const sceneInfo = {
             "counter": {
                 "title": "櫃檯｜長輩接送區",
@@ -258,7 +251,7 @@
                 "middle": {
                     "title": "走廊2", "type": "equirectangular", "panorama": "中段.jpg",
                     "hotSpots": [
-                        { "pitch": 0, "yaw": 155, "type": "scene", "text": "返回：走廊", "sceneId": "corridor" },
+                        { "pitch": 0, "yaw": 155, "type": "scene", "text": "前往：走廊", "sceneId": "corridor" },
                         { "pitch": 0, "yaw": -20, "type": "scene", "text": "前往：上課區", "sceneId": "Attend class" },
                         { "pitch": 0, "yaw": 100, "type": "scene", "text": "前往：快樂家", "sceneId": "happy" },
                         { "pitch": 0, "yaw": -130, "type": "scene", "text": "前往：性別友善廁所與無障礙廁所", "sceneId": "toilet2" },
@@ -289,40 +282,37 @@
                     "title": "圓滿家", "type": "equirectangular", "panorama": "圓滿家.jpg",
                     "hotSpots": [{ "pitch": 0, "yaw": -110, "type": "scene", "text": "返回：上課區", "sceneId": "Attend class" }]
                 },
-                "kitchen": {
-                    "title": "廚房", "type": "equirectangular", "panorama": "廚房.jpg", 
-                    "hotSpots": [{ "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：上課區", "sceneId": "Attend class" }]
-                },
                 "Attend class": {
                     "title": "上課區", "type": "equirectangular", "panorama": "上課區.jpg",
                     "hotSpots": [
                         { "pitch": 0, "yaw": -135, "type": "scene", "text": "前往：性別友善廁所與無障礙廁所", "sceneId": "toilet2" },
                         { "pitch": 0, "yaw": -160, "type": "scene", "text": "返回：走廊2", "sceneId": "middle" },
                         { "pitch": 0, "yaw": 119, "type": "scene", "text": "前往：圓滿家", "sceneId": "Perfect" },
-                        { "pitch": 0, "yaw": -50, "type": "scene", "text": "前往：廚房", "sceneId": "kitchen" }, 
+                        { "pitch": 0, "yaw": -50, "type": "scene", "text": "照片", "sceneId": "kitchen" }, 
                         { "pitch": 0, "yaw": -115, "type": "scene", "text": "前往：性別友善廁所", "sceneId": "toilet1" },
 
-                        // === 在這裡新增左右兩張平面照片 (pitch可調高低, yaw調左右方向) ===
+                        /* ▼▼▼ 在這裡新增教室「左側」與「右側」的平面照片熱點 ▼▼▼ */
                         {
-                            "pitch": -5,
-                            "yaw": -45, // 左側方向 (可依照實際需要調整角度)
+                            "pitch": 0,
+                            "yaw": -70, // 👈 調整左側角度 (可依實際畫面微調)
                             "type": "info",
-                            "createTooltipFunc": planarImageHotspot,
-                            "createTooltipArgs": {
-                                "url": "廚房.jpg",     // 請換成您左側平面的照片檔案名稱
-                                "caption": "教室活動照片（左）"
+                            "cssClass": "custom-photo-hotspot",
+                            "text": "🖼️ 檢視教室左側照片",
+                            "clickHandlerFunc": function() {
+                                openPhotoModal("廚房.jpg"); // 👈 請替換成您的左側平面照片檔名
                             }
                         },
                         {
-                            "pitch": -5,
-                            "yaw": 45,  // 右側方向 (可依照實際需要調整角度)
+                            "pitch": 0,
+                            "yaw": 70,  // 👈 調整右側角度 (可依實際畫面微調)
                             "type": "info",
-                            "createTooltipFunc": planarImageHotspot,
-                            "createTooltipArgs": {
-                                "url": "photo_right.jpg",    // 請換成您右側平面的照片檔案名稱
-                                "caption": "教室佈置照片（右）"
+                            "cssClass": "custom-photo-hotspot",
+                            "text": "🖼️ 檢視教室右側照片",
+                            "clickHandlerFunc": function() {
+                                openPhotoModal("教室右側照片.jpg"); // 👈 請替換成您的右側平面照片檔名
                             }
                         }
+                        /* ▲▲▲ 新增結束 ▲▲▲ */
                     ]
                 },
                 "activity": {
@@ -331,6 +321,19 @@
                 }
             }
         });
+
+        // 開啟平面照片燈箱視窗
+        function openPhotoModal(imageSrc) {
+            const modal = document.getElementById('photo-modal');
+            const img = document.getElementById('modal-img-src');
+            img.src = imageSrc;
+            modal.style.display = 'flex';
+        }
+
+        // 關閉平面照片燈箱視窗
+        function closePhotoModal() {
+            document.getElementById('photo-modal').style.display = 'none';
+        }
 
         // 切換上方提示框顯示/隱藏
         function toggleOverlay(event) {
