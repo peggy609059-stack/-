@@ -70,7 +70,6 @@
             background: rgba(0, 0, 0, 0.75); color: white; padding: 15px 20px; border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             max-width: 320px;
-            padding-bottom: 45px; /* 預留空間給右下角的按鈕 */
             transition: all 0.3s ease;
         }
         #title-overlay h2 { margin: 0 0 5px 0; font-size: 1.5rem; }
@@ -78,7 +77,6 @@
 
         #title-overlay.collapsed {
             padding: 10px 18px;
-            padding-bottom: 10px;
             cursor: pointer;
             background: rgba(0, 0, 0, 0.85);
         }
@@ -96,10 +94,8 @@
             padding: 6px 14px; 
             border-radius: 6px;
             cursor: pointer; 
+            float: right; 
             font-weight: bold;
-            position: absolute;
-            bottom: 10px;
-            right: 12px;
         }
         .toggle-btn:hover { 
             background: rgba(255, 255, 255, 0.45); 
