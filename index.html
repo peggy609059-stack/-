@@ -7,8 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
     <style>
-        body { margin: 0; font-family: "Microsoft JhengHei", sans-serif; overflow: hidden; }
-        #panorama { width: 100vw; height: 100vw; } /* 修正全螢幕高度 */
+        body { margin: 0; font-family: "Microsoft JhengHei", sans-serif; }
         #panorama { width: 100vw; height: 100vh; }
         
         #title-overlay {
@@ -21,6 +20,7 @@
         #title-overlay h2 { margin: 0 0 5px 0; font-size: 1.9rem; }
         #title-overlay p { margin: 0 0 10px 0; font-size: 1.5rem; color: #ccc; }
         
+        /* 標題提示框收合樣式 */
         #title-overlay.collapsed {
             padding: 10px 18px;
             cursor: pointer;
@@ -64,6 +64,7 @@
         #info-modal h3 { margin: 0 0 8px 0; font-size: 1.9rem; color: #007bff; }
         #info-modal p { margin: 0; font-size: 1.5rem; line-height: 1.6; color: #555; }
         
+        /* 放大後的介紹視窗關閉按鈕 */
         #info-modal .close-btn {
             background: rgba(0, 123, 255, 0.15); 
             border: 1px solid rgba(0, 123, 255, 0.3); 
@@ -80,6 +81,7 @@
             color: #0056b3; 
         }
 
+        /* 展開空間介紹按鈕（當彈跳視窗關閉時顯示） */
         #info-toggle-btn {
             position: absolute; bottom: 20px; left: 20px; z-index: 10;
             background: rgba(0, 123, 255, 0.9); color: white; 
@@ -89,53 +91,8 @@
             font-size: 1rem; font-weight: bold; cursor: pointer;
             display: none;
         }
-        #info-toggle-dev:hover {
+        #info-toggle-btn:hover {
             background: rgba(0, 123, 255, 1);
-        }
-
-        /* 模擬「點擊移動進去」的全螢幕平面照片檢視器 */
-        #flat-scene-view {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #111; z-index: 999;
-            display: none; justify-content: center; align-items: center; flex-direction: column;
-        }
-        #flat-scene-view img {
-            max-width: 85%; max-height: 80vh; object-fit: contain;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); border-radius: 4px;
-        }
-        /* 像 360 度場景切換風格的返回按鈕 */
-        .back-to-360-btn {
-            position: absolute; top: 20px; left: 20px;
-            background: rgba(0, 0, 0, 0.8); color: white;
-            border: 2px solid white; padding: 10px 20px;
-            font-size: 1.1rem; font-weight: bold; border-radius: 8px;
-            cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            transition: background 0.2s;
-        }
-        .back-to-360-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        #flat-title {
-            position: absolute; top: 25px; color: white; font-size: 1.5rem; font-weight: bold;
-        }
-
-        /* 模仿 360 度場景跳轉按鈕的外觀樣式 */
-        .scene-like-hotspot {
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            white-space: nowrap;
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            transition: all 0.2s;
-        }
-        .scene-like-hotspot:hover {
-            background: rgba(0, 123, 255, 0.9);
-            transform: scale(1.08);
         }
     </style>
 </head>
@@ -157,30 +114,63 @@
     <!-- 重新打開空間介紹的按鈕 -->
     <button id="info-toggle-btn" onclick="toggleInfoModal()">ℹ️ 展開空間介紹</button>
 
-    <!-- 模擬點擊進去的「平面照片檢視畫面」 -->
-    <div id="flat-scene-view">
-        <button class="back-to-360-btn" onclick="exitFlatScene()">⬅ 返回：上課區</button>
-        <div id="flat-title">平面照片名稱</div>
-        <img id="flat-img-element" src="" alt="平面照片">
-    </div>
-
     <div id="panorama"></div>
 
     <script>
+        // 各區域的詳細介紹資料
         const sceneInfo = {
-            "counter": { "title": "櫃檯｜長輩接送區", "desc": "提供家屬及交通車接送長輩的交接空間，方便長輩每日安全進出中心。" },
-            "shoes": { "title": "鞋櫃區｜培養生活自主性", "desc": "讓長輩自己練習穿脫鞋子，維持原有生活習慣，營造像回家一樣的生活感。" },
-            "locker": { "title": "置物櫃｜一人一櫃", "desc": "每位長輩都有自己的專屬置物櫃，可放置個人物品，保有自己的小空間。" },
-            "safe_home": { "title": "平安家（日照生活室）", "desc": "提供午休與日常休息空間，設有固定座位。" },
-            "happy": { "title": "快樂家（日照生活室）", "desc": "兼具休息區與小教室功能，有幾位長輩的專屬座位與活動區域。" },
-            "accessible_toilet": { "title": "無障礙廁所", "desc": "適合輪椅、助行器或下肢較無力的長輩使用。設有求救鈴。" },
-            "toilet1": { "title": "性別友善廁所", "desc": "設有三個小便斗、三間廁所及衛生紙取用區，外側左方設有洗手台。每間皆設有求救鈴。" },
-            "toilet2": { "title": "性別友善廁所與無障礙廁所", "desc": "設有三間廁所及衛生紙取用區，外側左右兩邊皆有洗手台。無障礙廁所適合輪椅、助行器或下肢較無力的長輩使用。每間皆設有求救鈴。" },
-            "Attend class": { "title": "教室區｜活動、運動與用餐", "desc": "提供長輩進行運動、手作、唱歌等團體活動，也是午餐及點心的主要使用空間，增加長輩彼此交流的機會。" },
-            "Perfect": { "title": "圓滿家（日照生活室）", "desc": "提供午休與休息使用，同樣設有固定座位。" },
-            "kitchen": { "title": "廚房區｜依需求準備餐食", "desc": "負責準備長輩的午餐與點心，並依照長輩的咀嚼能力與飲食需求準備餐食。廚房區與教室區具有良好的視線連結，工作人員準備餐食時，也能同時留意教室區長輩的活動與安全。" },
-            "escape": { "title": "逃生區｜安全與便利", "desc": "逃生區附近設有洗手台，方便坐附近的長輩使用。逃生門通往警察局，方便緊急狀況使用。" },
-            "activity": { "title": "活動區｜休息與交流", "desc": "設有沙發椅，提供午休及活動空檔休息使用，並有固定座位，讓長輩擁有熟悉的位置。" }
+            "counter": {
+                "title": "櫃檯｜長輩接送區",
+                "desc": "提供家屬及交通車接送長輩的交接空間，方便長輩每日安全進出中心。"
+            },
+            "shoes": {
+                "title": "鞋櫃區｜培養生活自主性",
+                "desc": "讓長輩自己練習穿脫鞋子，維持原有生活習慣，營造像回家一樣的生活感。"
+            },
+            "locker": {
+                "title": "置物櫃｜一人一櫃",
+                "desc": "每位長輩都有自己的專屬置物櫃，可放置個人物品，保有自己的小空間。"
+            },
+            "safe_home": {
+                "title": "平安家（日照生活室）",
+                "desc": "提供午休與日常休息空間，設有固定座位。"
+            },
+            "happy": {
+                "title": "快樂家（日照生活室）",
+                "desc": "兼具休息區與小教室功能，有幾位長輩的專屬座位與活動區域。"
+            },
+            "accessible_toilet": {
+                "title": "無障礙廁所",
+                "desc": "適合輪椅、助行器或下肢較無力的長輩使用。設有求救鈴。"
+            },
+            "toilet1": {
+                "title": "性別友善廁所",
+                "desc": "設有三個小便斗、三間廁所及衛生紙取用區，外側左方設有洗手台。每間皆設有求救鈴。"
+            },
+            "toilet2": {
+                "title": "性別友善廁所與無障礙廁所",
+                "desc": "設有三間廁所及衛生紙取用區，外側左右兩邊皆有洗手台。無障礙廁所適合輪椅、助行器或下肢較無力的長輩使用。每間皆設有求救鈴。"
+            },
+            "Attend class": {
+                "title": "教室區｜活動、運動與用餐",
+                "desc": "提供長輩進行運動、手作、唱歌等團體活動，也是午餐及點心的主要使用空間，增加長輩彼此交流的機會。"
+            },
+            "Perfect": {
+                "title": "圓滿家（日照生活室）",
+                "desc": "提供午休與休息使用，同樣設有固定座位。"
+            },
+            "kitchen": {
+                "title": "廚房區｜依需求準備餐食",
+                "desc": "負責準備長輩的午餐與點心，並依照長輩的咀嚼能力與飲食需求準備餐食。廚房區與教室區具有良好的視線連結，工作人員準備餐食時，也能同時留意教室區長輩的活動與安全。"
+            },
+            "escape": {
+                "title": "逃生區｜安全與便利",
+                "desc": "逃生區附近設有洗手台，方便坐附近的長輩使用。逃生門通往警察局，方便緊急狀況使用。"
+            },
+            "activity": {
+                "title": "活動區｜休息與交流",
+                "desc": "設有沙發椅，提供午休及活動空檔休息使用，並有固定座位，讓長輩擁有熟悉的位置。"
+            }
         };
 
         const viewer = pannellum.viewer('panorama', {
@@ -239,7 +229,7 @@
                 },
                 "accessible_toilet": {
                     "title": "無障礙廁所", "type": "equirectangular", "panorama": "廁所4.jpg",
-                    "hotSpots": [{ "pitch": 0, "yaw": 110, "type": "scene", "text": "返回：走廊", "sceneId": "corridor" }]
+                    "hotSpots": [{ "pitch": 0, "yaw": 90, "type": "scene", "text": "返回：走廊", "sceneId": "corridor" }]
                 },
                 "toilet2": {
                     "title": "性別友善廁所與無障礙廁所", "type": "equirectangular", "panorama": "廁所2.jpg",
@@ -251,7 +241,7 @@
                 },
                 "Perfect": {
                     "title": "圓滿家", "type": "equirectangular", "panorama": "圓滿家.jpg",
-                    "hotSpots": [{ "pitch": 0, "yaw": -140, "type": "scene", "text": "返回：上課區", "sceneId": "Attend class" }]
+                    "hotSpots": [{ "pitch": 0, "yaw": -110, "type": "scene", "text": "返回：上課區", "sceneId": "Attend class" }]
                 },
                 "kitchen": {
                     "title": "廚房", "type": "equirectangular", "panorama": "廚房.jpg", 
@@ -264,30 +254,7 @@
                         { "pitch": 0, "yaw": -160, "type": "scene", "text": "返回：走廊2", "sceneId": "middle" },
                         { "pitch": 0, "yaw": 119, "type": "scene", "text": "前往：圓滿家", "sceneId": "Perfect" },
                         { "pitch": 0, "yaw": -50, "type": "scene", "text": "前往：廚房", "sceneId": "kitchen" }, 
-                        { "pitch": 0, "yaw": -115, "type": "scene", "text": "前往：性別友善廁所", "sceneId": "toilet1" },
-
-                        /* ▼▼▼ 教室「左側」與「右側」的平面圖切換點 (長得跟移動場景按鈕一樣) ▼▼▼ */
-                        {
-                            "pitch": 0,
-                            "yaw": -70, // 👈 教室左側角度
-                            "type": "info",
-                            "cssClass": "scene-like-hotspot",
-                            "text": "⬅ 前往：教室左側平面圖",
-                            "clickHandlerFunc": function() {
-                                enterFlatScene("廚房.jpg", "教室左側平面圖"); // 👈 換成你的左側照片檔名
-                            }
-                        },
-                        {
-                            "pitch": 0,
-                            "yaw": 70,  // 👈 教室右側角度
-                            "type": "info",
-                            "cssClass": "scene-like-hotspot",
-                            "text": "前往：教室右側平面圖 ➡",
-                            "clickHandlerFunc": function() {
-                                enterFlatScene("教室右側照片.jpg", "教室右側平面圖"); // 👈 換成你的右側照片檔名
-                            }
-                        }
-                        /* ▲▲▲ 新增結束 ▲▲▲ */
+                        { "pitch": 0, "yaw": -115, "type": "scene", "text": "前往：性別友善廁所", "sceneId": "toilet1" }
                     ]
                 },
                 "activity": {
@@ -296,32 +263,6 @@
                 }
             }
         });
-
-        // 模擬切換到平面圖片「場景」
-        function enterFlatScene(imageSrc, titleText) {
-            const flatView = document.getElementById('flat-scene-view');
-            const flatImg = document.getElementById('flat-img-element');
-            const flatTitle = document.getElementById('flat-title');
-
-            flatImg.src = imageSrc;
-            flatTitle.innerText = titleText;
-            flatView.style.display = 'flex';
-
-            // 同時把左下角的空間介紹隱藏，避免干擾畫面
-            document.getElementById('info-modal').style.display = 'none';
-            document.getElementById('info-toggle-btn').style.display = 'none';
-            document.getElementById('title-overlay').style.display = 'none';
-        }
-
-        // 從平面照片「返回」360度上課區
-        function exitFlatScene() {
-            const flatView = document.getElementById('flat-scene-view');
-            flatView.style.display = 'none';
-
-            // 恢復原本的介面顯示
-            document.getElementById('title-overlay').style.display = 'block';
-            showInfo("Attend class", false); // 恢復上課區的左下角空間介紹
-        }
 
         // 切換上方提示框顯示/隱藏
         function toggleOverlay(event) {
