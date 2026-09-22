@@ -65,6 +65,94 @@
         }
         .back-step-btn:hover { background: #5a6268; }
 
+        /* 左上角標題提示卡片 */
+        #title-overlay {
+            position: absolute; top: 20px; left: 20px; z-index: 10;
+            background: rgba(0, 0, 0, 0.75); color: white; padding: 15px 20px; border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            max-width: 320px;
+            padding-bottom: 45px;
+            transition: all 0.3s ease;
+        }
+        #title-overlay h2 { margin: 0 0 5px 0; font-size: 1.5rem; }
+        #title-overlay p { margin: 0 0 10px 0; font-size: 1.3rem; color: #ccc; }
+
+        #title-overlay.collapsed {
+            padding: 10px 18px;
+            padding-bottom: 10px;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.85);
+        }
+        #title-overlay.collapsed h2,
+        #title-overlay.collapsed p,
+        #title-overlay.collapsed .toggle-btn {
+            display: none;
+        }
+
+        .toggle-btn {
+            background: rgba(255, 255, 255, 0.25); 
+            border: 1px solid rgba(255, 255, 255, 0.5); 
+            color: #fff; 
+            font-size: 1rem; 
+            padding: 6px 14px; 
+            border-radius: 6px;
+            cursor: pointer; 
+            font-weight: bold;
+            position: absolute;
+            bottom: 10px;
+            right: 12px;
+        }
+        .toggle-btn:hover { 
+            background: rgba(255, 255, 255, 0.45); 
+        }
+
+        #title-overlay.collapsed::after {
+            content: "💡 展開參訪提示";
+            font-size: 1rem;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* 空間介紹彈跳視窗（左下角） */
+        #info-modal {
+            position: absolute; bottom: 20px; left: 20px; z-index: 10;
+            background: rgba(255, 255, 255, 0.95); color: #333; padding: 15px 20px; border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); max-width: 320px; display: none;
+            border-left: 5px solid #007bff;
+        }
+        #info-modal h3 { margin: 0 0 8px 0; font-size: 1.7rem; color: #007bff; }
+        #info-modal p { margin: 0; font-size: 1.2rem; line-height: 1.6; color: #555; }
+
+        #info-modal .close-btn {
+            background: rgba(0, 123, 255, 0.15); 
+            border: 1px solid rgba(0, 123, 255, 0.3); 
+            color: #007bff; 
+            font-size: 0.95rem; 
+            padding: 5px 12px; 
+            border-radius: 6px;
+            cursor: pointer; 
+            float: right;
+            font-weight: bold;
+        }
+        #info-modal .close-btn:hover { 
+            background: rgba(0, 123, 255, 0.3); 
+            color: #0056b3; 
+        }
+
+        /* 重新打開空間介紹的按鈕 */
+        #info-toggle-btn {
+            position: absolute; bottom: 20px; left: 20px; z-index: 10;
+            background: rgba(0, 123, 255, 0.9); color: white; 
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 10px 18px; border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            font-size: 1.5rem; font-weight: bold; cursor: pointer;
+            display: none;
+        }
+        #info-toggle-btn:hover {
+            background: rgba(0, 123, 255, 1);
+        }
+
         .pnlm-hotspot-base {
             transform: scale(4);
             transform-origin: center center;
@@ -77,6 +165,12 @@
     </style>
 </head>
 <body>
+
+    <div id="title-overlay" onclick="checkToggle(event)">
+        <button class="toggle-btn" onclick="toggleOverlay(event)">✖ 關閉提示</button>
+        <h2>蘆洲集賢社區長照機構線上參訪</h2>
+        <p>💡提示：點擊畫面中的場景按鈕(↑)可自由穿梭各個區域</p>
+    </div>
 
     <!-- 快速導覽選單 -->
     <div id="quick-nav-container">
@@ -100,6 +194,16 @@
 
     <!-- 回到上一步按鈕 -->
     <button class="back-step-btn" onclick="goBackStep()">⬅ 回到上一步</button>
+
+    <!-- 空間介紹彈跳視窗 -->
+    <div id="info-modal">
+        <button class="close-btn" onclick="toggleInfoModal()">✖ 關閉介紹</button>
+        <h3 id="modal-title">區域名稱</h3>
+        <p id="modal-desc">區域介紹內容...</p>
+    </div>
+
+    <!-- 重新打開空間介紹的按鈕 -->
+    <button id="info-toggle-btn" onclick="toggleInfoModal()">ℹ️ 展開空間介紹</button>
 
     <div id="panorama"></div>
 
@@ -178,7 +282,7 @@
             "default": {
                 "firstScene": "counter",
                 "autoLoad": true,
-                "compass": false  // 已將指北針隱關閉
+                "compass": false
             },
             "scenes": {
                 "counter": {
@@ -263,7 +367,6 @@
         };
 
         let navigationHistory = ["counter"];
-        let currentSceneId = "counter";
 
         function openKitchenFlatView(event) {
             const container = document.getElementById('flat-view-container');
@@ -274,6 +377,9 @@
             if(info) {
                 document.getElementById('flat-detail-title').innerText = info.title;
                 document.getElementById('flat-detail-desc').innerHTML = info.desc;
+
+                document.getElementById('info-modal').style.display = 'none';
+                document.getElementById('info-toggle-btn').style.display = 'none';
             }
         }
 
@@ -286,12 +392,16 @@
             if(info) {
                 document.getElementById('flat-detail-title').innerText = info.title;
                 document.getElementById('flat-detail-desc').innerHTML = info.desc;
+
+                document.getElementById('info-modal').style.display = 'none';
+                document.getElementById('info-toggle-btn').style.display = 'none';
             }
         }
 
         function closeFlatView() {
             const container = document.getElementById('flat-view-container');
             container.style.display = 'none';
+            showInfo("Attend class", true);
         }
 
         function goBackStep() {
@@ -320,14 +430,66 @@
             document.getElementById('quick-nav-select').selectedIndex = 0;
         }
 
-        // 僅保留導覽歷史與場景切換邏輯
+        function toggleOverlay(event) {
+            if (event) event.stopPropagation();
+            const overlay = document.getElementById('title-overlay');
+            overlay.classList.toggle('collapsed');
+        }
+
+        function checkToggle(event) {
+            const overlay = document.getElementById('title-overlay');
+            if (overlay.classList.contains('collapsed')) {
+                overlay.classList.remove('collapsed');
+            }
+        }
+
+        let manualClosedInfo = false;
+        let currentSceneId = "counter";
+
+        function toggleInfoModal() {
+            const modal = document.getElementById('info-modal');
+            const toggleBtn = document.getElementById('info-toggle-btn');
+
+            if (modal.style.display === 'block') {
+                modal.style.display = 'none';
+                toggleBtn.style.display = 'block';
+                manualClosedInfo = true;
+            } else {
+                showInfo(currentSceneId, true);
+            }
+        }
+
         viewer.on('scenechange', function(sceneId) {
             currentSceneId = sceneId;
+            manualClosedInfo = false;
             
             if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
                 navigationHistory.push(sceneId);
             }
+
+            showInfo(sceneId, false);
         });
+
+        function showInfo(sceneId, forced) {
+            const info = sceneInfo[sceneId];
+            if (info) {
+                document.getElementById('modal-title').innerText = info.title;
+                document.getElementById('modal-desc').innerText = info.desc;
+
+                const modal = document.getElementById('info-modal');
+                const toggleBtn = document.getElementById('info-toggle-btn');
+
+                if (forced || !manualClosedInfo) {
+                    modal.style.display = 'block';
+                    toggleBtn.style.display = 'none';
+                    manualClosedInfo = false;
+                }
+            }
+        }
+
+        window.onload = function() {
+            showInfo("counter", true);
+        };
     </script>
 
 </body>
