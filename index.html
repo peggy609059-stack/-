@@ -45,7 +45,7 @@
         }
         .return-btn:hover { background: #cc0000; }
 
-        /* 新增：回到上一步按鈕樣式 */
+        /* 回到上一步按鈕樣式 */
         .back-step-btn {
             position: absolute; top: 20px; right: 140px; z-index: 25;
             background: #6c757d; color: white; border: none; padding: 10px 16px;
@@ -54,7 +54,7 @@
         }
         .back-step-btn:hover { background: #5a6268; }
 
-        /* 新增：快速導覽選單樣式 */
+        /* 快速導覽選單樣式 */
         #quick-nav-container {
             position: absolute; top: 20px; right: 285px; z-index: 25;
         }
@@ -178,8 +178,8 @@
             <option value="happy">快樂家</option>
             <option value="Perfect">圓滿家</option>
             <option value="Attend class">教室區</option>
-            <option value="kitchen">廚房區平面圖</option>
-            <option value="kitchen"> 逃生區與洗手台</option>
+            <option value="openKitchen">廚房</option>
+            <option value="openEscape">逃生區與洗手台</option>
             <option value="accessible_toilet">無障礙廁所</option>
             <option value="toilet1">性別友善廁所</option>
             <option value="toilet2">性別友善廁所與無障礙廁所</option>
@@ -255,7 +255,7 @@
                 "desc": "提供午休與休息使用，同樣設有固定座位。"
             },
             "kitchen": {
-                "title": "廚房區｜依需求準備餐食與安全設計",
+                "title": "廚房｜依需求準備餐食與安全設計",
                 "desc": "負責準備長輩的午餐與點心，並依照長輩的咀嚼能力與飲食需求準備餐食。<br>• <strong>視線連結</strong>：與教室區保持良好視線，工作人員備餐時也能兼顧長輩安全。<br>• <strong>膳食調整</strong>：提供軟食、碎食或特製餐點，滿足個別營養與吞嚥需求。"
             },
             "escape_wash": {
@@ -405,11 +405,8 @@
         // 回到上一步功能實作
         function goBackStep() {
             if (navigationHistory.length > 1) {
-                // 移除當前場景
                 navigationHistory.pop();
-                // 取得上一個場景
                 const prevScene = navigationHistory[navigationHistory.length - 1];
-                // 切換過去（帶有 skipHistory=true 避免重複寫入歷史）
                 viewer.loadScene(prevScene);
             } else {
                 alert("已經是起點囉！");
@@ -417,12 +414,20 @@
         }
 
         // 快速選單跳轉
-        function quickJump(sceneId) {
-            if (sceneId) {
-                viewer.loadScene(sceneId);
-                // 重置選單狀態
-                document.getElementById('quick-nav-select').selectedIndex = 0;
+        function quickJump(value) {
+            if (!value) return;
+
+            if (value === "openKitchen") {
+                viewer.loadScene("Attend class");
+                setTimeout(openKitchenFlatView, 300);
+            } else if (value === "openEscape") {
+                viewer.loadScene("Attend class");
+                setTimeout(openEscapeWashFlatView, 300);
+            } else {
+                viewer.loadScene(value);
             }
+
+            document.getElementById('quick-nav-select').selectedIndex = 0;
         }
 
         function toggleOverlay(event) {
@@ -459,7 +464,6 @@
             currentSceneId = sceneId;
             manualClosedInfo = false;
             
-            // 如果歷史紀錄最後一筆不是目前場景，則加入紀錄
             if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
                 navigationHistory.push(sceneId);
             }
