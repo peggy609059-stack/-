@@ -23,7 +23,6 @@
             border: 2px solid rgba(255,255,255,0.2);
             margin-bottom: 15px;
         }
-        /* 新增：平面圖下方的詳細文字面板樣式 */
         #flat-detail-panel {
             background: rgba(255, 255, 255, 0.95);
             color: #333;
@@ -45,6 +44,26 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s;
         }
         .return-btn:hover { background: #cc0000; }
+
+        /* 新增：回到上一步按鈕樣式 */
+        .back-step-btn {
+            position: absolute; top: 20px; right: 140px; z-index: 25;
+            background: #6c757d; color: white; border: none; padding: 10px 16px;
+            font-size: 1.1rem; border-radius: 6px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s;
+        }
+        .back-step-btn:hover { background: #5a6268; }
+
+        /* 新增：快速導覽選單樣式 */
+        #quick-nav-container {
+            position: absolute; top: 20px; right: 285px; z-index: 25;
+        }
+        #quick-nav-select {
+            background: rgba(0, 123, 255, 0.9); color: white; border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 10px 14px; font-size: 1rem; border-radius: 6px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); outline: none;
+        }
+        #quick-nav-select option { background: #333; color: white; }
 
         #title-overlay {
             position: absolute; top: 20px; left: 20px; z-index: 10;
@@ -129,11 +148,10 @@
 
         /* 放大 Pannellum 預設的場景與資訊熱點 */
         .pnlm-hotspot-base {
-            transform: scale(4); /* 可依需求調整倍數，例如改為 1.8 或 2 */
+            transform: scale(4);
             transform-origin: center center;
         }
 
-        /* 放大熱點提示文字（Tooltip）與背景方塊 */
         .pnlm-tooltip span {
             font-size: 1.1rem !important;
             padding: 6px 12px !important;
@@ -148,6 +166,28 @@
         <p>💡提示：點擊畫面中的場景按鈕(↑)可自由穿梭各個區域</p>
     </div>
 
+    <!-- 快速導覽選單 -->
+    <div id="quick-nav-container">
+        <select id="quick-nav-select" onchange="quickJump(this.value)">
+            <option value="" disabled selected>🚀 快速前往區域...</option>
+            <option value="counter">櫃檯</option>
+            <option value="shoes">鞋櫃</option>
+            <option value="locker">櫃子</option>
+            <option value="activity">活動區</option>
+            <option value="safe_home">平安家</option>
+            <option value="happy">快樂家</option>
+            <option value="Perfect">圓滿家</option>
+            <option value="Attend class">教室區</option>
+            <option value="kitchen">廚房</option>
+            <option value="accessible_toilet">無障礙廁所</option>
+            <option value="toilet1">性別友善廁所</option>
+            <option value="toilet2">性別友善廁所與無障礙廁所</option>
+        </select>
+    </div>
+
+    <!-- 回到上一步按鈕 -->
+    <button class="back-step-btn" onclick="goBackStep()">⬅ 回到上一步</button>
+
     <!-- 空間介紹彈跳視窗 -->
     <div id="info-modal">
         <button class="close-btn" onclick="toggleInfoModal()">✖ 關閉介紹</button>
@@ -160,12 +200,11 @@
 
     <div id="panorama"></div>
 
-    <!-- 平面照片檢視容器 (廚房區或逃生區)：圖片在中間、文字在下方 -->
+    <!-- 平面照片檢視容器 -->
     <div id="flat-view-container">
         <button class="return-btn" onclick="closeFlatView()">返回上課區</button>
         <img id="flat-image" src="廚房.jpg" alt="平面圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Flat+Image'">
         
-        <!-- 詳細介紹文字面板 (置於圖片下方) -->
         <div id="flat-detail-panel">
             <h3 id="flat-detail-title">區域名稱</h3>
             <p id="flat-detail-desc">詳細介紹內容...</p>
@@ -320,10 +359,13 @@
             }
         });
 
+        // 歷史軌跡陣列 (用於「回到上一步」功能)
+        let navigationHistory = ["counter"];
+
         // 點擊廚房區熱點時，打開平面圖並將廚房詳細介紹帶入下方面板
         function openKitchenFlatView(event) {
             const container = document.getElementById('flat-view-container');
-            document.getElementById('flat-image').src = "廚房.jpg"; // 如果有對應圖片可自行更改檔名
+            document.getElementById('flat-image').src = "廚房.jpg";
             container.style.display = 'flex';
             
             const info = sceneInfo["kitchen"];
@@ -331,16 +373,15 @@
                 document.getElementById('flat-detail-title').innerText = info.title;
                 document.getElementById('flat-detail-desc').innerHTML = info.desc;
 
-                // 隱藏左下角的原空間介紹
                 document.getElementById('info-modal').style.display = 'none';
                 document.getElementById('info-toggle-btn').style.display = 'none';
             }
         }
 
-        // 新增：點擊逃生區與洗手台熱點時開啟
+        // 點擊逃生區與洗手台熱點時開啟
         function openEscapeWashFlatView(event) {
             const container = document.getElementById('flat-view-container');
-            document.getElementById('flat-image').src = "逃生.jpg"; // 如果有對應圖片可自行更改檔名
+            document.getElementById('flat-image').src = "逃生.jpg";
             container.style.display = 'flex';
             
             const info = sceneInfo["escape_wash"];
@@ -348,7 +389,6 @@
                 document.getElementById('flat-detail-title').innerText = info.title;
                 document.getElementById('flat-detail-desc').innerHTML = info.desc;
 
-                // 隱藏左下角的原空間介紹
                 document.getElementById('info-modal').style.display = 'none';
                 document.getElementById('info-toggle-btn').style.display = 'none';
             }
@@ -359,6 +399,29 @@
             const container = document.getElementById('flat-view-container');
             container.style.display = 'none';
             showInfo("Attend class", true);
+        }
+
+        // 回到上一步功能實作
+        function goBackStep() {
+            if (navigationHistory.length > 1) {
+                // 移除當前場景
+                navigationHistory.pop();
+                // 取得上一個場景
+                const prevScene = navigationHistory[navigationHistory.length - 1];
+                // 切換過去（帶有 skipHistory=true 避免重複寫入歷史）
+                viewer.loadScene(prevScene);
+            } else {
+                alert("已經是起點囉！");
+            }
+        }
+
+        // 快速選單跳轉
+        function quickJump(sceneId) {
+            if (sceneId) {
+                viewer.loadScene(sceneId);
+                // 重置選單狀態
+                document.getElementById('quick-nav-select').selectedIndex = 0;
+            }
         }
 
         function toggleOverlay(event) {
@@ -390,9 +453,16 @@
             }
         }
 
+        // 當場景切換時更新歷史紀錄與左下角說明
         viewer.on('scenechange', function(sceneId) {
             currentSceneId = sceneId;
             manualClosedInfo = false;
+            
+            // 如果歷史紀錄最後一筆不是目前場景，則加入紀錄
+            if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
+                navigationHistory.push(sceneId);
+            }
+
             showInfo(sceneId, false);
         });
 
