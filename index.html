@@ -65,51 +65,12 @@
         }
         .back-step-btn:hover { background: #5a6268; }
 
-        #title-overlay {
-            position: absolute; top: 20px; left: 20px; z-index: 10;
-            background: rgba(0, 0, 0, 0.75); color: white; padding: 15px 20px; border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            max-width: 320px;
-            padding-bottom: 45px; /* 預留空間給右下角的按鈕 */
-            transition: all 0.3s ease;
-        }
-        #title-overlay h2 { margin: 0 0 5px 0; font-size: 1.5rem; }
-        #title-overlay p { margin: 0 0 10px 0; font-size: 1.3rem; color: #ccc; }
-
-        #title-overlay.collapsed {
-            padding: 10px 18px;
-            padding-bottom: 10px;
-            cursor: pointer;
-            background: rgba(0, 0, 0, 0.85);
-        }
-        #title-overlay.collapsed h2,
-        #title-overlay.collapsed p,
-        #title-overlay.collapsed .toggle-btn {
-            display: none;
-        }
-
-        .toggle-btn {
-            background: rgba(255, 255, 255, 0.25); 
-            border: 1px solid rgba(255, 255, 255, 0.5); 
-            color: #fff; 
-            font-size: 1rem; 
-            padding: 6px 14px; 
-            border-radius: 6px;
-            cursor: pointer; 
-            font-weight: bold;
-            position: absolute;
-            bottom: 10px;
-            right: 12px;
-        }
-        .toggle-btn:hover { 
-            background: rgba(255, 255, 255, 0.45); 
-        }
-
-        #title-overlay.collapsed::after {
-            content: "💡 展開參訪提示";
-            font-size: 1rem;
-            color: #fff;
-            font-weight: bold;
+        /* 左下角目前場景標籤樣式 */
+        #current-scene-badge {
+            position: absolute; bottom: 20px; left: 20px; z-index: 10;
+            background: rgba(0, 0, 0, 0.8); color: white; padding: 10px 18px; border-radius: 6px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); font-size: 1.3rem; font-weight: bold;
+            border-left: 4px solid #007bff;
         }
 
         .pnlm-hotspot-base {
@@ -125,11 +86,8 @@
 </head>
 <body>
 
-    <div id="title-overlay" onclick="checkToggle(event)">
-        <button class="toggle-btn" onclick="toggleOverlay(event)">✖ 關閉提示</button>
-        <h2>蘆洲集賢社區長照機構線上參訪</h2>
-        <p>💡提示：點擊畫面中的場景按鈕(↑)可自由穿梭各個區域</p>
-    </div>
+    <!-- 左下角動態顯示當前區域名稱的標籤 -->
+    <div id="current-scene-badge">載入中...</div>
 
     <!-- 快速導覽選單 -->
     <div id="quick-nav-container">
@@ -231,7 +189,7 @@
             "default": {
                 "firstScene": "counter",
                 "autoLoad": true,
-                "compass": false 
+                "compass": false  // 已將指北針隱關閉
             },
             "scenes": {
                 "counter": {
@@ -313,9 +271,10 @@
                     "hotSpots": [{ "pitch": 0, "yaw": -170, "type": "scene", "text": "返回：置物櫃", "sceneId": "locker" }]
                 }
             }
-        });
+        };
 
         let navigationHistory = ["counter"];
+        let currentSceneId = "counter";
 
         function openKitchenFlatView(event) {
             const container = document.getElementById('flat-view-container');
@@ -372,24 +331,30 @@
             document.getElementById('quick-nav-select').selectedIndex = 0;
         }
 
-        function toggleOverlay(event) {
-            if (event) event.stopPropagation();
-            const overlay = document.getElementById('title-overlay');
-            overlay.classList.toggle('collapsed');
-        }
-
-        function checkToggle(event) {
-            const overlay = document.getElementById('title-overlay');
-            if (overlay.classList.contains('collapsed')) {
-                overlay.classList.remove('collapsed');
-            }
-        }
-
+        // 監聽場景切換事件，自動更新左下角標籤文字
         viewer.on('scenechange', function(sceneId) {
+            currentSceneId = sceneId;
+            
             if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
                 navigationHistory.push(sceneId);
             }
+
+            updateSceneBadge(sceneId);
         });
+
+        function updateSceneBadge(sceneId) {
+            const info = sceneInfo[sceneId];
+            const badge = document.getElementById('current-scene-badge');
+            if (info) {
+                badge.innerText = info.title;
+            } else {
+                badge.innerText = sceneId;
+            }
+        }
+
+        window.onload = function() {
+            updateSceneBadge("counter");
+        };
     </script>
 
 </body>
