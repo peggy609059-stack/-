@@ -48,17 +48,17 @@
         }
         .back-to-class-btn:hover { background: #c82333; }
 
-        /* 快速導覽選單樣式：維持在左下角 */
+        /* 快速導覽選單樣式：維持在左下角（已縮短長度） */
         #quick-nav-container {
             position: absolute; bottom: 20px; left: 20px; z-index: 25;
             transition: opacity 0.3s ease;
         }
         #quick-nav-select {
             background: rgba(0, 123, 255, 0.9); color: white; border: 1px solid rgba(255, 255, 255, 0.4);
-            padding: 10px 14px; font-size: 1.2rem; border-radius: 6px; cursor: pointer; font-weight: bold;
+            padding: 10px 10px; font-size: 1.2rem; border-radius: 6px; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); outline: none;
-            max-width: 180px;
-            width: 100%;
+            width: auto;
+            max-width: 100px;
         }
         #quick-nav-select option { background: #333; color: white; }
 
@@ -387,7 +387,6 @@
             document.getElementById('flat-image').src = "廚房.jpg";
             container.style.display = 'flex';
 
-            // 隱藏左下角按鈕與右下角空間介紹
             document.querySelector('.back-step-btn').style.opacity = '0';
             document.querySelector('.back-step-btn').style.pointerEvents = 'none';
             document.getElementById('quick-nav-container').style.opacity = '0';
@@ -407,7 +406,6 @@
             document.getElementById('flat-image').src = "逃生.jpg";
             container.style.display = 'flex';
 
-            // 隱藏左下角按鈕與右下角空間介紹
             document.querySelector('.back-step-btn').style.opacity = '0';
             document.querySelector('.back-step-btn').style.pointerEvents = 'none';
             document.getElementById('quick-nav-container').style.opacity = '0';
@@ -426,7 +424,6 @@
             const container = document.getElementById('flat-view-container');
             container.style.display = 'none';
 
-            // 恢復顯示左下角按鈕與右下角空間介紹
             document.querySelector('.back-step-btn').style.opacity = '1';
             document.querySelector('.back-step-btn').style.pointerEvents = 'auto';
             document.getElementById('quick-nav-container').style.opacity = '1';
