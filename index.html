@@ -45,7 +45,7 @@
         }
         .return-btn:hover { background: #cc0000; }
 
-        /* 快速導覽選單樣式：移至左下角 */
+        /* 快速導覽選單樣式：移至最左下角 */
         #quick-nav-container {
             position: absolute; bottom: 20px; left: 20px; z-index: 25;
         }
@@ -58,7 +58,7 @@
         }
         #quick-nav-select option { background: #333; color: white; }
 
-        /* 回到上一步按鈕樣式：移至快速導覽選單上方 (左下角疊加) */
+        /* 回到上一步按鈕樣式：移至快速導覽選單上方 */
         .back-step-btn {
             position: absolute; bottom: 75px; left: 20px; z-index: 25;
             background: #6c757d; color: white; border: none; padding: 10px 16px;
@@ -67,9 +67,9 @@
         }
         .back-step-btn:hover { background: #5a6268; }
 
-        /* 參訪提示框：往右移 1 公分左右 (left 改為 60px) */
+        /* 參訪提示框：往左移 0.5 公分 (left 設為 40px) */
         #title-overlay {
-            position: absolute; top: 20px; left: 60px; z-index: 10;
+            position: absolute; top: 20px; left: 40px; z-index: 10;
             background: rgba(0, 0, 0, 0.75); color: white; padding: 15px 20px; border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             max-width: 320px;
@@ -82,6 +82,8 @@
             padding: 10px 18px;
             cursor: pointer;
             background: rgba(0, 0, 0, 0.85);
+            left: auto;
+            right: 20px; /* 移到最右上角 */
         }
         #title-overlay.collapsed h2,
         #title-overlay.collapsed p,
@@ -113,8 +115,9 @@
             font-weight: bold;
         }
 
+        /* 詳細介紹區域：預設關閉，展開時蓋住左下角的快速導覽與返回按鈕 (z-index 提高到 30) */
         #info-modal {
-            position: absolute; bottom: 20px; left: 20px; z-index: 10;
+            position: absolute; bottom: 20px; left: 20px; z-index: 30;
             background: rgba(255, 255, 255, 0.95); color: #333; padding: 15px 20px; border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); max-width: 320px; display: none;
             border-left: 5px solid #007bff;
@@ -145,7 +148,7 @@
             padding: 10px 18px; border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4);
             font-size: 1.2rem; font-weight: bold; cursor: pointer;
-            display: none;
+            display: block; /* 初始直接顯示按鈕，內文預設關閉 */
         }
         #info-toggle-btn:hover {
             background: rgba(0, 123, 255, 1);
@@ -170,7 +173,7 @@
         <button class="toggle-btn" onclick="toggleOverlay(event)">✖ 關閉提示</button>
     </div>
 
-    <!-- 快速導覽選單 (移至左下角) -->
+    <!-- 快速導覽選單 (最左下角) -->
     <div id="quick-nav-container">
         <select id="quick-nav-select" onchange="quickJump(this.value)">
             <option value="" disabled selected>🚀 快速導覽</option>
@@ -190,10 +193,10 @@
         </select>
     </div>
 
-    <!-- 回到上一步按鈕 (移至快速導覽上方) -->
+    <!-- 回到上一步按鈕 (快速導覽上方) -->
     <button class="back-step-btn" onclick="goBackStep()">⬅ 回到上一步</button>
 
-    <!-- 空間介紹彈跳視窗 -->
+    <!-- 空間介紹彈跳視窗 (初始關閉) -->
     <div id="info-modal">
         <button class="close-btn" onclick="toggleInfoModal()">✖ 關閉介紹</button>
         <h3 id="modal-title">區域名稱</h3>
@@ -399,7 +402,7 @@
         function closeFlatView() {
             const container = document.getElementById('flat-view-container');
             container.style.display = 'none';
-            showInfo("Attend class", true);
+            // 離開平面圖時維持關閉介紹視窗狀態
         }
 
         function goBackStep() {
@@ -441,7 +444,6 @@
             }
         }
 
-        let manualClosedInfo = false;
         let currentSceneId = "counter";
 
         function toggleInfoModal() {
@@ -451,42 +453,41 @@
             if (modal.style.display === 'block') {
                 modal.style.display = 'none';
                 toggleBtn.style.display = 'block';
-                manualClosedInfo = true;
             } else {
-                showInfo(currentSceneId, true);
+                showInfo(currentSceneId);
+                modal.style.display = 'block';
+                toggleBtn.style.display = 'none';
             }
         }
 
         viewer.on('scenechange', function(sceneId) {
             currentSceneId = sceneId;
-            manualClosedInfo = false;
 
             if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
                 navigationHistory.push(sceneId);
             }
 
-            showInfo(sceneId, false);
-        });
-
-        function showInfo(sceneId, forced) {
+            // 場景切換時更新標題與描述，但不強制自動彈出視窗（維持使用者當前的開關意願）
             const info = sceneInfo[sceneId];
             if (info) {
                 document.getElementById('modal-title').innerText = info.title;
                 document.getElementById('modal-desc').innerText = info.desc;
+            }
+        });
 
-                const modal = document.getElementById('info-modal');
-                const toggleBtn = document.getElementById('info-toggle-btn');
-
-                if (forced || !manualClosedInfo) {
-                    modal.style.display = 'block';
-                    toggleBtn.style.display = 'none';
-                    manualClosedInfo = false;
-                }
+        function showInfo(sceneId) {
+            const info = sceneInfo[sceneId];
+            if (info) {
+                document.getElementById('modal-title').innerText = info.title;
+                document.getElementById('modal-desc').innerText = info.desc;
             }
         }
 
         window.onload = function() {
-            showInfo("counter", true);
+            showInfo("counter");
+            // 初始狀態下保持介紹視窗關閉，僅顯示展開按鈕
+            document.getElementById('info-modal').style.display = 'none';
+            document.getElementById('info-toggle-btn').style.display = 'block';
         };
     </script>
 
