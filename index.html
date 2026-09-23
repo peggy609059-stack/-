@@ -45,9 +45,9 @@
         }
         .return-btn:hover { background: #cc0000; }
 
-        /* 快速導覽選單樣式（置於右上角最上方，並設定最大寬度縮短） */
+        /* 快速導覽選單樣式：移至左下角 */
         #quick-nav-container {
-            position: absolute; top: 20px; right: 20px; z-index: 25;
+            position: absolute; bottom: 20px; left: 20px; z-index: 25;
         }
         #quick-nav-select {
             background: rgba(0, 123, 255, 0.9); color: white; border: 1px solid rgba(255, 255, 255, 0.4);
@@ -58,22 +58,22 @@
         }
         #quick-nav-select option { background: #333; color: white; }
 
-        /* 回到上一步按鈕樣式（置於快速導覽選單下方） */
+        /* 回到上一步按鈕樣式：移至快速導覽選單上方 (左下角疊加) */
         .back-step-btn {
-            position: absolute; top: 75px; right: 20px; z-index: 25;
+            position: absolute; bottom: 75px; left: 20px; z-index: 25;
             background: #6c757d; color: white; border: none; padding: 10px 16px;
             font-size: 1.1rem; border-radius: 6px; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s;
         }
         .back-step-btn:hover { background: #5a6268; }
 
+        /* 參訪提示框：往右移 1 公分左右 (left 改為 60px) */
         #title-overlay {
-            position: absolute; top: 20px; left: 20px; z-index: 10;
+            position: absolute; top: 20px; left: 60px; z-index: 10;
             background: rgba(0, 0, 0, 0.75); color: white; padding: 15px 20px; border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             max-width: 320px;
             transition: all 0.3s ease;
-            position: absolute;
         }
         #title-overlay h2 { margin: 0 0 5px 0; font-size: 1.5rem; }
         #title-overlay p { margin: 0 0 12px 0; font-size: 1.3rem; color: #ccc; }
@@ -170,7 +170,7 @@
         <button class="toggle-btn" onclick="toggleOverlay(event)">✖ 關閉提示</button>
     </div>
 
-    <!-- 快速導覽選單 -->
+    <!-- 快速導覽選單 (移至左下角) -->
     <div id="quick-nav-container">
         <select id="quick-nav-select" onchange="quickJump(this.value)">
             <option value="" disabled selected>🚀 快速導覽</option>
@@ -190,7 +190,7 @@
         </select>
     </div>
 
-    <!-- 回到上一步按鈕 -->
+    <!-- 回到上一步按鈕 (移至快速導覽上方) -->
     <button class="back-step-btn" onclick="goBackStep()">⬅ 回到上一步</button>
 
     <!-- 空間介紹彈跳視窗 -->
