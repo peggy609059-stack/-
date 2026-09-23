@@ -127,7 +127,7 @@
             width: 100%; height: 100%; object-fit: cover;
             pointer-events: none;
         }
-        #map-marker {
+        .map-marker {
             position: absolute; width: 14px; height: 14px; background: #dc3545;
             border: 2px solid #fff; border-radius: 50%; transform: translate(-50%, -50%);
             box-shadow: 0 0 6px rgba(0,0,0,0.8); transition: all 0.3s ease;
@@ -148,10 +148,16 @@
         #map-modal-img {
             max-width: 75vw; max-height: 70vh; display: block; border-radius: 4px;
         }
+        /* 放大地圖內的定位點容器，利用 absolute 對齊圖片邊界 */
+        #map-modal-img-wrapper {
+            position: relative;
+            display: inline-block;
+        }
         .close-map-btn {
             position: absolute; top: -15px; right: -15px; background: #dc3545;
             color: white; border: none; width: 35px; height: 35px; border-radius: 50%;
             font-size: 1.2rem; cursor: pointer; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            z-index: 60;
         }
 
         /* 參訪提示框 */
@@ -242,7 +248,7 @@
     <!-- 左下角小地圖 -->
     <div id="mini-map-container" onclick="openLargeMap()" title="點擊放大全圖">
         <img id="mini-map-img" src="日照中心平面圖.png" alt="小地圖" onerror="this.src='https://placehold.co/180x120/333/fff?text=Map'">
-        <div id="map-marker"></div>
+        <div id="map-marker" class="map-marker"></div>
     </div>
 
     <!-- 放大版地圖 Modal -->
@@ -250,7 +256,10 @@
         <div id="map-modal-content" onclick="event.stopPropagation()">
             <button class="close-map-btn" onclick="closeLargeMap()">✖</button>
             <h3 style="margin-top: 0; color: #333; text-align: center; font-size: 1.4rem;">中心平面導覽圖</h3>
-            <img id="map-modal-img" src="日照中心平面圖.png" alt="大張地圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Large+Map'">
+            <div id="map-modal-img-wrapper">
+                <img id="map-modal-img" src="日照中心平面圖.png" alt="大張地圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Large+Map'">
+                <div id="map-modal-marker" class="map-marker"></div>
+            </div>
         </div>
     </div>
 
@@ -333,7 +342,7 @@
             }
         };
 
-        // 根據新平面圖 (206446.jpg) 位置精準設定各場景座標百分比 (0~100%)
+        // 依要求調整：平安家左移 0.1 (67 -> 66.9)，快樂家左移 0.3 (55 -> 54.7)，無障礙廁所下移 (52 假設圖片高度放大後推估微調，例如 53.5 左右，依整體比例約往下 0.2~0.5%)
         const sceneCoordinates = {
             "counter": { x: 86, y: 90 },
             "shoes": { x: 86, y: 64 },
@@ -341,12 +350,12 @@
             "locker": { x: 83, y: 58 },
             "corridor": { x: 67, y: 64 },
             "middle": { x: 55, y: 64 },
-            "safe_home": { x: 67, y: 30 },
-            "happy": { x: 55, y: 30 },
+            "safe_home": { x: 66.9, y: 30 },
+            "happy": { x: 54.7, y: 30 },
             "Perfect": { x: 30, y: 30 },
             "Attend class": { x: 30, y: 64 },
             "activity": { x: 86, y: 30 },
-            "accessible_toilet": { x: 60, y: 52 },
+            "accessible_toilet": { x: 60, y: 53.5 },
             "toilet1": { x: 42, y: 90 },
             "toilet2": { x: 59, y: 90 },
             "kitchen": { x: 22, y: 90 },
@@ -543,16 +552,23 @@
             document.getElementById('quick-nav-select').selectedIndex = 0;
         }
 
-        // 更新小地圖定位點
+        // 更新小地圖與放大地圖的定位點紅點位置
         function updateMapMarker(sceneId) {
             const pos = sceneCoordinates[sceneId];
-            const marker = document.getElementById('map-marker');
+            const miniMarker = document.getElementById('map-marker');
+            const largeMarker = document.getElementById('map-modal-marker');
+            
             if (pos) {
-                marker.style.left = pos.x + '%';
-                marker.style.top = pos.y + '%';
-                marker.style.display = 'block';
+                miniMarker.style.left = pos.x + '%';
+                miniMarker.style.top = pos.y + '%';
+                miniMarker.style.display = 'block';
+
+                largeMarker.style.left = pos.x + '%';
+                largeMarker.style.top = pos.y + '%';
+                largeMarker.style.display = 'block';
             } else {
-                marker.style.display = 'none';
+                miniMarker.style.display = 'none';
+                largeMarker.style.display = 'none';
             }
         }
 
@@ -598,7 +614,7 @@
 
         viewer.on('scenechange', function(sceneId) {
             currentSceneId = sceneId;
-            updateMapMarker(sceneId); // 同步更新小地圖紅點位置
+            updateMapMarker(sceneId); // 同步更新小地圖與大圖的紅點位置
             
             if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
                 navigationHistory.push(sceneId);
