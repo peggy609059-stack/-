@@ -48,7 +48,7 @@
         }
         .back-to-class-btn:hover { background: #c82333; }
 
-        /* 空間介紹區域：展開時維持原本寬度 */
+        /* 空間介紹區域（右下角） */
         #info-modal {
             position: absolute; bottom: 20px; right: 20px; z-index: 30;
             background: rgba(255, 255, 255, 0.95); color: #333; padding: 15px 20px; border-radius: 8px;
@@ -60,7 +60,7 @@
         #info-modal h3 { margin: 0 0 8px 0; font-size: 1.7rem; color: #007bff; }
         #info-modal p { margin: 0; font-size: 1.2rem; line-height: 1.6; color: #555; }
 
-        /* 收合狀態：寬度減半（設為固定小寬度並置中文字），文字維持橫向不換行 */
+        /* 收合狀態 */
         #info-modal.collapsed {
             padding: 10px 5px;
             cursor: pointer;
@@ -68,37 +68,36 @@
             border-left: none;
             bottom: 20px;
             right: 20px;
-            width: 145px !important;  /* 寬度減半（原本約170px） */
+            width: 145px !important;
             max-width: 145px !important;
-            text-align: center;      /* 文字置中 */
+            text-align: center;
         }
         #info-modal.collapsed h3,
         #info-modal.collapsed p,
         #info-modal.collapsed .close-btn {
             display: none;
         }
-
         #info-modal.collapsed::after {
             content: "展開空間介紹";
-            font-size: 1.3rem;     /* 微調字體大小讓縮小後的框框更協調 */
+            font-size: 1.3rem;
             color: #fff;
             font-weight: bold;
-            white-space: nowrap;    /* 確保文字維持橫向不換行 */
+            white-space: nowrap;
         }
 
-        /* 回到上一步按鈕樣式：已往下移並與下方按鈕保持間距 */
+        /* 回到上一步按鈕樣式 */
         .back-step-btn {
             position: absolute; bottom: 74px; right: 20px; z-index: 25;
             background: #6c757d; color: white; border: none; padding: 10px 16px;
             font-size: 1.3rem; border-radius: 6px; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s, opacity 0.3s ease;
-            width: 140px; 
+            width: 140px;
             box-sizing: border-box;
             text-align: center;
         }
         .back-step-btn:hover { background: #5a6268; }
 
-        /* 快速導覽選單樣式：已往下移並與下方按鈕保持間距 */
+        /* 快速導覽選單樣式 */
         #quick-nav-container {
             position: absolute; bottom: 128px; right: 20px; z-index: 25;
             transition: opacity 0.3s ease;
@@ -107,12 +106,55 @@
             background: rgba(0, 123, 255, 0.9); color: white; border: 1px solid rgba(255, 255, 255, 0.4);
             padding: 10px 16px; font-size: 1.4rem; border-radius: 6px; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); outline: none;
-            width: 140px; 
+            width: 140px;
             box-sizing: border-box;
         }
         #quick-nav-select option { background: #333; color: white; }
 
-        /* 參訪提示框：維持在左上角 */
+        /* 左下角小地圖樣式 */
+        #mini-map-container {
+            position: absolute; bottom: 20px; left: 20px; z-index: 25;
+            width: 180px; height: 120px; background: rgba(0, 0, 0, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.5); border-radius: 8px;
+            overflow: hidden; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
+        }
+        #mini-map-container:hover {
+            border-color: #007bff;
+            transform: scale(1.05);
+        }
+        #mini-map-img {
+            width: 100%; height: 100%; object-fit: cover;
+            pointer-events: none;
+        }
+        #map-marker {
+            position: absolute; width: 14px; height: 14px; background: #dc3545;
+            border: 2px solid #fff; border-radius: 50%; transform: translate(-50%, -50%);
+            box-shadow: 0 0 6px rgba(0,0,0,0.8); transition: all 0.3s ease;
+            z-index: 26; pointer-events: none;
+        }
+
+        /* 放大版地圖 Modal 樣式 */
+        #map-modal {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.85); z-index: 50; display: none;
+            justify-content: center; align-items: center; flex-direction: column;
+        }
+        #map-modal-content {
+            position: relative; max-width: 80vw; max-height: 80vh;
+            background: #fff; padding: 15px; border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        #map-modal-img {
+            max-width: 75vw; max-height: 70vh; display: block; border-radius: 4px;
+        }
+        .close-map-btn {
+            position: absolute; top: -15px; right: -15px; background: #dc3545;
+            color: white; border: none; width: 35px; height: 35px; border-radius: 50%;
+            font-size: 1.2rem; cursor: pointer; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        /* 參訪提示框 */
         #title-overlay {
             position: absolute; top: 20px; left: 40px; z-index: 10;
             background: rgba(0, 0, 0, 0.75); color: white; padding: 15px 20px; border-radius: 8px;
@@ -148,9 +190,7 @@
             display: block;
             margin-left: auto;
         }
-        .toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.45);
-        }
+        .toggle-btn:hover { background: rgba(255, 255, 255, 0.45); }
 
         #title-overlay.collapsed::after {
             content: "展開參訪提示";
@@ -197,6 +237,21 @@
             <option value="toilet1">性別友善廁所</option>
             <option value="toilet2">性別友善廁所與無障礙廁所</option>
         </select>
+    </div>
+
+    <!-- 左下角小地圖 -->
+    <div id="mini-map-container" onclick="openLargeMap()" title="點擊放大全圖">
+        <img id="mini-map-img" src="日照中心平面圖.jpg" alt="小地圖" onerror="this.src='https://placehold.co/180x120/333/fff?text=Map'">
+        <div id="map-marker"></div>
+    </div>
+
+    <!-- 放大版地圖 Modal -->
+    <div id="map-modal" onclick="closeLargeMap(event)">
+        <div id="map-modal-content" onclick="event.stopPropagation()">
+            <button class="close-map-btn" onclick="closeLargeMap()">✖</button>
+            <h3 style="margin-top: 0; color: #333; text-align: center; font-size: 1.4rem;">中心平面導覽圖</h3>
+            <img id="map-modal-img" src="日照中心平面圖.jpg" alt="大張地圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Large+Map'">
+        </div>
     </div>
 
     <!-- 回到上一步按鈕 -->
@@ -276,6 +331,26 @@
                 "title": "活動區｜休息與交流",
                 "desc": "設有沙發椅，提供午休及活動空檔休息使用，並有固定座位，讓長輩擁有熟悉的位置。"
             }
+        };
+
+        // 設定各個 sceneId 在平面圖上的相對位置百分比 (可依實際平面圖微調數值 0~100%)
+        const sceneCoordinates = {
+            "counter": { x: 20, y: 80 },
+            "shoes": { x: 30, y: 80 },
+            "aisle": { x: 40, y: 70 },
+            "locker": { x: 50, y: 60 },
+            "corridor": { x: 50, y: 45 },
+            "middle": { x: 60, y: 45 },
+            "safe_home": { x: 40, y: 30 },
+            "happy": { x: 50, y: 30 },
+            "Perfect": { x: 75, y: 30 },
+            "Attend class": { x: 70, y: 45 },
+            "activity": { x: 50, y: 75 },
+            "accessible_toilet": { x: 35, y: 45 },
+            "toilet1": { x: 60, y: 60 },
+            "toilet2": { x: 65, y: 60 },
+            "kitchen": { x: 80, y: 60 },
+            "escape_wash": { x: 85, y: 45 }
         };
 
         const viewer = pannellum.viewer('panorama', {
@@ -384,6 +459,8 @@
             document.querySelector('.back-step-btn').style.pointerEvents = 'none';
             document.getElementById('quick-nav-container').style.opacity = '0';
             document.getElementById('quick-nav-container').style.pointerEvents = 'none';
+            document.getElementById('mini-map-container').style.opacity = '0';
+            document.getElementById('mini-map-container').style.pointerEvents = 'none';
             document.getElementById('info-modal').style.opacity = '0';
             document.getElementById('info-modal').style.pointerEvents = 'none';
 
@@ -403,6 +480,8 @@
             document.querySelector('.back-step-btn').style.pointerEvents = 'none';
             document.getElementById('quick-nav-container').style.opacity = '0';
             document.getElementById('quick-nav-container').style.pointerEvents = 'none';
+            document.getElementById('mini-map-container').style.opacity = '0';
+            document.getElementById('mini-map-container').style.pointerEvents = 'none';
             document.getElementById('info-modal').style.opacity = '0';
             document.getElementById('info-modal').style.pointerEvents = 'none';
 
@@ -421,6 +500,8 @@
             document.querySelector('.back-step-btn').style.pointerEvents = 'auto';
             document.getElementById('quick-nav-container').style.opacity = '1';
             document.getElementById('quick-nav-container').style.pointerEvents = 'auto';
+            document.getElementById('mini-map-container').style.opacity = '1';
+            document.getElementById('mini-map-container').style.pointerEvents = 'auto';
             document.getElementById('info-modal').style.opacity = '1';
             document.getElementById('info-modal').style.pointerEvents = 'auto';
         }
@@ -462,6 +543,31 @@
             document.getElementById('quick-nav-select').selectedIndex = 0;
         }
 
+        // 更新小地圖定位點
+        function updateMapMarker(sceneId) {
+            const pos = sceneCoordinates[sceneId];
+            const marker = document.getElementById('map-marker');
+            if (pos) {
+                marker.style.left = pos.x + '%';
+                marker.style.top = pos.y + '%';
+                marker.style.display = 'block';
+            } else {
+                marker.style.display = 'none';
+            }
+        }
+
+        // 開啟放大地圖
+        function openLargeMap() {
+            document.getElementById('map-modal').style.display = 'flex';
+        }
+
+        // 關閉放大地圖
+        function closeLargeMap(event) {
+            if (!event || event.target.id === 'map-modal' || event.target.classList.contains('close-map-btn')) {
+                document.getElementById('map-modal').style.display = 'none';
+            }
+        }
+
         function toggleOverlay(event) {
             if (event) event.stopPropagation();
             const overlay = document.getElementById('title-overlay');
@@ -492,7 +598,8 @@
 
         viewer.on('scenechange', function(sceneId) {
             currentSceneId = sceneId;
-
+            updateMapMarker(sceneId); // 同步更新小地圖紅點位置
+            
             if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
                 navigationHistory.push(sceneId);
             }
@@ -514,6 +621,7 @@
 
         window.onload = function() {
             showInfo("counter");
+            updateMapMarker("counter");
             document.getElementById('info-modal').classList.add('collapsed');
         };
     </script>
