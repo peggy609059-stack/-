@@ -48,27 +48,27 @@
         }
         .back-to-class-btn:hover { background: #c82333; }
 
-        /* 快速導覽選單樣式：維持在左下角 */
+        /* 快速導覽選單樣式：改至右下角群組 */
         #quick-nav-container {
-            position: absolute; bottom: 20px; left: 20px; z-index: 25;
+            position: absolute; bottom: 145px; right: 20px; z-index: 25;
             transition: opacity 0.3s ease;
         }
         #quick-nav-select {
             background: rgba(0, 123, 255, 0.9); color: white; border: 1px solid rgba(255, 255, 255, 0.4);
             padding: 10px 16px; font-size: 1.4rem; border-radius: 6px; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); outline: none;
-            width: 145px; /* 與回到上一步按鈕維持相同長度 */
+            width: 320px; /* 與右下角資訊視窗最大寬度一致 */
             box-sizing: border-box;
         }
         #quick-nav-select option { background: #333; color: white; }
 
-        /* 回到上一步按鈕樣式 */
+        /* 回到上一步按鈕樣式：改至右下角群組 */
         .back-step-btn {
-            position: absolute; bottom: 72px; left: 20px; z-index: 25;
+            position: absolute; bottom: 95px; right: 20px; z-index: 25;
             background: #6c757d; color: white; border: none; padding: 10px 16px;
             font-size: 1.1rem; border-radius: 6px; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s, opacity 0.3s ease;
-            width: 145px; /* 設定固定寬度使兩者長度一致 */
+            width: 320px; /* 與右下角資訊視窗最大寬度一致 */
             box-sizing: border-box;
             text-align: center;
         }
@@ -121,12 +121,13 @@
             font-weight: bold;
         }
 
-        /* 空間介紹區域：右下角 */
+        /* 空間介紹區域：右下角最底部 */
         #info-modal {
             position: absolute; bottom: 20px; right: 20px; z-index: 30;
             background: rgba(255, 255, 255, 0.95); color: #333; padding: 15px 20px; border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4); max-width: 320px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); max-width: 320px; width: 320px;
             border-left: 5px solid #007bff;
+            box-sizing: border-box;
             transition: all 0.3s ease;
         }
         #info-modal h3 { margin: 0 0 8px 0; font-size: 1.7rem; color: #007bff; }
@@ -188,7 +189,7 @@
         <button class="toggle-btn" onclick="toggleOverlay(event)">✖ 關閉提示</button>
     </div>
 
-    <!-- 快速導覽選單 (左下角) -->
+    <!-- 快速導覽選單 (移至右下角上方) -->
     <div id="quick-nav-container">
         <select id="quick-nav-select" onchange="quickJump(this.value)">
             <option value="" disabled selected>快速導覽</option>
@@ -209,10 +210,10 @@
         </select>
     </div>
 
-    <!-- 回到上一步按鈕 -->
+    <!-- 回到上一步按鈕 (移至右下角上方) -->
     <button class="back-step-btn" onclick="goBackStep()">回到上一步</button>
 
-    <!-- 空間介紹彈跳視窗 -->
+    <!-- 空間介紹彈跳視窗 (維持在右下角最底部) -->
     <div id="info-modal" onclick="checkInfoToggle(event)">
         <button class="close-btn" onclick="toggleInfoModal(event)">✖ 關閉介紹</button>
         <h3 id="modal-title">區域名稱</h3>
