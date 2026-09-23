@@ -48,7 +48,7 @@
         }
         .back-to-class-btn:hover { background: #c82333; }
 
-        /* 空間介紹區域：右下角最底部 (固定在底端 20px) */
+        /* 空間介紹區域：展開時維持原本寬度 */
         #info-modal {
             position: absolute; bottom: 20px; right: 20px; z-index: 30;
             background: rgba(255, 255, 255, 0.95); color: #333; padding: 15px 20px; border-radius: 8px;
@@ -60,17 +60,17 @@
         #info-modal h3 { margin: 0 0 8px 0; font-size: 1.7rem; color: #007bff; }
         #info-modal p { margin: 0; font-size: 1.2rem; line-height: 1.6; color: #555; }
 
+        /* 收合狀態：寬度減半（設為固定小寬度並置中文字），文字維持橫向不換行 */
         #info-modal.collapsed {
-            padding: 10px 8px;
+            padding: 10px 5px;
             cursor: pointer;
             background: rgba(0, 123, 255, 0.9);
             border-left: none;
             bottom: 20px;
             right: 20px;
-            width: 85px !important; /* 寬度減半 */
+            width: 85px !important;  /* 寬度減半（原本約170px） */
             max-width: 85px !important;
-            text-align: center;
-            overflow: hidden;
+            text-align: center;      /* 文字置中 */
         }
         #info-modal.collapsed h3,
         #info-modal.collapsed p,
@@ -80,29 +80,10 @@
 
         #info-modal.collapsed::after {
             content: "展開空間介紹";
-            font-size: 1.2rem;
+            font-size: 0.95rem;     /* 微調字體大小讓縮小後的框框更協調 */
             color: #fff;
             font-weight: bold;
-            writing-mode: vertical-rl; /* 改為直排顯示，讓長度變窄但字體大小不變 */
-            text-orientation: upright;
-            display: inline-block;
-            letter-spacing: 2px;
-        }
-
-        #info-modal .close-btn {
-            background: rgba(0, 123, 255, 0.15);
-            border: 1px solid rgba(0, 123, 255, 0.3);
-            color: #007bff;
-            font-size: 0.95rem;
-            padding: 5px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            float: right;
-            font-weight: bold;
-        }
-        #info-modal .close-btn:hover {
-            background: rgba(0, 123, 255, 0.3);
-            color: #0056b3;
+            white-space: nowrap;    /* 確保文字維持橫向不換行 */
         }
 
         /* 回到上一步按鈕樣式：已往下移並與下方按鈕保持間距 */
