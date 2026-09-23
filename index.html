@@ -387,10 +387,13 @@
             document.getElementById('flat-image').src = "廚房.jpg";
             container.style.display = 'flex';
 
+            // 隱藏左下角按鈕與右下角空間介紹
             document.querySelector('.back-step-btn').style.opacity = '0';
             document.querySelector('.back-step-btn').style.pointerEvents = 'none';
             document.getElementById('quick-nav-container').style.opacity = '0';
             document.getElementById('quick-nav-container').style.pointerEvents = 'none';
+            document.getElementById('info-modal').style.opacity = '0';
+            document.getElementById('info-modal').style.pointerEvents = 'none';
 
             const info = sceneInfo["kitchen"];
             if(info) {
@@ -404,10 +407,13 @@
             document.getElementById('flat-image').src = "逃生.jpg";
             container.style.display = 'flex';
 
+            // 隱藏左下角按鈕與右下角空間介紹
             document.querySelector('.back-step-btn').style.opacity = '0';
             document.querySelector('.back-step-btn').style.pointerEvents = 'none';
             document.getElementById('quick-nav-container').style.opacity = '0';
             document.getElementById('quick-nav-container').style.pointerEvents = 'none';
+            document.getElementById('info-modal').style.opacity = '0';
+            document.getElementById('info-modal').style.pointerEvents = 'none';
 
             const info = sceneInfo["escape_wash"];
             if(info) {
@@ -420,10 +426,13 @@
             const container = document.getElementById('flat-view-container');
             container.style.display = 'none';
 
+            // 恢復顯示左下角按鈕與右下角空間介紹
             document.querySelector('.back-step-btn').style.opacity = '1';
             document.querySelector('.back-step-btn').style.pointerEvents = 'auto';
             document.getElementById('quick-nav-container').style.opacity = '1';
             document.getElementById('quick-nav-container').style.pointerEvents = 'auto';
+            document.getElementById('info-modal').style.opacity = '1';
+            document.getElementById('info-modal').style.pointerEvents = 'auto';
         }
 
         function returnToClass() {
