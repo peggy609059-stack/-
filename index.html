@@ -111,13 +111,19 @@
         }
         #quick-nav-select option { background: #333; color: white; }
 
+        /* 左下角小地圖外層包裝（用於定位放大鏡圖示） */
+        #mini-map-wrapper {
+            position: absolute; bottom: 20px; left: 20px; z-index: 25;
+            transition: opacity 0.3s ease;
+        }
+
         /* 左下角小地圖樣式 */
         #mini-map-container {
-            position: absolute; bottom: 20px; left: 20px; z-index: 25;
             width: 180px; height: 120px; background: rgba(0, 0, 0, 0.8);
             border: 2px solid rgba(255, 255, 255, 0.5); border-radius: 8px;
             overflow: hidden; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4);
             transition: all 0.3s ease;
+            position: relative;
         }
         #mini-map-container:hover {
             border-color: #007bff;
@@ -134,6 +140,16 @@
             z-index: 26; pointer-events: none;
         }
 
+        /* 小地圖上方的放大鏡提示標籤 */
+        .map-zoom-hint {
+            position: absolute; top: -32px; left: 0;
+            background: rgba(0, 123, 255, 0.9); color: white;
+            padding: 4px 10px; font-size: 1rem; border-radius: 4px;
+            font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            pointer-events: none; white-space: nowrap;
+            display: flex; align-items: center; gap: 4px;
+        }
+
         /* 放大版地圖 Modal 樣式 */
         #map-modal {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -148,7 +164,6 @@
         #map-modal-img {
             max-width: 75vw; max-height: 70vh; display: block; border-radius: 4px;
         }
-        /* 放大地圖內的定位點容器，利用 absolute 對齊圖片邊界 */
         #map-modal-img-wrapper {
             position: relative;
             display: inline-block;
@@ -245,10 +260,13 @@
         </select>
     </div>
 
-    <!-- 左下角小地圖 -->
-    <div id="mini-map-container" onclick="openLargeMap()" title="點擊放大全圖">
-        <img id="mini-map-img" src="日照中心平面圖.png" alt="小地圖" onerror="this.src='https://placehold.co/180x120/333/fff?text=Map'">
-        <div id="map-marker" class="map-marker"></div>
+    <!-- 左下角小地圖與放大鏡提示 -->
+    <div id="mini-map-wrapper">
+        <div class="map-zoom-hint">🔍 點擊放大全圖</div>
+        <div id="mini-map-container" onclick="openLargeMap()" title="點擊放大全圖">
+            <img id="mini-map-img" src="日照中心平面圖.png" alt="小地圖" onerror="this.src='https://placehold.co/180x120/333/fff?text=Map'">
+            <div id="map-marker" class="map-marker"></div>
+        </div>
     </div>
 
     <!-- 放大版地圖 Modal -->
@@ -342,7 +360,6 @@
             }
         };
 
-        // 已依需求更新：無障礙廁所往下移 (+0.4 => 53.9)，平安家往左移 (-0.1 => 66.8)，快樂家往左移 (-0.3 => 54.4)
         const sceneCoordinates = {
             "counter": { x: 86, y: 90 },
             "shoes": { x: 86, y: 64 },
@@ -468,8 +485,8 @@
             document.querySelector('.back-step-btn').style.pointerEvents = 'none';
             document.getElementById('quick-nav-container').style.opacity = '0';
             document.getElementById('quick-nav-container').style.pointerEvents = 'none';
-            document.getElementById('mini-map-container').style.opacity = '0';
-            document.getElementById('mini-map-container').style.pointerEvents = 'none';
+            document.getElementById('mini-map-wrapper').style.opacity = '0';
+            document.getElementById('mini-map-wrapper').style.pointerEvents = 'none';
             document.getElementById('info-modal').style.opacity = '0';
             document.getElementById('info-modal').style.pointerEvents = 'none';
 
@@ -489,8 +506,8 @@
             document.querySelector('.back-step-btn').style.pointerEvents = 'none';
             document.getElementById('quick-nav-container').style.opacity = '0';
             document.getElementById('quick-nav-container').style.pointerEvents = 'none';
-            document.getElementById('mini-map-container').style.opacity = '0';
-            document.getElementById('mini-map-container').style.pointerEvents = 'none';
+            document.getElementById('mini-map-wrapper').style.opacity = '0';
+            document.getElementById('mini-map-wrapper').style.pointerEvents = 'none';
             document.getElementById('info-modal').style.opacity = '0';
             document.getElementById('info-modal').style.pointerEvents = 'none';
 
@@ -509,8 +526,8 @@
             document.querySelector('.back-step-btn').style.pointerEvents = 'auto';
             document.getElementById('quick-nav-container').style.opacity = '1';
             document.getElementById('quick-nav-container').style.pointerEvents = 'auto';
-            document.getElementById('mini-map-container').style.opacity = '1';
-            document.getElementById('mini-map-container').style.pointerEvents = 'auto';
+            document.getElementById('mini-map-wrapper').style.opacity = '1';
+            document.getElementById('mini-map-wrapper').style.pointerEvents = 'auto';
             document.getElementById('info-modal').style.opacity = '1';
             document.getElementById('info-modal').style.pointerEvents = 'auto';
         }
@@ -552,7 +569,6 @@
             document.getElementById('quick-nav-select').selectedIndex = 0;
         }
 
-        // 更新小地圖與放大地圖的定位點紅點位置
         function updateMapMarker(sceneId) {
             const pos = sceneCoordinates[sceneId];
             const miniMarker = document.getElementById('map-marker');
@@ -572,12 +588,10 @@
             }
         }
 
-        // 開啟放大地圖
         function openLargeMap() {
             document.getElementById('map-modal').style.display = 'flex';
         }
 
-        // 關閉放大地圖
         function closeLargeMap(event) {
             if (!event || event.target.id === 'map-modal' || event.target.classList.contains('close-map-btn')) {
                 document.getElementById('map-modal').style.display = 'none';
@@ -614,7 +628,7 @@
 
         viewer.on('scenechange', function(sceneId) {
             currentSceneId = sceneId;
-            updateMapMarker(sceneId); // 同步更新小地圖與大圖的紅點位置
+            updateMapMarker(sceneId);
             
             if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
                 navigationHistory.push(sceneId);
