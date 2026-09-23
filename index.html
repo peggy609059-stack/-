@@ -48,7 +48,7 @@
         }
         .back-to-class-btn:hover { background: #c82333; }
 
-        /* 空間介紹區域：右下角最底部 (基底 20px) */
+        /* 空間介紹區域：右下角最底部 (固定在底端 20px) */
         #info-modal {
             position: absolute; bottom: 20px; right: 20px; z-index: 30;
             background: rgba(255, 255, 255, 0.95); color: #333; padding: 15px 20px; border-radius: 8px;
@@ -99,11 +99,11 @@
 
         /* 回到上一步按鈕樣式：位於空間介紹上方，間距 0.3cm (~11px) */
         .back-step-btn {
-            position: absolute; bottom: 121px; right: 20px; z-index: 25;
+            position: absolute; bottom: 84px; right: 20px; z-index: 25;
             background: #6c757d; color: white; border: none; padding: 10px 16px;
             font-size: 1.1rem; border-radius: 6px; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s, opacity 0.3s ease;
-            width: 140px; /* 與右下角寬度一致 */
+            width: 140px; 
             box-sizing: border-box;
             text-align: center;
         }
@@ -111,14 +111,14 @@
 
         /* 快速導覽選單樣式：位於回到上一步上方，間距 0.3cm (~11px) */
         #quick-nav-container {
-            position: absolute; bottom: 177px; right: 20px; z-index: 25;
+            position: absolute; bottom: 139px; right: 20px; z-index: 25;
             transition: opacity 0.3s ease;
         }
         #quick-nav-select {
             background: rgba(0, 123, 255, 0.9); color: white; border: 1px solid rgba(255, 255, 255, 0.4);
             padding: 10px 16px; font-size: 1.4rem; border-radius: 6px; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); outline: none;
-            width: 140px; /* 與右下角寬度一致 */
+            width: 140px; 
             box-sizing: border-box;
         }
         #quick-nav-select option { background: #333; color: white; }
@@ -189,7 +189,7 @@
         <button class="toggle-btn" onclick="toggleOverlay(event)">✖ 關閉提示</button>
     </div>
 
-    <!-- 快速導覽選單 (右下角上方) -->
+    <!-- 快速導覽選單 -->
     <div id="quick-nav-container">
         <select id="quick-nav-select" onchange="quickJump(this.value)">
             <option value="" disabled selected>快速導覽</option>
@@ -210,10 +210,10 @@
         </select>
     </div>
 
-    <!-- 回到上一步按鈕 (右下角中間) -->
+    <!-- 回到上一步按鈕 -->
     <button class="back-step-btn" onclick="goBackStep()">回到上一步</button>
 
-    <!-- 空間介紹彈跳視窗 (右下角最底部) -->
+    <!-- 空間介紹彈跳視窗 -->
     <div id="info-modal" onclick="checkInfoToggle(event)">
         <button class="close-btn" onclick="toggleInfoModal(event)">✖ 關閉介紹</button>
         <h3 id="modal-title">區域名稱</h3>
@@ -269,7 +269,7 @@
             },
             "Attend class": {
                 "title": "教室區｜活動、運動與用餐",
-                "desc": "提供長輩進行運動、手作、唱歌等團體活動，也是午餐及點心的主要使用空間，增加長輩彼此交流的機會。"
+                "desc": "提供長輩進行運動-手作-唱歌等團體活動，也是午餐及點心的主要使用空間，增加長輩彼此交流的機會。"
             },
             "Perfect": {
                 "title": "圓滿家（日照生活室）",
