@@ -33,13 +33,25 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             border-left: 5px solid #007bff;
             box-sizing: border-box;
+            position: relative;
         }
         #flat-detail-panel h3 { margin: 0 0 8px 0; font-size: 1.7rem; color: #007bff; }
         #flat-detail-panel p { margin: 0; font-size: 1.6rem; line-height: 1.5; color: #555; }
 
+        /* 返回教室的紅色按鈕樣式 (置於平面詳細面板內或旁邊) */
+        .back-to-class-btn {
+            background: #dc3545; color: white; border: none; padding: 10px 18px;
+            font-size: 1.2rem; border-radius: 6px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s;
+            margin-top: 15px;
+            display: inline-block;
+        }
+        .back-to-class-btn:hover { background: #c82333; }
+
         /* 快速導覽選單樣式：維持在左下角 */
         #quick-nav-container {
             position: absolute; bottom: 20px; left: 20px; z-index: 25;
+            transition: opacity 0.3s ease;
         }
         #quick-nav-select {
             background: rgba(0, 123, 255, 0.9); color: white; border: 1px solid rgba(255, 255, 255, 0.4);
@@ -55,7 +67,7 @@
             position: absolute; bottom: 75px; left: 20px; z-index: 25;
             background: #6c757d; color: white; border: none; padding: 10px 16px;
             font-size: 1.1rem; border-radius: 6px; cursor: pointer; font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s, opacity 0.3s ease;
         }
         .back-step-btn:hover { background: #5a6268; }
 
@@ -180,6 +192,7 @@
             <option value="" disabled selected>🚀 快速導覽</option>
             <option value="counter">櫃檯</option>
             <option value="shoes">鞋櫃</option>
+            <option value="aisle">走道</option>
             <option value="locker">櫃子</option>
             <option value="activity">活動區</option>
             <option value="safe_home">平安家</option>
@@ -213,6 +226,7 @@
         <div id="flat-detail-panel">
             <h3 id="flat-detail-title">區域名稱</h3>
             <p id="flat-detail-desc">詳細介紹內容...</p>
+            <button class="back-to-class-btn" onclick="returnToClass()">🔙 返回教室區</button>
         </div>
     </div>
 
@@ -266,10 +280,6 @@
                 "title": "逃生區與洗手台｜安全疏散與衛生便利",
                 "desc": "位於教室區右側，設置緊急逃生動線以確保突發狀況時的安全疏散；同時配有洗手台，方便長輩在活動前後或用餐前後就近洗手維持衛生。"
             },
-            "escape": {
-                "title": "逃生區｜安全與便利",
-                "desc": "逃生區附近設有洗手台，方便坐附近的長輩使用。逃生門通往警察局，方便緊急狀況使用。"
-            },
             "activity": {
                 "title": "活動區｜休息與交流",
                 "desc": "設有沙發椅，提供午休及活動空檔休息使用，並有固定座位，讓長輩擁有熟悉的位置。"
@@ -291,20 +301,20 @@
                     "title": "鞋櫃", "type": "equirectangular", "panorama": "鞋櫃.jpg",
                     "hotSpots": [
                         { "pitch": 0, "yaw": 140, "type": "scene", "text": "返回：櫃台", "sceneId": "counter" },
-                        { "pitch": 0, "yaw": -90, "type": "scene", "text": "前往：走道", "sceneId": "locker" }
+                        { "pitch": 0, "yaw": -90, "type": "scene", "text": "前往：走道", "sceneId": "aisle" }
                     ]
                 },
                 "aisle": {
                     "title": "走道", "type": "equirectangular", "panorama": "1.jpg",
                     "hotSpots": [
-                        { "pitch": 0, "yaw": 140, "type": "scene", "text": "返回：鞋櫃", "sceneId": "counter" },
-                        { "pitch": 0, "yaw": -90, "type": "scene", "text": "前往：置物櫃", "sceneId": "locker" }
+                        { "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：鞋櫃", "sceneId": "shoes" },
+                        { "pitch": 0, "yaw": 90, "type": "scene", "text": "前往：置物櫃", "sceneId": "locker" }
                     ]
                 },
                 "locker": {
                     "title": "置物櫃", "type": "equirectangular", "panorama": "櫃子.jpg",
                     "hotSpots": [
-                        { "pitch": 0, "yaw": 50, "type": "scene", "text": "返回：鞋櫃", "sceneId": "shoes" },
+                        { "pitch": 0, "yaw": 50, "type": "scene", "text": "返回：走道", "sceneId": "aisle" },
                         { "pitch": 0, "yaw": -90, "type": "scene", "text": "前往：活動區", "sceneId": "activity" },
                         { "pitch": 0, "yaw": 170, "type": "scene", "text": "前往：走廊", "sceneId": "corridor" }
                     ]
@@ -378,6 +388,12 @@
             document.getElementById('flat-image').src = "廚房.jpg";
             container.style.display = 'flex';
 
+            // 隱藏左下角的「回到上一步」與「快速導覽」
+            document.querySelector('.back-step-btn').style.opacity = '0';
+            document.querySelector('.back-step-btn').style.pointerEvents = 'none';
+            document.getElementById('quick-nav-container').style.opacity = '0';
+            document.getElementById('quick-nav-container').style.pointerEvents = 'none';
+
             const info = sceneInfo["kitchen"];
             if(info) {
                 document.getElementById('flat-detail-title').innerText = info.title;
@@ -390,6 +406,12 @@
             document.getElementById('flat-image').src = "逃生.jpg";
             container.style.display = 'flex';
 
+            // 隱藏左下角的「回到上一步」與「快速導覽」
+            document.querySelector('.back-step-btn').style.opacity = '0';
+            document.querySelector('.back-step-btn').style.pointerEvents = 'none';
+            document.getElementById('quick-nav-container').style.opacity = '0';
+            document.getElementById('quick-nav-container').style.pointerEvents = 'none';
+
             const info = sceneInfo["escape_wash"];
             if(info) {
                 document.getElementById('flat-detail-title').innerText = info.title;
@@ -397,10 +419,26 @@
             }
         }
 
+        function closeFlatView() {
+            const container = document.getElementById('flat-view-container');
+            container.style.display = 'none';
+
+            // 恢復顯示左下角的按鈕與選單
+            document.querySelector('.back-step-btn').style.opacity = '1';
+            document.querySelector('.back-step-btn').style.pointerEvents = 'auto';
+            document.getElementById('quick-nav-container').style.opacity = '1';
+            document.getElementById('quick-nav-container').style.pointerEvents = 'auto';
+        }
+
+        function returnToClass() {
+            closeFlatView();
+            viewer.loadScene("Attend class");
+        }
+
         // 點擊背景可隨時關閉平面圖返回全景
         document.getElementById('flat-view-container').addEventListener('click', function(e) {
             if (e.target === this) {
-                this.style.display = 'none';
+                closeFlatView();
             }
         });
 
