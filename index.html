@@ -241,7 +241,7 @@
 
     <!-- 左下角小地圖 -->
     <div id="mini-map-container" onclick="openLargeMap()" title="點擊放大全圖">
-        <img id="mini-map-img" src="日照中心平面圖.png" alt="小地圖" onerror="this.src='https://placehold.co/180x120/333/fff?text=Map'">
+        <img id="mini-map-img" src="206446.jpg" alt="小地圖" onerror="this.src='https://placehold.co/180x120/333/fff?text=Map'">
         <div id="map-marker"></div>
     </div>
 
@@ -250,7 +250,7 @@
         <div id="map-modal-content" onclick="event.stopPropagation()">
             <button class="close-map-btn" onclick="closeLargeMap()">✖</button>
             <h3 style="margin-top: 0; color: #333; text-align: center; font-size: 1.4rem;">中心平面導覽圖</h3>
-            <img id="map-modal-img" src="日照中心平面圖.png" alt="大張地圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Large+Map'">
+            <img id="map-modal-img" src="206446.jpg" alt="大張地圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Large+Map'">
         </div>
     </div>
 
@@ -333,24 +333,24 @@
             }
         };
 
-        // 已根據您提供的平面圖標示位置更新 X、Y 百分比座標
+        // 根據新平面圖 (206446.jpg) 位置精準設定各場景座標百分比 (0~100%)
         const sceneCoordinates = {
-            "counter": { x: 85, y: 88 },
-            "shoes": { x: 88, y: 70 },
-            "aisle": { x: 75, y: 70 },
-            "locker": { x: 88, y: 55 },
-            "corridor": { x: 68, y: 50 },
-            "middle": { x: 55, y: 50 },
-            "safe_home": { x: 68, y: 38 },
-            "happy": { x: 53, y: 38 },
-            "Perfect": { x: 38, y: 38 },
-            "Attend class": { x: 28, y: 62 },
-            "activity": { x: 88, y: 30 },
-            "accessible_toilet": { x: 60, y: 58 },
-            "toilet1": { x: 60, y: 92 },
-            "toilet2": { x: 73, y: 92 },
-            "kitchen": { x: 20, y: 88 },
-            "escape_wash": { x: 18, y: 25 }
+            "counter": { x: 86, y: 90 },
+            "shoes": { x: 86, y: 64 },
+            "aisle": { x: 75, y: 64 },
+            "locker": { x: 83, y: 58 },
+            "corridor": { x: 67, y: 64 },
+            "middle": { x: 55, y: 64 },
+            "safe_home": { x: 67, y: 30 },
+            "happy": { x: 55, y: 30 },
+            "Perfect": { x: 30, y: 30 },
+            "Attend class": { x: 30, y: 64 },
+            "activity": { x: 86, y: 30 },
+            "accessible_toilet": { x: 60, y: 52 },
+            "toilet1": { x: 42, y: 90 },
+            "toilet2": { x: 59, y: 90 },
+            "kitchen": { x: 22, y: 90 },
+            "escape_wash": { x: 18, y: 30 }
         };
 
         const viewer = pannellum.viewer('panorama', {
