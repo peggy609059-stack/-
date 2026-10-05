@@ -111,9 +111,9 @@
         }
         #quick-nav-select option { background: #333; color: white; }
 
-        /* 左下角小地圖樣式 */
+        /* 左下角小地圖樣式（往上移約 0.5 公分：bottom 改為 39px） */
         #mini-map-container {
-            position: absolute; bottom: 20px; left: 20px; z-index: 25;
+            position: absolute; bottom: 39px; left: 20px; z-index: 25;
             width: 180px; height: 120px; background: rgba(0, 0, 0, 0.8);
             border: 2px solid rgba(255, 255, 255, 0.5); border-radius: 8px;
             overflow: hidden; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4);
@@ -258,7 +258,7 @@
     <!-- 左下角小地圖 -->
     <div id="mini-map-container" onclick="openLargeMap()" title="點擊放大全圖">
         <div class="map-zoom-icon">🔍</div>
-        <img id="mini-map-img" src="206446.jpg" alt="小地圖" onerror="this.src='https://placehold.co/180x120/333/fff?text=Map'">
+        <img id="mini-map-img" src="0bb5870c-fe66-4a7f-a875-fc3a834c5506.png" alt="小地圖" onerror="this.src='https://placehold.co/180x120/333/fff?text=Map'">
         <div id="map-marker" class="map-marker"></div>
     </div>
 
@@ -268,7 +268,7 @@
             <button class="close-map-btn" onclick="closeLargeMap()">✖</button>
             <h3 style="margin-top: 0; color: #333; text-align: center; font-size: 1.4rem;">中心平面導覽圖</h3>
             <div id="map-modal-img-wrapper">
-                <img id="map-modal-img" src="206446.jpg" alt="大張地圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Large+Map'">
+                <img id="map-modal-img" src="0bb5870c-fe66-4a7f-a875-fc3a834c5506.png" alt="大張地圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Large+Map'">
                 <div id="map-modal-marker" class="map-marker"></div>
             </div>
         </div>
@@ -353,7 +353,6 @@
             }
         };
 
-        // 已依需求更新座標：無障礙廁所往下移 (+0.4 => 54.3)，平安家往左移 (-0.1 => 66.7)，快樂家往左移 (-0.3 => 54.1)
         const sceneCoordinates = {
             "counter": { x: 86, y: 90 },
             "shoes": { x: 86, y: 70 },
@@ -566,7 +565,6 @@
             document.getElementById('quick-nav-select').selectedIndex = 0;
         }
 
-        // 更新小地圖與放大地圖的定位點紅點位置
         function updateMapMarker(sceneId) {
             const pos = sceneCoordinates[sceneId];
             const miniMarker = document.getElementById('map-marker');
@@ -586,12 +584,10 @@
             }
         }
 
-        // 開啟放大地圖
         function openLargeMap() {
             document.getElementById('map-modal').style.display = 'flex';
         }
 
-        // 關閉放大地圖
         function closeLargeMap(event) {
             if (!event || event.target.id === 'map-modal' || event.target.classList.contains('close-map-btn')) {
                 document.getElementById('map-modal').style.display = 'none';
@@ -628,7 +624,7 @@
 
         viewer.on('scenechange', function(sceneId) {
             currentSceneId = sceneId;
-            updateMapMarker(sceneId); // 同步更新小地圖與大圖的紅點位置
+            updateMapMarker(sceneId);
             
             if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
                 navigationHistory.push(sceneId);
