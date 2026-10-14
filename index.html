@@ -161,15 +161,15 @@
             pointer-events: none; max-width: 80vw;
         }
 
-        /* 大紅色動態箭頭 */
+        /* 超大、加粗的紅色動態箭頭（往上移 2px） */
         .big-red-arrow {
-            position: absolute; z-index: 95; font-size: 60px; color: #ff0000;
-            text-shadow: 0 0 10px #ffffff, 0 0 20px #ff0000;
+            position: absolute; z-index: 95; font-size: 75px; font-weight: 900; color: #ff0000;
+            text-shadow: 0 0 12px #ffffff, 0 0 25px #ff0000;
             animation: bounceArrow 1s infinite alternate; pointer-events: none;
         }
         @keyframes bounceArrow {
-            0% { transform: translateY(0) scale(1); }
-            100% { transform: translateY(15px) scale(1.1); }
+            0% { transform: translateY(-2px) scale(1); }
+            100% { transform: translateY(13px) scale(1.15); }
         }
 
         /* 半透明滑動教學提示 */
@@ -256,7 +256,7 @@
         <div id="flat-detail-panel">
             <h3 id="flat-detail-title">區域名稱</h3>
             <p id="flat-detail-desc">詳細介紹內容...</p>
-            <button class="back-to-class-btn" onclick="returnToClass()">返回教室區</button>
+            <button class="back-to-class-btn" onclick="returnToClass()">返回教室区</button>
         </div>
     </div>
 
@@ -387,17 +387,15 @@
             arrowContainer.innerHTML = ''; // 清除舊箭頭
 
             if (step === 1) {
-                banner.innerText = "【步驟 1/6】請點擊右下角的「展開空間介紹」！";
-                // 箭頭精準指向右下角收合按鈕
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 40px; right: 110px;">↙</div>`;
+                banner.innerText = "【教學步驟 1/7】如何查看空間介紹？\n請點擊右下角的「展開空間介紹」！";
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 38px; right: 200px;">↙</div>`;
             } 
             else if (step === 2) {
-                banner.innerText = "【步驟 1/6-2】請點擊「✖ 關閉介紹」收合視窗！";
-                // 箭頭精準指向彈出視窗內的關閉按鈕
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 230px; right: 190px;">↙</div>`;
+                banner.innerText = "【教學步驟 2/7】如何關閉空間介紹？\n請點擊「✖ 關閉介紹」收合視窗！";
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 228px; right: 198px;">↙</div>`;
             }
             else if (step === 3) {
-                banner.innerText = "【步驟 2/6】請按住畫面左右滑動，旋轉一圈觀察環境！";
+                banner.innerText = "【教學步驟 3/7】如何滑動畫面？\n請按住畫面左右滑動，旋轉一圈觀察環境！";
                 const swipeDiv = document.createElement('div');
                 swipeDiv.className = 'swipe-hint-overlay';
                 swipeDiv.id = 'swipe-overlay-hint';
@@ -405,20 +403,20 @@
                 document.body.appendChild(swipeDiv);
             }
             else if (step === 4) {
-                banner.innerText = "【步驟 3/6】請點擊畫面中的紅色箭頭引導按鈕前往下個地點！";
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 50%; left: 60%;">⬅</div>`;
+                banner.innerText = "【教學步驟 4/7】如何使用箭頭引導？\n請點擊畫面中的紅色箭頭引導按鈕前往下個地點！";
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 48px; left: 58%;">⬅</div>`;
             }
             else if (step === 5) {
-                banner.innerText = "【步驟 4/6】請點擊左上角的「快速導覽」按鈕！";
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 90px; left: 60px;">⬆</div>`;
+                banner.innerText = "【教學步驟 5/7】如何使用快速導覽？\n請點擊左上角的「快速導覽」選單！";
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 88px; left: 218px;">⬆</div>`;
             }
             else if (step === 6) {
-                banner.innerText = "【步驟 5/6】請點擊左下角的小地圖將其放大！";
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 160px; left: 80px;">⬇</div>`;
+                banner.innerText = "【教學步驟 6/7】如何使用地圖定位？\n請點擊左下角的小地圖將其放大！";
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 158px; left: 208px;">⬇</div>`;
             }
             else if (step === 7) {
-                banner.innerText = "【步驟 6/6】請點擊右上角的「回到上一步」按鈕！";
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 90px; right: 100px;">⬆</div>`;
+                banner.innerText = "【教學步驟 7/7】如何回到上一步？\n請點擊右上角的「回到上一步」按鈕！";
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 88px; right: 198px;">⬆</div>`;
             }
             else if (step === 8) {
                 banner.innerText = "🎉 教學完成！即將帶您回到初始畫面開始正式參訪...";
@@ -437,9 +435,9 @@
             modal.classList.toggle('collapsed');
 
             if (tutorialStep === 1 && !wasCollapsed) {
-                setTutorialStep(2); // 進入步驟 1-2 (點擊關閉)
+                setTutorialStep(2); // 成功點開 -> 進入步驟 2 (關閉介紹)
             } else if (tutorialStep === 2 && wasCollapsed) {
-                setTutorialStep(3); // 進入步驟 2 (滑動畫面)
+                setTutorialStep(3); // 成功關閉 -> 進入步驟 3 (滑動畫面)
             }
         }
 
