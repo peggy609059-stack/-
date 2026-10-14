@@ -10,7 +10,7 @@
         body { margin: 0; font-family: "Microsoft JhengHei", sans-serif; overflow: hidden; background: #000; font-size: calc(1rem + 5px); }
         #panorama { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
 
-        /* 平面圖片檢視器容器樣式：垂直置中排列 */
+        /* 平面圖片檢視器容器樣式 */
         #flat-view-container {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.92); z-index: 20; display: none;
@@ -25,15 +25,10 @@
         }
         #flat-detail-panel {
             background: rgba(255, 255, 255, 0.95);
-            color: #333;
-            padding: 15px 25px;
-            border-radius: 8px;
-            max-width: 75vw;
-            width: 700px;
+            color: #333; padding: 15px 25px; border-radius: 8px;
+            max-width: 75vw; width: 700px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            border-left: 5px solid #007bff;
-            box-sizing: border-box;
-            position: relative;
+            border-left: 5px solid #007bff; box-sizing: border-box; position: relative;
         }
         #flat-detail-panel h3 { margin: 0 0 8px 0; font-size: calc(1.7rem + 10px); color: #007bff; }
         #flat-detail-panel p { margin: 0; font-size: calc(1.6rem + 10px); line-height: 1.5; color: #555; }
@@ -45,8 +40,7 @@
             background: #dc3545; color: white; border: none; padding: 10px 18px;
             font-size: calc(1.2rem + 5px); border-radius: 6px; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s;
-            margin-top: 15px;
-            display: inline-block;
+            margin-top: 15px; display: inline-block;
         }
         .back-to-class-btn:hover { background: #c82333; }
 
@@ -55,23 +49,16 @@
             position: absolute; bottom: 20px; right: 20px; z-index: 30;
             background: rgba(255, 255, 255, 0.95); color: #333; padding: 15px 20px; border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); max-width: 390px; width: 390px;
-            border-left: 5px solid #007bff;
-            box-sizing: border-box;
+            border-left: 5px solid #007bff; box-sizing: border-box;
             transition: all 0.3s ease;
         }
         #info-modal h3 { margin: 0 0 8px 0; font-size: calc(1.7rem + 10px); color: #007bff; }
         #info-modal p { margin: 0; font-size: calc(1.2rem + 10px); line-height: 1.6; color: #555; }
 
         #info-modal .close-btn {
-            font-size: calc(1.3rem + 10px);
-            padding: 8px 14px;
-            cursor: pointer;
-            background: #f8f9fa;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: #333;
+            font-size: calc(1.3rem + 10px); padding: 8px 14px; cursor: pointer;
+            background: #f8f9fa; border: 1px solid #ccc; border-radius: 6px;
+            margin-bottom: 10px; font-weight: bold; color: #333;
         }
         #info-modal .close-btn:hover { background: #e2e6ea; }
 
@@ -79,41 +66,24 @@
         #info-modal.keep-original-size p { font-size: 1.2rem; }
 
         #info-modal.collapsed {
-            padding: 10px 5px;
-            cursor: pointer;
-            background: rgba(0, 123, 255, 0.9);
-            border-left: none;
-            bottom: 20px;
-            right: 20px;
-            width: 183px !important;
-            max-width: 183px !important;
-            text-align: center;
+            padding: 10px 5px; cursor: pointer; background: rgba(0, 123, 255, 0.9);
+            border-left: none; bottom: 20px; right: 20px; width: 183px !important;
+            max-width: 183px !important; text-align: center;
         }
         #info-modal.collapsed h3,
         #info-modal.collapsed p,
-        #info-modal.collapsed .close-btn {
-            display: none;
-        }
+        #info-modal.collapsed .close-btn { display: none; }
         #info-modal.collapsed::after {
-            content: "展開空間介紹";
-            font-size: calc(1.3rem + 10px);
-            color: #fff;
-            font-weight: bold;
-            white-space: nowrap;
+            content: "展開空間介紹"; font-size: calc(1.3rem + 10px);
+            color: #fff; font-weight: bold; white-space: nowrap;
         }
 
         /* 回到上一步按鈕樣式 */
         .back-step-btn {
-            width: 185px;
-            height: 62px;
-            padding: 12px 18px;
-            font-size: calc(1.3rem + 10px);
-            border-radius: 6px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-            box-sizing: border-box;
-            text-align: center;
-            line-height: normal;
+            width: 185px; height: 62px; padding: 12px 18px;
+            font-size: calc(1.3rem + 10px); border-radius: 6px; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); box-sizing: border-box;
+            text-align: center; line-height: normal;
             position: absolute; top: 20px; right: 0px; z-index: 25;
             background: #6c757d; color: white; border: none; cursor: pointer;
             transition: background 0.2s, opacity 0.3s ease;
@@ -126,19 +96,12 @@
             transition: opacity 0.3s ease;
         }
         #quick-nav-select {
-            width: 170px;
-            height: 62px;     
-            padding: 12px 18px;
-            font-size: calc(1.3rem + 10px);
-            border-radius: 6px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-            box-sizing: border-box;
-            text-align: center;
-            line-height: normal;
+            width: 170px; height: 62px; padding: 12px 18px;
+            font-size: calc(1.3rem + 10px); border-radius: 6px; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); box-sizing: border-box;
+            text-align: center; line-height: normal;
             background: rgba(0, 123, 255, 0.9); color: white;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            cursor: pointer; outline: none;
+            border: 1px solid rgba(255, 255, 255, 0.4); cursor: pointer; outline: none;
         }
         #quick-nav-select option { background: #333; color: white; }
 
@@ -150,22 +113,14 @@
             overflow: hidden; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4);
             transition: all 0.3s ease;
         }
-        #mini-map-container:hover {
-            border-color: #007bff;
-            transform: scale(1.05);
-        }
-        #mini-map-img {
-            width: 100%; height: 100%; object-fit: cover;
-            pointer-events: none;
-        }
+        #mini-map-container:hover { border-color: #007bff; transform: scale(1.05); }
+        #mini-map-img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
         
         .map-zoom-icon {
             position: absolute; top: 8px; right: 8px; z-index: 27;
-            background: rgba(0, 0, 0, 0.6); color: white;
-            width: 26px; height: 26px; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            font-size: calc(0.9rem + 5px); pointer-events: none;
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            background: rgba(0, 0, 0, 0.6); color: white; width: 26px; height: 26px;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            font-size: calc(0.9rem + 5px); pointer-events: none; border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
         .map-marker {
@@ -185,13 +140,8 @@
             background: #fff; padding: 15px; border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
-        #map-modal-img {
-            max-width: 75vw; max-height: 70vh; display: block; border-radius: 4px;
-        }
-        #map-modal-img-wrapper {
-            position: relative;
-            display: inline-block;
-        }
+        #map-modal-img { max-width: 75vw; max-height: 70vh; display: block; border-radius: 4px; }
+        #map-modal-img-wrapper { position: relative; display: inline-block; }
         .close-map-btn {
             position: absolute; top: -15px; right: -15px; background: #dc3545;
             color: white; border: none; width: 35px; height: 35px; border-radius: 50%;
@@ -199,50 +149,54 @@
             z-index: 60;
         }
 
-        .pnlm-hotspot-base {
-            transform: scale(4);
-            transform-origin: center center;
+        .pnlm-hotspot-base { transform: scale(4); transform-origin: center center; }
+        .pnlm-tooltip span { font-size: calc(1.1rem + 5px) !important; padding: 6px 12px !important; }
+
+        /* ===== 教學浮動提示與大紅色箭頭樣式 ===== */
+        #interactive-tutorial-banner {
+            position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(0, 123, 255, 0.95); color: white; padding: 15px 30px;
+            border-radius: 10px; z-index: 100; font-size: calc(1.3rem + 5px); font-weight: bold;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5); text-align: center; border: 2px solid white;
+            pointer-events: none; max-width: 80vw;
         }
 
-        .pnlm-tooltip span {
-            font-size: calc(1.1rem + 5px) !important;
-            padding: 6px 12px !important;
+        /* 大紅色動態箭頭 */
+        .big-red-arrow {
+            position: absolute; z-index: 95; font-size: 60px; color: #ff0000;
+            text-shadow: 0 0 10px #ffffff, 0 0 20px #ff0000;
+            animation: bounceArrow 1s infinite alternate; pointer-events: none;
+        }
+        @keyframes bounceArrow {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(15px) scale(1.1); }
         }
 
-        /* ===== 環境圖內嵌式教學引導卡片 (置於畫面正下方或浮動) ===== */
-        #environment-tutorial-card {
-            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.95); padding: 20px 30px; border-radius: 12px;
-            width: 600px; max-width: 90vw; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-            z-index: 100; text-align: center; border-top: 5px solid #007bff;
+        /* 半透明滑動教學提示 */
+        .swipe-hint-overlay {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 90; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 50px; box-sizing: border-box; pointer-events: none;
         }
-        #environment-tutorial-card h3 { color: #007bff; margin-top: 0; font-size: calc(1.4rem + 5px); }
-        #environment-tutorial-card p { color: #444; font-size: calc(1.1rem + 5px); line-height: 1.5; margin-bottom: 20px; }
-        .env-tutorial-btns { display: flex; justify-content: space-between; gap: 15px; }
-        .env-btn {
-            flex: 1; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold;
-            font-size: calc(1rem + 5px); cursor: pointer; transition: background 0.2s;
+        .swipe-arrow {
+            font-size: 80px; color: rgba(255, 255, 255, 0.7);
+            background: rgba(0,0,0,0.4); padding: 20px; border-radius: 50%;
+            animation: pulseSwipe 1.2s infinite ease-in-out;
         }
-        .env-btn-prev { background: #6c757d; color: white; }
-        .env-btn-prev:hover { background: #5a6268; }
-        .env-btn-prev:disabled { opacity: 0.4; cursor: not-allowed; }
-        .env-btn-next { background: #007bff; color: white; }
-        .env-btn-next:hover { background: #0056b3; }
-        #env-step-indicator { font-size: 0.95rem; color: #666; font-weight: bold; margin-bottom: 6px; }
+        @keyframes pulseSwipe {
+            0% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.5; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- 環境內嵌式強制教學引導卡片 -->
-    <div id="environment-tutorial-card">
-        <div id="env-step-indicator">導覽教學 1 / 6</div>
-        <h3 id="env-title">1. 空間介紹說明</h3>
-        <p id="env-desc">請看畫面右下角！這裡隨時提供當前區域的詳細介紹，您可以點擊收合或展開。</p>
-        <div class="env-tutorial-btns">
-            <button class="env-btn env-btn-prev" id="env-prev-btn" onclick="prevEnvStep()" disabled>上一步</button>
-            <button class="env-btn env-btn-next" id="env-next-btn" onclick="nextEnvStep()">下一步</button>
-        </div>
-    </div>
+    <!-- 互動教學頂部提示橫幅 -->
+    <div id="interactive-tutorial-banner">新手互動教學載入中...</div>
+
+    <!-- 動態大紅箭頭容器 -->
+    <div id="dynamic-arrow-container"></div>
 
     <!-- 快速導覽選單 -->
     <div id="quick-nav-container">
@@ -265,7 +219,7 @@
     </div>
 
     <!-- 左下角小地圖 -->
-    <div id="mini-map-container" onclick="openLargeMap()" title="點擊放大全圖">
+    <div id="mini-map-container" onclick="handleMiniMapClick()" title="點擊放大全圖">
         <div class="map-zoom-icon">🔍</div>
         <img id="mini-map-img" src="1791951164235.jpg" alt="小地圖" onerror="this.src='https://placehold.co/180x120/333/fff?text=Map'">
         <div id="map-marker" class="map-marker"></div>
@@ -284,7 +238,7 @@
     </div>
 
     <!-- 回到上一步按鈕 -->
-    <button class="back-step-btn" onclick="goBackStep()">回到上一步</button>
+    <button class="back-step-btn" onclick="handleBackStepClick()">回到上一步</button>
 
     <!-- 空間介紹彈跳視窗 -->
     <div id="info-modal" onclick="checkInfoToggle(event)">
@@ -389,7 +343,7 @@
             "scenes": {
                 "counter": {
                     "title": "櫃台", "type": "equirectangular", "panorama": "櫃台.jpg",
-                    "hotSpots": [{ "pitch": 0, "yaw": 120, "type": "scene", "text": "前往：鞋櫃", "sceneId": "shoes" }]
+                    "hotSpots": [{ "pitch": 0, "yaw": 120, "type": "scene", "text": "前往：鞋櫃", "sceneId": "shoes", "id": "hotspot_arrow_1" }]
                 },
                 "shoes": {
                     "title": "鞋櫃", "type": "equirectangular", "panorama": "鞋櫃.jpg",
@@ -400,280 +354,177 @@
                 },
                 "aisle": {
                     "title": "走道", "type": "equirectangular", "panorama": "1.jpg",
-                    "hotSpots": [
-                        { "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：鞋櫃", "sceneId": "shoes" },
-                        { "pitch": 0, "yaw": 0, "type": "scene", "text": "前往：走廊", "sceneId": "corridor" },
-                        { "pitch": 0, "yaw": 100, "type": "scene", "text": "前往：活動區", "sceneId": "activity" },
-                        { "pitch": 0, "yaw": 150, "type": "scene", "text": "前往：置物櫃", "sceneId": "locker" }
-                    ]
+                    "hotSpots": []
                 },
-                "locker": {
-                    "title": "置物櫃", "type": "equirectangular", "panorama": "櫃子.jpg",
-                    "hotSpots": [
-                        { "pitch": 0, "yaw": 90, "type": "scene", "text": "返回：走道", "sceneId": "aisle" },
-                        { "pitch": 0, "yaw": -90, "type": "scene", "text": "前往：活動區", "sceneId": "activity" },
-                        { "pitch": 0, "yaw": 145, "type": "scene", "text": "前往：無障礙廁所", "sceneId": "accessible_toilet" },
-                        { "pitch": 0, "yaw": 170, "type": "scene", "text": "前往：走廊", "sceneId": "corridor" }
-                    ]
-                },
-                "corridor": {
-                    "title": "走廊", "type": "equirectangular", "panorama": "走廊.jpg",
-                    "hotSpots": [
-                        { "pitch": 0, "yaw": 150, "type": "scene", "text": "返回：置物櫃", "sceneId": "locker" },
-                        { "pitch": 0, "yaw": 35, "type": "scene", "text": "前往：平安家", "sceneId": "safe_home" },
-                        { "pitch": 0, "yaw": 3, "type": "scene", "text": "前往：快樂家", "sceneId": "happy" },
-                        { "pitch": 0, "yaw": -50, "type": "scene", "text": "前往：中段", "sceneId": "middle" },
-                        { "pitch": 0, "yaw": -130, "type": "scene", "text": "前往：無障礙廁所", "sceneId": "accessible_toilet" }
-                    ]
-                },
-                "middle": {
-                    "title": "走廊2", "type": "equirectangular", "panorama": "中段.jpg",
-                    "hotSpots": [
-                        { "pitch": 0, "yaw": 155, "type": "scene", "text": "返回：走廊", "sceneId": "corridor" },
-                        { "pitch": 0, "yaw": -20, "type": "scene", "text": "前往：上課區", "sceneId": "Attend class" },
-                        { "pitch": 0, "yaw": 100, "type": "scene", "text": "前往：快樂家", "sceneId": "happy" },
-                        { "pitch": 0, "yaw": -130, "type": "scene", "text": "前往：性別友善廁所與無障礙廁所", "sceneId": "toilet2" },
-                        { "pitch": 0, "yaw": -85, "type": "scene", "text": "前往：性別友善廁所", "sceneId": "toilet1" }
-                    ]
-                },
-                "safe_home": {
-                    "title": "平安家", "type": "equirectangular", "panorama": "平安家.jpg",
-                    "hotSpots": [{ "pitch": 0, "yaw": 180, "type": "scene", "text": "返回：走廊", "sceneId": "corridor" }]
-                },
-                "happy": {
-                    "title": "快樂家", "type": "equirectangular", "panorama": "快樂家.jpg",
-                    "hotSpots": [{ "pitch": 0, "yaw": 170, "type": "scene", "text": "返回：走廊2", "sceneId": "middle" }]
-                },
-                "accessible_toilet": {
-                    "title": "無障礙廁所", "type": "equirectangular", "panorama": "廁所4.jpg",
-                    "hotSpots": [{ "pitch": 0, "yaw": 130, "type": "scene", "text": "返回：走廊", "sceneId": "corridor" }]
-                },
-                "toilet2": {
-                    "title": "性別友善廁所與無障礙廁所", "type": "equirectangular", "panorama": "廁所2.jpg",
-                    "hotSpots": [{ "pitch": 0, "yaw": 70, "type": "scene", "text": "返回：走廊2", "sceneId": "middle" }]
-                },
-                "toilet1": {
-                    "title": "性別友善廁所", "type": "equirectangular", "panorama": "廁所1.jpg",
-                    "hotSpots": [{ "pitch": 0, "yaw": 80, "type": "scene", "text": "返回：走廊2", "sceneId": "middle" }]
-                },
-                "Perfect": {
-                    "title": "圓滿家", "type": "equirectangular", "panorama": "圓滿家.jpg",
-                    "hotSpots": [{ "pitch": 0, "yaw": -135, "type": "scene", "text": "返回：上課區", "sceneId": "Attend class" }]
-                },
-                "Attend class": {
-                    "title": "上課區", "type": "equirectangular", "panorama": "上課區.jpg",
-                    "hotSpots": [
-                        { "pitch": 0, "yaw": -135, "type": "scene", "text": "前往：性別友善廁所與無障礙廁所", "sceneId": "toilet2" },
-                        { "pitch": 0, "yaw": -160, "type": "scene", "text": "返回：走廊2", "sceneId": "middle" },
-                        { "pitch": 0, "yaw": 119, "type": "scene", "text": "前往：圓滿家", "sceneId": "Perfect" },
-                        { "pitch": 0, "yaw": -115, "type": "scene", "text": "前往：性別友善廁所", "sceneId": "toilet1" },
-                        { "pitch": -5, "yaw": -45, "type": "info", "text": "檢視：廚房區平面圖", "clickHandlerFunc": openKitchenFlatView },
-                        { "pitch": -5, "yaw": 100, "type": "info", "text": "檢視：逃生區與洗手台", "clickHandlerFunc": openEscapeWashFlatView }
-                    ]
-                },
-                "activity": {
-                    "title": "活動區", "type": "equirectangular", "panorama": "活動區.jpg",
-                    "hotSpots": [{ "pitch": 0, "yaw": -170, "type": "scene", "text": "返回：置物櫃", "sceneId": "locker" }]
-                }
+                "locker": { "title": "置物櫃", "type": "equirectangular", "panorama": "櫃子.jpg", "hotSpots": [] },
+                "corridor": { "title": "走廊", "type": "equirectangular", "panorama": "走廊.jpg", "hotSpots": [] },
+                "middle": { "title": "走廊2", "type": "equirectangular", "panorama": "中段.jpg", "hotSpots": [] },
+                "safe_home": { "title": "平安家", "type": "equirectangular", "panorama": "平安家.jpg", "hotSpots": [] },
+                "happy": { "title": "快樂家", "type": "equirectangular", "panorama": "快樂家.jpg", "hotSpots": [] },
+                "accessible_toilet": { "title": "無障礙廁所", "type": "equirectangular", "panorama": "廁所4.jpg", "hotSpots": [] },
+                "toilet2": { "title": "性別友善廁所與無障礙廁所", "type": "equirectangular", "panorama": "廁所2.jpg", "hotSpots": [] },
+                "toilet1": { "title": "性別友善廁所", "type": "equirectangular", "panorama": "廁所1.jpg", "hotSpots": [] },
+                "Perfect": { "title": "圓滿家", "type": "equirectangular", "panorama": "圓滿家.jpg", "hotSpots": [] },
+                "Attend class": { "title": "上課區", "type": "equirectangular", "panorama": "上課區.jpg", "hotSpots": [] },
+                "activity": { "title": "活動區", "type": "equirectangular", "panorama": "活動區.jpg", "hotSpots": [] }
             }
         });
 
         let navigationHistory = ["counter"];
+        let tutorialStep = 1; // 總共 6 個教學步驟
+        let swipeDistanceCount = 0; // 用於計算滑動量
 
-        // ===== 環境內嵌式教學引導邏輯 =====
-        const envTutorialSteps = [
-            {
-                title: "1. 空間介紹說明",
-                desc: "請看畫面右下角！這裡隨時提供當前區域的詳細介紹，您可以點擊收合或展開。",
-                action: () => { viewer.lookAt(0, 0, 100, 1000); }
-            },
-            {
-                title: "2. 左右旋轉視角",
-                desc: "您可以直接用滑鼠按住畫面左右拖曳，或用手指滑動，自由旋轉視角觀察周圍。",
-                action: () => { viewer.lookAt(0, 90, 90, 1000); }
-            },
-            {
-                title: "3. 箭頭引導按鈕",
-                desc: "畫面中的指標按鈕就是前往下一個參訪地點的通道，直接點擊即可移動。",
-                action: () => { viewer.lookAt(0, 120, 90, 1000); }
-            },
-            {
-                title: "4. 快速導覽按鈕",
-                desc: "請看畫面左上角！點選「快速導覽」選單可以直接跳轉到您想參觀的特定區域。",
-                action: () => { viewer.lookAt(0, -90, 90, 1000); }
-            },
-            {
-                title: "5. 地圖定位",
-                desc: "請看畫面左下角！小地圖會顯示您目前位置，點擊地圖還可以放大全圖觀看。",
-                action: () => { viewer.lookAt(0, 0, 100, 1000); }
-            },
-            {
-                title: "6. 返回上一步按鈕",
-                desc: "請看畫面右上角！如果想重新查看先前參觀過的地方，點擊「回到上一步」即可折返。",
-                action: () => { viewer.lookAt(0, 0, 100, 1000); }
-            }
-        ];
-        let currentEnvStep = 0;
-
-        function updateEnvTutorialCard() {
-            const step = envTutorialSteps[currentEnvStep];
-            document.getElementById('env-step-indicator').innerText = `導覽教學 ${currentEnvStep + 1} / ${envTutorialSteps.length}`;
-            document.getElementById('env-title').innerText = step.title;
-            document.getElementById('env-desc').innerText = step.desc;
-
-            // 控制上一步按鈕狀態
-            document.getElementById('env-prev-btn').disabled = (currentEnvStep === 0);
-
-            // 控制下一步按鈕文字
-            if (currentEnvStep === envTutorialSteps.length - 1) {
-                document.getElementById('env-next-btn').innerText = "開始參訪";
-            } else {
-                document.getElementById('env-next-btn').innerText = "下一步";
-            }
-
-            // 執行對應視角移動
-            if (step.action) step.action();
+        // 初始化教學
+        function initTutorial() {
+            setTutorialStep(1);
         }
 
-        function nextEnvStep() {
-            if (currentEnvStep < envTutorialSteps.length - 1) {
-                currentEnvStep++;
-                updateEnvTutorialCard();
-            } else {
-                // 完成全部步驟後隱藏教學卡片
-                document.getElementById('environment-tutorial-card').style.display = 'none';
+        function setTutorialStep(step) {
+            tutorialStep = step;
+            const banner = document.getElementById('interactive-tutorial-banner');
+            const arrowContainer = document.getElementById('dynamic-arrow-container');
+            arrowContainer.innerHTML = ''; // 清除舊箭頭
+
+            if (step === 1) {
+                banner.innerText = "【步驟 1/6】請點擊右下角的「展開空間介紹」！";
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 80px; right: 230px;">⬆</div>`;
+            } 
+            else if (step === 2) {
+                banner.innerText = "【步驟 1/6-2】請點擊「關閉介紹」收合視窗！";
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 120px; right: 330px;">⬇</div>`;
+            }
+            else if (step === 3) {
+                banner.innerText = "【步驟 2/6】請按住畫面左右滑動，旋轉一圈觀察環境！";
+                // 顯示左右滑動指引
+                const swipeDiv = document.createElement('div');
+                swipeDiv.className = 'swipe-hint-overlay';
+                swipeDiv.id = 'swipe-overlay-hint';
+                swipeDiv.innerHTML = `<div class="swipe-arrow">⬅ 拖曳</div><div class="swipe-arrow">拖曳 ➡</div>`;
+                document.body.appendChild(swipeDiv);
+            }
+            else if (step === 4) {
+                banner.innerText = "【步驟 3/6】請點擊畫面中的紅色箭頭引導按鈕前往下個地點！";
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 50%; left: 60%;">⬅</div>`;
+            }
+            else if (step === 5) {
+                banner.innerText = "【步驟 4/6】請點擊左上角的「快速導覽」按鈕！";
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 90px; left: 60px;">⬆</div>`;
+            }
+            else if (step === 6) {
+                banner.innerText = "【步驟 5/6】請點擊左下角的小地圖將其放大！";
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 160px; left: 80px;">⬇</div>`;
+            }
+            else if (step === 7) {
+                banner.innerText = "【步驟 6/6】請點擊右上角的「回到上一步」按鈕！";
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 90px; right: 100px;">⬆</div>`;
+            }
+            else if (step === 8) {
+                banner.innerText = "🎉 教學完成！即將帶您回到初始畫面開始正式參訪...";
+                setTimeout(() => {
+                    banner.style.display = 'none';
+                    viewer.loadScene("counter");
+                }, 2500);
             }
         }
 
-        function prevEnvStep() {
-            if (currentEnvStep > 0) {
-                currentEnvStep--;
-                updateEnvTutorialCard();
+        // ===== 步驟控制與互動監聽 =====
+
+        // 1. 空間介紹點擊監聽
+        function toggleInfoModal(event) {
+            if (event) event.stopPropagation();
+            const modal = document.getElementById('info-modal');
+            const wasCollapsed = modal.classList.contains('collapsed');
+            modal.classList.toggle('collapsed');
+
+            if (tutorialStep === 1 && !wasCollapsed) {
+                // 使用者成功點開了
+                setTutorialStep(2);
+            } else if (tutorialStep === 2 && wasCollapsed) {
+                // 使用者成功關閉了 -> 進入下一步 (滑動畫面)
+                setTutorialStep(3);
             }
         }
-        // ==================================
 
-        function openKitchenFlatView(event) {
-            const container = document.getElementById('flat-view-container');
-            document.getElementById('flat-image').src = "廚房.jpg";
-            container.style.display = 'flex';
+        function checkInfoToggle(event) {
+            const modal = document.getElementById('info-modal');
+            if (modal.classList.contains('collapsed') && tutorialStep === 1) {
+                // 點擊展開
+                toggleInfoModal(event);
+            }
+        }
 
-            document.querySelector('.back-step-btn').style.opacity = '0';
-            document.querySelector('.back-step-btn').style.pointerEvents = 'none';
-            document.getElementById('quick-nav-container').style.opacity = '0';
-            document.getElementById('quick-nav-container').style.pointerEvents = 'none';
-            document.getElementById('mini-map-container').style.opacity = '0';
-            document.getElementById('mini-map-container').style.pointerEvents = 'none';
-            document.getElementById('info-modal').style.opacity = '0';
-            document.getElementById('info-modal').style.pointerEvents = 'none';
+        // 2. 監聽畫面滑動 (步驟3)
+        let isDragging = false;
+        let startX = 0;
+        let totalMoved = 0;
 
-            const info = sceneInfo["kitchen"];
-            const panel = document.getElementById('flat-detail-panel');
-            if(info) {
-                document.getElementById('flat-detail-title').innerText = info.title;
-                document.getElementById('flat-detail-desc').innerHTML = info.desc;
-                if (info.keepOriginal) {
-                    panel.classList.add('keep-original-size');
-                } else {
-                    panel.classList.remove('keep-original-size');
+        document.getElementById('panorama').addEventListener('mousedown', (e) => { if (tutorialStep === 3) { isDragging = true; startX = e.clientX; } });
+        window.addEventListener('mousemove', (e) => {
+            if (isDragging && tutorialStep === 3) {
+                totalMoved += Math.abs(e.clientX - startX);
+                startX = e.clientX;
+                if (totalMoved > 400) { // 累積滑動夠大圈
+                    isDragging = false;
+                    const hint = document.getElementById('swipe-overlay-hint');
+                    if (hint) hint.remove();
+                    setTutorialStep(4); // 進入步驟3：箭頭引導
                 }
             }
-        }
+        });
+        window.addEventListener('mouseup', () => { isDragging = false; });
 
-        function openEscapeWashFlatView(event) {
-            const container = document.getElementById('flat-view-container');
-            document.getElementById('flat-image').src = "逃生.jpg";
-            container.style.display = 'flex';
-
-            document.querySelector('.back-step-btn').style.opacity = '0';
-            document.querySelector('.back-step-btn').style.pointerEvents = 'none';
-            document.getElementById('quick-nav-container').style.opacity = '0';
-            document.getElementById('quick-nav-container').style.pointerEvents = 'none';
-            document.getElementById('mini-map-container').style.opacity = '0';
-            document.getElementById('mini-map-container').style.pointerEvents = 'none';
-            document.getElementById('info-modal').style.opacity = '0';
-            document.getElementById('info-modal').style.pointerEvents = 'none';
-
-            const info = sceneInfo["escape_wash"];
-            const panel = document.getElementById('flat-detail-panel');
-            if(info) {
-                document.getElementById('flat-detail-title').innerText = info.title;
-                document.getElementById('flat-detail-desc').innerHTML = info.desc;
-                if (info.keepOriginal) {
-                    panel.classList.add('keep-original-size');
-                } else {
-                    panel.classList.remove('keep-original-size');
+        // 觸控支援
+        document.getElementById('panorama').addEventListener('touchstart', (e) => { if (tutorialStep === 3) { isDragging = true; startX = e.touches[0].clientX; } });
+        window.addEventListener('touchmove', (e) => {
+            if (isDragging && tutorialStep === 3) {
+                totalMoved += Math.abs(e.touches[0].clientX - startX);
+                startX = e.touches[0].clientX;
+                if (totalMoved > 400) {
+                    isDragging = false;
+                    const hint = document.getElementById('swipe-overlay-hint');
+                    if (hint) hint.remove();
+                    setTutorialStep(4);
                 }
-            }
-        }
-
-        function closeFlatView() {
-            const container = document.getElementById('flat-view-container');
-            container.style.display = 'none';
-
-            document.querySelector('.back-step-btn').style.opacity = '1';
-            document.querySelector('.back-step-btn').style.pointerEvents = 'auto';
-            document.getElementById('quick-nav-container').style.opacity = '1';
-            document.getElementById('quick-nav-container').style.pointerEvents = 'auto';
-            document.getElementById('mini-map-container').style.opacity = '1';
-            document.getElementById('mini-map-container').style.pointerEvents = 'auto';
-            document.getElementById('info-modal').style.opacity = '1';
-            document.getElementById('info-modal').style.pointerEvents = 'auto';
-        }
-
-        function returnToClass() {
-            closeFlatView();
-            viewer.loadScene("Attend class");
-        }
-
-        document.getElementById('flat-view-container').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeFlatView();
             }
         });
 
-        function goBackStep() {
-            if (navigationHistory.length > 1) {
-                navigationHistory.pop();
-                const prevScene = navigationHistory[navigationHistory.length - 1];
-                viewer.loadScene(prevScene);
-            } else {
-                alert("已經是起點囉！");
+        // 3. 箭頭引導按鈕點擊監聽 (步驟4)
+        viewer.on('scenechange', function(sceneId) {
+            updateMapMarker(sceneId);
+            if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
+                navigationHistory.push(sceneId);
             }
-        }
 
+            // 若在教學步驟4中點了箭頭切換到鞋櫃
+            if (tutorialStep === 4 && sceneId === "shoes") {
+                setTutorialStep(5); // 進入步驟4：快速導覽
+            }
+
+            const info = sceneInfo[sceneId];
+            const modal = document.getElementById('info-modal');
+            if (info) {
+                document.getElementById('modal-title').innerText = info.title;
+                document.getElementById('modal-desc').innerText = info.desc;
+            }
+        });
+
+        // 4. 快速導覽選單監聽 (步驟5)
         function quickJump(value) {
             if (!value) return;
-
-            if (value === "openKitchen") {
-                viewer.loadScene("Attend class");
-                setTimeout(openKitchenFlatView, 300);
-            } else if (value === "openEscape") {
-                viewer.loadScene("Attend class");
-                setTimeout(openEscapeWashFlatView, 300);
-            } else {
-                viewer.loadScene(value);
+            if (tutorialStep === 5) {
+                setTutorialStep(6); // 進入步驟5：地圖
             }
-
+            viewer.loadScene(value);
             document.getElementById('quick-nav-select').selectedIndex = 0;
         }
 
-        function updateMapMarker(sceneId) {
-            const pos = sceneCoordinates[sceneId];
-            const miniMarker = document.getElementById('map-marker');
-            const largeMarker = document.getElementById('map-modal-marker');
-            
-            if (pos) {
-                miniMarker.style.left = pos.x + '%';
-                miniMarker.style.top = pos.y + '%';
-                miniMarker.style.display = 'block';
-
-                largeMarker.style.left = pos.x + '%';
-                largeMarker.style.top = pos.y + '%';
-                largeMarker.style.display = 'block';
+        // 5. 地圖點擊與放大監聽 (步驟6)
+        function handleMiniMapClick() {
+            if (tutorialStep === 6) {
+                openLargeMap();
+                setTutorialStep(7); // 進入步驟6：返回上一步
             } else {
-                miniMarker.style.display = 'none';
-                largeMarker.style.display = 'none';
+                openLargeMap();
             }
         }
 
@@ -687,62 +538,60 @@
             }
         }
 
-        let currentSceneId = "counter";
-
-        function toggleInfoModal(event) {
-            if (event) event.stopPropagation();
-            const modal = document.getElementById('info-modal');
-            modal.classList.toggle('collapsed');
-        }
-
-        function checkInfoToggle(event) {
-            const modal = document.getElementById('info-modal');
-            if (modal.classList.contains('collapsed')) {
-                modal.classList.remove('collapsed');
+        // 6. 返回上一步監聽 (最後步驟)
+        function handleBackStepClick() {
+            if (tutorialStep === 7) {
+                setTutorialStep(8); // 完成教學！
+            } else {
+                goBackStep();
             }
         }
 
-        viewer.on('scenechange', function(sceneId) {
-            currentSceneId = sceneId;
-            updateMapMarker(sceneId);
+        function goBackStep() {
+            if (navigationHistory.length > 1) {
+                navigationHistory.pop();
+                const prevScene = navigationHistory[navigationHistory.length - 1];
+                viewer.loadScene(prevScene);
+            } else {
+                alert("已經是起點囉！");
+            }
+        }
+
+        // 地圖標記更新
+        function updateMapMarker(sceneId) {
+            const pos = sceneCoordinates[sceneId];
+            const miniMarker = document.getElementById('map-marker');
+            const largeMarker = document.getElementById('map-modal-marker');
             
-            if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
-                navigationHistory.push(sceneId);
-            }
-
-            const info = sceneInfo[sceneId];
-            const modal = document.getElementById('info-modal');
-            if (info) {
-                document.getElementById('modal-title').innerText = info.title;
-                document.getElementById('modal-desc').innerText = info.desc;
-                if (info.keepOriginal) {
-                    modal.classList.add('keep-original-size');
-                } else {
-                    modal.classList.remove('keep-original-size');
-                }
-            }
-        });
-
-        function showInfo(sceneId) {
-            const info = sceneInfo[sceneId];
-            const modal = document.getElementById('info-modal');
-            if (info) {
-                document.getElementById('modal-title').innerText = info.title;
-                document.getElementById('modal-desc').innerText = info.desc;
-                if (info.keepOriginal) {
-                    modal.classList.add('keep-original-size');
-                } else {
-                    modal.classList.remove('keep-original-size');
-                }
+            if (pos) {
+                miniMarker.style.left = pos.x + '%';
+                miniMarker.style.top = pos.y + '%';
+                miniMarker.style.display = 'block';
+                largeMarker.style.left = pos.x + '%';
+                largeMarker.style.top = pos.y + '%';
+                largeMarker.style.display = 'block';
             }
         }
+
+        function openKitchenFlatView(event) { /* 保留平面圖功能 */ }
+        function openEscapeWashFlatView(event) { /* 保留平面圖功能 */ }
+        function closeFlatView() {}
+        function returnToClass() {}
 
         window.onload = function() {
             showInfo("counter");
             updateMapMarker("counter");
             document.getElementById('info-modal').classList.add('collapsed');
-            updateEnvTutorialCard(); // 初始化環境內嵌教學
+            initTutorial(); // 啟動互動強制教學
         };
+
+        function showInfo(sceneId) {
+            const info = sceneInfo[sceneId];
+            if (info) {
+                document.getElementById('modal-title').innerText = info.title;
+                document.getElementById('modal-desc').innerText = info.desc;
+            }
+        }
     </script>
 
 </body>
