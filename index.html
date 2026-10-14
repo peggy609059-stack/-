@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -7,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
     <style>
-        body { margin: 0; font-family: "Microsoft JhengHei", sans-serif; overflow: hidden; background: #000; }
+        body { margin: 0; font-family: "Microsoft JhengHei", sans-serif; overflow: hidden; background: #000; font-size: calc(1rem + 5px); }
         #panorama { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
 
         /* 平面圖片檢視器容器樣式：垂直置中排列 */
@@ -35,13 +36,17 @@
             box-sizing: border-box;
             position: relative;
         }
-        #flat-detail-panel h3 { margin: 0 0 8px 0; font-size: 1.7rem; color: #007bff; }
-        #flat-detail-panel p { margin: 0; font-size: 1.6rem; line-height: 1.5; color: #555; }
+        #flat-detail-panel h3 { margin: 0 0 8px 0; font-size: calc(1.7rem + 5px); color: #007bff; }
+        #flat-detail-panel p { margin: 0; font-size: calc(1.6rem + 5px); line-height: 1.5; color: #555; }
+        
+        /* 廚房與逃生區文字維持原大小 */
+        #flat-detail-panel.keep-original-size h3 { font-size: 1.7rem; }
+        #flat-detail-panel.keep-original-size p { font-size: 1.6rem; }
 
         /* 返回教室的紅色按鈕樣式 */
         .back-to-class-btn {
             background: #dc3545; color: white; border: none; padding: 10px 18px;
-            font-size: 1.2rem; border-radius: 6px; cursor: pointer; font-weight: bold;
+            font-size: calc(1.2rem + 5px); border-radius: 6px; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s;
             margin-top: 15px;
             display: inline-block;
@@ -57,8 +62,12 @@
             box-sizing: border-box;
             transition: all 0.3s ease;
         }
-        #info-modal h3 { margin: 0 0 8px 0; font-size: 1.7rem; color: #007bff; }
-        #info-modal p { margin: 0; font-size: 1.2rem; line-height: 1.6; color: #555; }
+        #info-modal h3 { margin: 0 0 8px 0; font-size: calc(1.7rem + 5px); color: #007bff; }
+        #info-modal p { margin: 0; font-size: calc(1.2rem + 5px); line-height: 1.6; color: #555; }
+
+        /* 空間介紹中的廚房與逃生區文字維持原大小 */
+        #info-modal.keep-original-size h3 { font-size: 1.7rem; }
+        #info-modal.keep-original-size p { font-size: 1.2rem; }
 
         /* 收合狀態 */
         #info-modal.collapsed {
@@ -68,8 +77,8 @@
             border-left: none;
             bottom: 20px;
             right: 20px;
-            width: 145px !important;
-            max-width: 145px !important;
+            width: 165px !important;
+            max-width: 165px !important;
             text-align: center;
         }
         #info-modal.collapsed h3,
@@ -79,34 +88,34 @@
         }
         #info-modal.collapsed::after {
             content: "展開空間介紹";
-            font-size: 1.3rem;
+            font-size: calc(1.3rem + 5px);
             color: #fff;
             font-weight: bold;
             white-space: nowrap;
         }
 
-        /* 回到上一步按鈕樣式 */
+        /* 回到上一步按鈕樣式（移至右上角） */
         .back-step-btn {
-            position: absolute; bottom: 74px; right: 20px; z-index: 25;
+            position: absolute; top: 20px; right: 20px; z-index: 25;
             background: #6c757d; color: white; border: none; padding: 10px 16px;
-            font-size: 1.3rem; border-radius: 6px; cursor: pointer; font-weight: bold;
+            font-size: calc(1.3rem + 5px); border-radius: 6px; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s, opacity 0.3s ease;
-            width: 140px;
+            width: 160px;
             box-sizing: border-box;
             text-align: center;
         }
         .back-step-btn:hover { background: #5a6268; }
 
-        /* 快速導覽選單樣式 */
+        /* 快速導覽選單樣式（移至左上角） */
         #quick-nav-container {
-            position: absolute; bottom: 128px; right: 20px; z-index: 25;
+            position: absolute; top: 20px; left: 20px; z-index: 25;
             transition: opacity 0.3s ease;
         }
         #quick-nav-select {
             background: rgba(0, 123, 255, 0.9); color: white; border: 1px solid rgba(255, 255, 255, 0.4);
-            padding: 10px 16px; font-size: 1.4rem; border-radius: 6px; cursor: pointer; font-weight: bold;
+            padding: 10px 16px; font-size: calc(1.4rem + 5px); border-radius: 6px; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); outline: none;
-            width: 140px;
+            width: 160px;
             box-sizing: border-box;
         }
         #quick-nav-select option { background: #333; color: white; }
@@ -134,7 +143,7 @@
             background: rgba(0, 0, 0, 0.6); color: white;
             width: 26px; height: 26px; border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            font-size: 0.9rem; pointer-events: none;
+            font-size: calc(0.9rem + 5px); pointer-events: none;
             border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
@@ -167,53 +176,8 @@
         .close-map-btn {
             position: absolute; top: -15px; right: -15px; background: #dc3545;
             color: white; border: none; width: 35px; height: 35px; border-radius: 50%;
-            font-size: 1.2rem; cursor: pointer; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            font-size: calc(1.2rem + 5px); cursor: pointer; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
             z-index: 60;
-        }
-
-        /* 參訪提示框 */
-        #title-overlay {
-            position: absolute; top: 20px; left: 40px; z-index: 10;
-            background: rgba(0, 0, 0, 0.75); color: white; padding: 15px 20px; border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            max-width: 320px;
-            transition: all 0.3s ease;
-        }
-        #title-overlay h2 { margin: 0 0 5px 0; font-size: 1.5rem; }
-        #title-overlay p { margin: 0 0 12px 0; font-size: 1.3rem; color: #ccc; }
-
-        #title-overlay.collapsed {
-            padding: 10px 18px;
-            cursor: pointer;
-            background: rgba(0, 0, 0, 0.85);
-            left: auto;
-            right: 20px;
-        }
-        #title-overlay.collapsed h2,
-        #title-overlay.collapsed p,
-        #title-overlay.collapsed .toggle-btn {
-            display: none;
-        }
-
-        .toggle-btn {
-            background: rgba(255, 255, 255, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            color: #fff;
-            font-size: 0.95rem;
-            padding: 5px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            display: block;
-            margin-left: auto;
-        }
-        .toggle-btn:hover { background: rgba(255, 255, 255, 0.45); }
-
-        #title-overlay.collapsed::after {
-            content: "展開參訪提示";
-            font-size: 1.3rem;
-            color: #fff;
-            font-weight: bold;
         }
 
         .pnlm-hotspot-base {
@@ -222,20 +186,14 @@
         }
 
         .pnlm-tooltip span {
-            font-size: 1.1rem !important;
+            font-size: calc(1.1rem + 5px) !important;
             padding: 6px 12px !important;
         }
     </style>
 </head>
 <body>
 
-    <div id="title-overlay" onclick="checkToggle(event)">
-        <h2>蘆洲集賢社區長照機構線上參訪</h2>
-        <p>💡提示：點擊畫面中的場景按鈕(↑)可自由穿梭各個區域<br>可用手指移動圖片瀏覽環景</p>
-        <button class="toggle-btn" onclick="toggleOverlay(event)">✖ 關閉提示</button>
-    </div>
-
-    <!-- 快速導覽選單 -->
+    <!-- 快速導覽選單（移至左上角） -->
     <div id="quick-nav-container">
         <select id="quick-nav-select" onchange="quickJump(this.value)">
             <option value="" disabled selected>快速導覽</option>
@@ -266,7 +224,7 @@
     <div id="map-modal" onclick="closeLargeMap(event)">
         <div id="map-modal-content" onclick="event.stopPropagation()">
             <button class="close-map-btn" onclick="closeLargeMap()">✖</button>
-            <h3 style="margin-top: 0; color: #333; text-align: center; font-size: 1.4rem;">中心平面導覽圖</h3>
+            <h3 style="margin-top: 0; color: #333; text-align: center; font-size: calc(1.4rem + 5px);">中心平面導覽圖</h3>
             <div id="map-modal-img-wrapper">
                 <img id="map-modal-img" src="0bb5870c-fe66-4a7f-a875-fc3a834c5506.png" alt="大張地圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Large+Map'">
                 <div id="map-modal-marker" class="map-marker"></div>
@@ -274,7 +232,7 @@
         </div>
     </div>
 
-    <!-- 回到上一步按鈕 -->
+    <!-- 回到上一步按鈕（移至右上角） -->
     <button class="back-step-btn" onclick="goBackStep()">回到上一步</button>
 
     <!-- 空間介紹彈跳視窗 -->
@@ -341,11 +299,13 @@
             },
             "kitchen": {
                 "title": "廚房｜依需求準備餐食與安全設計",
-                "desc": "負責準備長輩的午餐與點心，並依照長輩的咀嚼能力與飲食需求準備餐食。與教室區保持良好視線，工作人員備餐時也能兼顧長輩安全。"
+                "desc": "負責準備長輩的午餐與點心，並依照長輩的咀嚼能力與飲食需求準備餐食。與教室區保持良好視線，工作人員備餐時也能兼顧長輩安全。",
+                "keepOriginal": true
             },
             "escape_wash": {
                 "title": "逃生區與洗手台｜安全疏散與衛生便利",
-                "desc": "位於教室區右側，設置緊急逃生動線以確保突發狀況時的安全疏散；同時配有洗手台，方便長輩在活動前後或用餐前後就近洗手維持衛生。"
+                "desc": "位於教室區右側，設置緊急逃生動線以確保突發狀況時的安全疏散；同時配有洗手台，方便長輩在活動前後或用餐前後就近洗手維持衛生。",
+                "keepOriginal": true
             },
             "activity": {
                 "title": "活動區｜休息與交流",
@@ -484,9 +444,15 @@
             document.getElementById('info-modal').style.pointerEvents = 'none';
 
             const info = sceneInfo["kitchen"];
+            const panel = document.getElementById('flat-detail-panel');
             if(info) {
                 document.getElementById('flat-detail-title').innerText = info.title;
                 document.getElementById('flat-detail-desc').innerHTML = info.desc;
+                if (info.keepOriginal) {
+                    panel.classList.add('keep-original-size');
+                } else {
+                    panel.classList.remove('keep-original-size');
+                }
             }
         }
 
@@ -505,9 +471,15 @@
             document.getElementById('info-modal').style.pointerEvents = 'none';
 
             const info = sceneInfo["escape_wash"];
+            const panel = document.getElementById('flat-detail-panel');
             if(info) {
                 document.getElementById('flat-detail-title').innerText = info.title;
                 document.getElementById('flat-detail-desc').innerHTML = info.desc;
+                if (info.keepOriginal) {
+                    panel.classList.add('keep-original-size');
+                } else {
+                    panel.classList.remove('keep-original-size');
+                }
             }
         }
 
@@ -591,19 +563,6 @@
             }
         }
 
-        function toggleOverlay(event) {
-            if (event) event.stopPropagation();
-            const overlay = document.getElementById('title-overlay');
-            overlay.classList.toggle('collapsed');
-        }
-
-        function checkToggle(event) {
-            const overlay = document.getElementById('title-overlay');
-            if (overlay.classList.contains('collapsed')) {
-                overlay.classList.remove('collapsed');
-            }
-        }
-
         let currentSceneId = "counter";
 
         function toggleInfoModal(event) {
@@ -628,17 +587,29 @@
             }
 
             const info = sceneInfo[sceneId];
+            const modal = document.getElementById('info-modal');
             if (info) {
                 document.getElementById('modal-title').innerText = info.title;
                 document.getElementById('modal-desc').innerText = info.desc;
+                if (info.keepOriginal) {
+                    modal.classList.add('keep-original-size');
+                } else {
+                    modal.classList.remove('keep-original-size');
+                }
             }
         });
 
         function showInfo(sceneId) {
             const info = sceneInfo[sceneId];
+            const modal = document.getElementById('info-modal');
             if (info) {
                 document.getElementById('modal-title').innerText = info.title;
                 document.getElementById('modal-desc').innerText = info.desc;
+                if (info.keepOriginal) {
+                    modal.classList.add('keep-original-size');
+                } else {
+                    modal.classList.remove('keep-original-size');
+                }
             }
         }
 
