@@ -161,15 +161,15 @@
             pointer-events: none; max-width: 80vw;
         }
 
-        /* 超大、加粗的紅色動態箭頭（往上移 2px） */
+        /* 超大、加粗的紅色動態箭頭 */
         .big-red-arrow {
-            position: absolute; z-index: 95; font-size: 75px; font-weight: 900; color: #ff0000;
-            text-shadow: 0 0 12px #ffffff, 0 0 25px #ff0000;
+            position: absolute; z-index: 95; font-size: 85px; font-weight: 900; color: #ff0000;
+            text-shadow: 0 0 15px #ffffff, 0 0 30px #ff0000;
             animation: bounceArrow 1s infinite alternate; pointer-events: none;
         }
         @keyframes bounceArrow {
-            0% { transform: translateY(-2px) scale(1); }
-            100% { transform: translateY(13px) scale(1.15); }
+            0% { transform: translateY(-5px) scale(1); }
+            100% { transform: translateY(15px) scale(1.15); }
         }
 
         /* 半透明滑動教學提示 */
@@ -387,11 +387,12 @@
             arrowContainer.innerHTML = ''; // 清除舊箭頭
 
             if (step === 1) {
-                banner.innerText = "【教學步驟 1/7】如何查看空間介紹？\n請點擊右下角的「展開空間介紹」！";
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 38px; right: 200px;">↙</div>`;
+                banner.innerHTML = "如何查看空間介紹<br><span style='font-size: calc(1rem + 3px); font-weight: normal;'>右下角隨時提供當前區域的詳細介紹。<br>您可以點擊「展開空間介紹」將其展開。</span>";
+                // 箭頭放到展開空間介紹按鈕的正上方 (bottom 90px, right 85px) 向下指
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 90px; right: 85px;">⬇</div>`;
             } 
             else if (step === 2) {
-                banner.innerText = "【教學步驟 2/7】如何關閉空間介紹？\n請點擊「✖ 關閉介紹」收合視窗！";
+                banner.innerHTML = "如何關閉空間介紹<br><span style='font-size: calc(1rem + 3px); font-weight: normal;'>您可以點擊「✖ 關閉介紹」將其收合。</span>";
                 arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 228px; right: 198px;">↙</div>`;
             }
             else if (step === 3) {
