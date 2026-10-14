@@ -152,7 +152,7 @@
         .pnlm-hotspot-base { transform: scale(4); transform-origin: center center; }
         .pnlm-tooltip span { font-size: calc(1.1rem + 5px) !important; padding: 6px 12px !important; }
 
-        /* ===== 教學提示框往下移 15px (改為 top: 40px) ===== */
+        /* 教學提示框樣式 */
         #interactive-tutorial-banner {
             position: absolute; top: 130px; left: 50%; transform: translateX(-50%);
             width: 380px; 
@@ -399,12 +399,10 @@
 
             if (step === 1) {
                 textElement.innerHTML = "<strong>如何查看空間介紹</strong><br>右下角隨時提供當前區域的詳細介紹。請您可以點擊「展開空間介紹」將其展開。";
-                // 箭頭精準指著右下角「展開空間介紹」按鈕上方
                 arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 75px; right: 90px;">⬇</div>`;
             } 
             else if (step === 2) {
                 textElement.innerHTML = "左上角隨時可以關閉空間介紹。 請您點擊「關閉介紹」將其收合。";
-                // 箭頭精準指著彈出視窗內的「關閉介紹」按鈕上方
                 arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 270px; right: 190px;">⬇</div>`;
             }
             else if (step === 3) {
@@ -416,8 +414,10 @@
                 document.body.appendChild(swipeDiv);
             }
             else if (step === 4) {
+                // 自動載入鞋櫃場景，並將箭頭對準前往下一個區域的熱點按鈕
+                viewer.loadScene("shoes");
                 textElement.innerHTML = "<strong>如何使用箭頭引導</strong><br>請點擊畫面中的紅色箭頭引導按鈕前往下個地點！";
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 48px; left: 58%;">⬅</div>`;
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 50%; right: 30%;">⬅</div>`;
             }
             else if (step === 5) {
                 textElement.innerHTML = "<strong>如何使用快速導覽</strong><br>請點擊左上角的「快速導覽」選單！";
@@ -446,7 +446,6 @@
             const modal = document.getElementById('info-modal');
             const wasCollapsed = modal.classList.contains('collapsed');
             
-            // 步驟 1 點擊展開時立即清除箭頭並進入步驟 2
             if (tutorialStep === 1 && wasCollapsed) {
                 document.getElementById('dynamic-arrow-container').innerHTML = '';
                 setTutorialStep(2);
@@ -544,7 +543,7 @@
             }
         }
 
-        // 6. 返回上一步監聽 (最後步驟)
+        // 6. 返回上一步按鈕監聽 (最後步驟)
         function handleBackStepClick() {
             if (tutorialStep === 7) {
                 setTutorialStep(8);
