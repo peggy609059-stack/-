@@ -107,17 +107,17 @@
             line-height: normal;
         }
 
-        /* 回到上一步按鈕樣式 */
+        /* 回到上一步按鈕樣式（已向右平移 0.5 公分） */
         .back-step-btn {
-            position: absolute; top: 20px; right: 20px; z-index: 25;
+            position: absolute; top: 20px; right: 0px; z-index: 25;
             background: #6c757d; color: white; border: none; cursor: pointer;
             transition: background 0.2s, opacity 0.3s ease;
         }
         .back-step-btn:hover { background: #5a6268; }
 
-        /* 快速導覽選單樣式 */
+        /* 快速導覽選單樣式（已向右平移 0.5 公分） */
         #quick-nav-container {
-            position: absolute; top: 20px; left: 20px; z-index: 25;
+            position: absolute; top: 20px; left: 40px; z-index: 25;
             transition: opacity 0.3s ease;
         }
         #quick-nav-select {
@@ -127,7 +127,7 @@
         }
         #quick-nav-select option { background: #333; color: white; }
 
-        /* 左下角小地圖樣式（往上移約 0.5 公分：bottom 改為 39px） */
+        /* 左下角小地圖樣式 */
         #mini-map-container {
             position: absolute; bottom: 39px; left: 20px; z-index: 25;
             width: 180px; height: 120px; background: rgba(0, 0, 0, 0.8);
@@ -175,7 +175,6 @@
         #map-modal-img {
             max-width: 75vw; max-height: 70vh; display: block; border-radius: 4px;
         }
-        /* 放大地圖內的定位點容器，利用 absolute 對齊圖片邊界 */
         #map-modal-img-wrapper {
             position: relative;
             display: inline-block;
@@ -200,7 +199,7 @@
 </head>
 <body>
 
-    <!-- 快速導覽選單（移至左上角） -->
+    <!-- 快速導覽選單（已向右平移） -->
     <div id="quick-nav-container">
         <select id="quick-nav-select" onchange="quickJump(this.value)">
             <option value="" disabled selected>快速導覽</option>
@@ -239,7 +238,7 @@
         </div>
     </div>
 
-    <!-- 回到上一步按鈕（移至右上角） -->
+    <!-- 回到上一步按鈕（已向右平移） -->
     <button class="back-step-btn" onclick="goBackStep()">回到上一步</button>
 
     <!-- 空間介紹彈跳視窗 -->
