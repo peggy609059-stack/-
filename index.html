@@ -93,15 +93,17 @@
             white-space: nowrap;
         }
 
-        /* 共用的按鈕/選單尺寸與外觀樣式（確保大小完全一致） */
+        /* 讓快速導覽與回到上一步擁有完全相同的固定寬度、高度與樣式 */
         .back-step-btn, #quick-nav-select {
+            width: 195px;     /* 統一固定寬度 */
+            height: 62px;     /* 統一固定高度 */
             padding: 12px 18px;
             font-size: calc(1.3rem + 10px);
             border-radius: 6px;
             font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4);
             box-sizing: border-box;
-            height: 60px; /* 固定相同高度 */
+            text-align: center;
             line-height: normal;
         }
 
@@ -110,7 +112,6 @@
             position: absolute; top: 20px; right: 20px; z-index: 25;
             background: #6c757d; color: white; border: none; cursor: pointer;
             transition: background 0.2s, opacity 0.3s ease;
-            text-align: center;
         }
         .back-step-btn:hover { background: #5a6268; }
 
@@ -165,32 +166,3 @@
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.85); z-index: 50; display: none;
             justify-content: center; align-items: center; flex-direction: column;
-        }
-        #map-modal-content {
-            position: relative; max-width: 80vw; max-height: 80vh;
-            background: #fff; padding: 15px; border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-        }
-        #map-modal-img {
-            max-width: 75vw; max-height: 70vh; display: block; border-radius: 4px;
-        }
-        /* 放大地圖內的定位點容器，利用 absolute 對齊圖片邊界 */
-        #map-modal-img-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-        .close-map-btn {
-            position: absolute; top: -15px; right: -15px; background: #dc3545;
-            color: white; border: none; width: 35px; height: 35px; border-radius: 50%;
-            font-size: calc(1.2rem + 5px); cursor: pointer; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-            z-index: 60;
-        }
-
-        .pnlm-hotspot-base {
-            transform: scale(4);
-            transform-origin: center center;
-        }
-
-        .pnlm-tooltip span {
-            font-size: calc(1.1rem + 5px) !important;
-            padding: 6px 12px !important;
