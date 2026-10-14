@@ -152,13 +152,21 @@
         .pnlm-hotspot-base { transform: scale(4); transform-origin: center center; }
         .pnlm-tooltip span { font-size: calc(1.1rem + 5px) !important; padding: 6px 12px !important; }
 
-        /* ===== 教學提示框固定在畫面正中央 ===== */
+        /* ===== 教學提示框放在上方正中央，寬度為兩側按鈕長度總和 ===== */
         #interactive-tutorial-banner {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0, 123, 255, 0.95); color: white; padding: 20px 40px;
-            border-radius: 12px; z-index: 100; font-size: calc(1.4rem + 5px); font-weight: bold;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7); text-align: center; border: 3px solid white;
-            pointer-events: none; max-width: 130vw;
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            width: 380px; /* 快速導覽(170px) + 返回上一步(185px) 左右間距總和 */
+            background: rgba(0, 123, 255, 0.95); color: white; padding: 12px 15px;
+            border-radius: 10px; z-index: 100; font-size: calc(1.1rem + 2px); font-weight: bold;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6); text-align: center; border: 2px solid white;
+            pointer-events: none; box-sizing: border-box; line-height: 1.4;
+        }
+        .tutorial-mode-title {
+            font-size: calc(1.2rem + 4px);
+            color: #ffe066;
+            margin-bottom: 4px;
+            font-weight: 900;
+            letter-spacing: 1px;
         }
 
         /* 超大、加粗的紅色動態箭頭 */
@@ -168,7 +176,7 @@
             animation: bounceArrow 1s infinite alternate; pointer-events: none;
         }
         @keyframes bounceArrow {
-            0% { transform: translateY(-5px) scale(1); }
+            0% { transform: translateY(-2px) scale(1); }
             100% { transform: translateY(15px) scale(1.15); }
         }
 
@@ -192,8 +200,11 @@
 </head>
 <body>
 
-    <!-- 互動教學提示橫幅（置中顯示） -->
-    <div id="interactive-tutorial-banner">新手互動教學載入中...</div>
+    <!-- 互動教學提示橫幅（置於上方正中央，寬度對齊兩側按鈕） -->
+    <div id="interactive-tutorial-banner">
+        <div class="tutorial-mode-title">【教學模式】</div>
+        <div id="tutorial-text">載入中...</div>
+    </div>
 
     <!-- 動態大紅箭頭容器 -->
     <div id="dynamic-arrow-container"></div>
@@ -309,7 +320,7 @@
             },
             "escape_wash": {
                 "title": "逃生區與洗手台｜安全疏散與衛生便利",
-                "desc": "位於教室區右側，設置緊急逃生動線以確保突發狀況時的安全疏散;同時配有洗手台，方便長輩在活動前後或用餐前後就近洗手維持衛生。",
+                "desc": "位於教室區右側，設置緊急逃生動線以確保突發狀況時的安全疏散；同時配有洗手台，方便長輩在活動前後或用餐前後就近洗手維持衛生。",
                 "keepOriginal": true
             },
             "activity": {
@@ -382,21 +393,22 @@
 
         function setTutorialStep(step) {
             tutorialStep = step;
-            const banner = document.getElementById('interactive-tutorial-banner');
+            const textElement = document.getElementById('tutorial-text');
             const arrowContainer = document.getElementById('dynamic-arrow-container');
             arrowContainer.innerHTML = ''; // 清除舊箭頭
 
             if (step === 1) {
-                banner.innerHTML = "如何查看空間介紹<br><span style='font-size: calc(1rem + 3px); font-weight: normal;'>右下角隨時提供當前區域的詳細介紹。<br>您可以點擊「展開空間介紹」將其展開。</span>";
-                // 箭頭放到展開空間介紹按鈕的正上方 (bottom 90px, right 85px) 向下指
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 90px; right: 85px;">⬇</div>`;
+                textElement.innerHTML = "<strong>如何查看空間介紹</strong><br>右下角隨時提供當前區域的詳細介紹。您可以點擊「展開空間介紹」將其展開。";
+                // 箭頭精準指著右下角「展開空間介紹」按鈕上方
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 75px; right: 90px;">⬇</div>`;
             } 
             else if (step === 2) {
-                banner.innerHTML = "如何關閉空間介紹<br><span style='font-size: calc(1rem + 3px); font-weight: normal;'>您可以點擊「✖ 關閉介紹」將其收合。</span>";
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 228px; right: 198px;">↙</div>`;
+                textElement.innerHTML = "<strong>如何關閉空間介紹</strong><br>請點擊「✖ 關閉介紹」收合視窗！";
+                // 箭頭指著彈出視窗內的關閉按鈕上方
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 270px; right: 190px;">⬇</div>`;
             }
             else if (step === 3) {
-                banner.innerText = "【教學步驟 3/7】如何滑動畫面？\n請按住畫面左右滑動，旋轉一圈觀察環境！";
+                textElement.innerHTML = "<strong>如何滑動畫面</strong><br>請按住畫面左右滑動，旋轉一圈觀察環境！";
                 const swipeDiv = document.createElement('div');
                 swipeDiv.className = 'swipe-hint-overlay';
                 swipeDiv.id = 'swipe-overlay-hint';
@@ -404,25 +416,25 @@
                 document.body.appendChild(swipeDiv);
             }
             else if (step === 4) {
-                banner.innerText = "【教學步驟 4/7】如何使用箭頭引導？\n請點擊畫面中的紅色箭頭引導按鈕前往下個地點！";
+                textElement.innerHTML = "<strong>如何使用箭頭引導</strong><br>請點擊畫面中的紅色箭頭引導按鈕前往下個地點！";
                 arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 48px; left: 58%;">⬅</div>`;
             }
             else if (step === 5) {
-                banner.innerText = "【教學步驟 5/7】如何使用快速導覽？\n請點擊左上角的「快速導覽」選單！";
+                textElement.innerHTML = "<strong>如何使用快速導覽</strong><br>請點擊左上角的「快速導覽」選單！";
                 arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 88px; left: 218px;">⬆</div>`;
             }
             else if (step === 6) {
-                banner.innerText = "【教學步驟 6/7】如何使用地圖定位？\n請點擊左下角的小地圖將其放大！";
+                textElement.innerHTML = "<strong>如何使用地圖定位</strong><br>請點擊左下角的小地圖將其放大！";
                 arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 158px; left: 208px;">⬇</div>`;
             }
             else if (step === 7) {
-                banner.innerText = "【教學步驟 7/7】如何回到上一步？\n請點擊右上角的「回到上一步」按鈕！";
+                textElement.innerHTML = "<strong>如何回到上一步</strong><br>請點擊右上角的「回到上一步」按鈕！";
                 arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 88px; right: 198px;">⬆</div>`;
             }
             else if (step === 8) {
-                banner.innerText = "🎉 教學完成！即將帶您回到初始畫面開始正式參訪...";
+                textElement.innerHTML = "🎉 教學完成！即將帶您回到初始畫面開始正式參訪...";
                 setTimeout(() => {
-                    banner.style.display = 'none';
+                    document.getElementById('interactive-tutorial-banner').style.display = 'none';
                     viewer.loadScene("counter");
                 }, 2500);
             }
