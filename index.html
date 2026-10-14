@@ -152,7 +152,7 @@
         .pnlm-hotspot-base { transform: scale(4); transform-origin: center center; }
         .pnlm-tooltip span { font-size: calc(1.1rem + 5px) !important; padding: 6px 12px !important; }
 
-        /* 教學提示框樣式 */
+        /* 教學提示框 */
         #interactive-tutorial-banner {
             position: absolute; top: 130px; left: 50%; transform: translateX(-50%);
             width: 380px; 
@@ -414,10 +414,14 @@
                 document.body.appendChild(swipeDiv);
             }
             else if (step === 4) {
-                // 自動載入鞋櫃場景，並將箭頭對準前往下一個區域的熱點按鈕
-                viewer.loadScene("shoes");
                 textElement.innerHTML = "<strong>如何使用箭頭引導</strong><br>請點擊畫面中的紅色箭頭引導按鈕前往下個地點！";
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 50%; right: 30%;">⬅</div>`;
+                
+                // 自動將鏡頭轉向鞋櫃方向 (yaw: 120 對應櫃檯場景中前往鞋櫃的熱點)
+                viewer.setYaw(120);
+                viewer.setPitch(0);
+
+                // 將大紅箭頭精準指向鞋櫃熱點位置
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 52%; left: 62%;">⬅</div>`;
             }
             else if (step === 5) {
                 textElement.innerHTML = "<strong>如何使用快速導覽</strong><br>請點擊左上角的「快速導覽」選單！";
@@ -543,7 +547,7 @@
             }
         }
 
-        // 6. 返回上一步按鈕監聽 (最後步驟)
+        // 6. 返回上一步監聽 (最後步驟)
         function handleBackStepClick() {
             if (tutorialStep === 7) {
                 setTutorialStep(8);
