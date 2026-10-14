@@ -93,7 +93,7 @@
             white-space: nowrap;
         }
 
-        /* 回到上一步按鈕樣式 */
+        /* 回到上一步按鈕樣式（字體再加大 5） */
         .back-step-btn {
             position: absolute; top: 20px; right: 20px; z-index: 25;
             background: #6c757d; color: white; border: none; padding: 12px 18px;
@@ -105,18 +105,15 @@
         }
         .back-step-btn:hover { background: #5a6268; }
 
-        /* 快速導覽選單樣式（改為 fit-content 與 auto 讓寬度貼合文字） */
+        /* 快速導覽選單樣式（字體再加大 5） */
         #quick-nav-container {
-            position: absolute; top: 20px; left: 20px; z-index: 25;
-            transition: opacity 0.3s ease;
-            width: fit-content;
-        }
-        #quick-nav-select {
-            background: rgba(0, 123, 255, 0.9); color: white; border: 1px solid rgba(255, 255, 255, 0.4);
-            padding: 12px 18px; font-size: calc(1.4rem + 10px); border-radius: 6px; cursor: pointer; font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4); outline: none;
+            position: absolute; top: 20px; right: 20px; z-index: 25;
+            background: #6c757d; color: white; border: none; padding: 12px 18px;
+            font-size: calc(1.3rem + 10px); border-radius: 6px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s, opacity 0.3s ease;
             width: auto;
             box-sizing: border-box;
+            text-align: center;
         }
         #quick-nav-select option { background: #333; color: white; }
 
