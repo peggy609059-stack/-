@@ -10,6 +10,42 @@
         body { margin: 0; font-family: "Microsoft JhengHei", sans-serif; overflow: hidden; background: #000; font-size: calc(1rem + 5px); }
         #panorama { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
 
+        /* 強制教學遮罩樣式 */
+        #tutorial-overlay {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.85); z-index: 100; display: flex;
+            justify-content: center; align-items: center; flex-direction: column;
+            color: white; text-align: center; padding: 20px; box-sizing: border-box;
+            animation: fadeIn 0.3s ease;
+        }
+        .tutorial-content {
+            max-width: 500px; background: rgba(255, 255, 255, 0.1);
+            padding: 30px; border-radius: 12px; border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+        }
+        .tutorial-icon {
+            font-size: 60px; margin-bottom: 20px;
+            animation: handMove 1.5s infinite ease-in-out;
+        }
+        .tutorial-content h2 { color: #007bff; margin-top: 0; font-size: calc(1.8rem + 5px); }
+        .tutorial-content p { font-size: calc(1.3rem + 5px); line-height: 1.6; color: #ddd; margin-bottom: 25px; }
+        .tutorial-btn {
+            background: #007bff; color: white; border: none; padding: 12px 30px;
+            font-size: calc(1.3rem + 5px); border-radius: 8px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,123,255,0.4); transition: background 0.2s;
+        }
+        .tutorial-btn:hover { background: #0056b3; }
+
+        @keyframes handMove {
+            0% { transform: translateX(-30px); opacity: 0.6; }
+            50% { transform: translateX(30px); opacity: 1; }
+            100% { transform: translateX(-30px); opacity: 0.6; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         /* 平面圖片檢視器容器樣式：垂直置中排列 */
         #flat-view-container {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -38,11 +74,9 @@
         #flat-detail-panel h3 { margin: 0 0 8px 0; font-size: calc(1.7rem + 10px); color: #007bff; }
         #flat-detail-panel p { margin: 0; font-size: calc(1.6rem + 10px); line-height: 1.5; color: #555; }
         
-        /* 廚房與逃生區文字維持原大小 */
         #flat-detail-panel.keep-original-size h3 { font-size: 1.7rem; }
         #flat-detail-panel.keep-original-size p { font-size: 1.6rem; }
 
-        /* 返回教室的紅色按鈕樣式 */
         .back-to-class-btn {
             background: #dc3545; color: white; border: none; padding: 10px 18px;
             font-size: calc(1.2rem + 5px); border-radius: 6px; cursor: pointer; font-weight: bold;
@@ -52,7 +86,6 @@
         }
         .back-to-class-btn:hover { background: #c82333; }
 
-        /* 空間介紹區域（右下角） */
         #info-modal {
             position: absolute; bottom: 20px; right: 20px; z-index: 30;
             background: rgba(255, 255, 255, 0.95); color: #333; padding: 15px 20px; border-radius: 8px;
@@ -64,7 +97,6 @@
         #info-modal h3 { margin: 0 0 8px 0; font-size: calc(1.7rem + 10px); color: #007bff; }
         #info-modal p { margin: 0; font-size: calc(1.2rem + 10px); line-height: 1.6; color: #555; }
 
-        /* 放大空間介紹中的關閉按鈕 */
         #info-modal .close-btn {
             font-size: calc(1.3rem + 10px);
             padding: 8px 14px;
@@ -80,11 +112,9 @@
             background: #e2e6ea;
         }
 
-        /* 空間介紹中的廚房與逃生區文字維持原大小 */
         #info-modal.keep-original-size h3 { font-size: 1.7rem; }
         #info-modal.keep-original-size p { font-size: 1.2rem; }
 
-        /* 收合狀態 */
         #info-modal.collapsed {
             padding: 10px 5px;
             cursor: pointer;
@@ -109,7 +139,6 @@
             white-space: nowrap;
         }
 
-        /* 回到上一步按鈕樣式 */
         .back-step-btn {
             width: 185px;
             height: 62px;
@@ -127,7 +156,6 @@
         }
         .back-step-btn:hover { background: #5a6268; }
 
-        /* 快速導覽選單樣式 */
         #quick-nav-container {
             position: absolute; top: 20px; left: 40px; z-index: 25;
             transition: opacity 0.3s ease;
@@ -149,7 +177,6 @@
         }
         #quick-nav-select option { background: #333; color: white; }
 
-        /* 左下角小地圖樣式 */
         #mini-map-container {
             position: absolute; bottom: 39px; left: 20px; z-index: 25;
             width: 180px; height: 120px; background: rgba(0, 0, 0, 0.8);
@@ -166,7 +193,6 @@
             pointer-events: none;
         }
         
-        /* 放大鏡圖示樣式 */
         .map-zoom-icon {
             position: absolute; top: 8px; right: 8px; z-index: 27;
             background: rgba(0, 0, 0, 0.6); color: white;
@@ -183,7 +209,6 @@
             z-index: 26; pointer-events: none;
         }
 
-        /* 放大版地圖 Modal 樣式 */
         #map-modal {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.85); z-index: 50; display: none;
@@ -220,6 +245,16 @@
     </style>
 </head>
 <body>
+
+    <!-- 強制滑動教學引導遮罩 -->
+    <div id="tutorial-overlay">
+        <div class="tutorial-content">
+            <div class="tutorial-icon">👉 🔄 👈</div>
+            <h2>歡迎來到智慧日照中心</h2>
+            <p>請用手指或滑鼠<strong>按住畫面左右滑動</strong>，即可360度環視周遭環境與尋找導覽標點喔！</p>
+            <button class="tutorial-btn" onclick="closeTutorial()">開始參訪</button>
+        </div>
+    </div>
 
     <!-- 快速導覽選單 -->
     <div id="quick-nav-container">
@@ -456,6 +491,15 @@
         });
 
         let navigationHistory = ["counter"];
+
+        // 關閉強制教學遮罩
+        function closeTutorial() {
+            const overlay = document.getElementById('tutorial-overlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 300);
+        }
 
         function openKitchenFlatView(event) {
             const container = document.getElementById('flat-view-container');
