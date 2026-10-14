@@ -93,19 +93,42 @@
             white-space: nowrap;
         }
 
-        /* 讓快速導覽與回到上一步擁有完全相同的固定寬度、高度與樣式 */
-        .back-step-btn, #quick-nav-select {
-            width: 195px;     /* 統一固定寬度 */
-            height: 62px;     /* 統一固定高度 */
-            padding: 12px 18px;
-            font-size: calc(1.3rem + 10px);
-            border-radius: 6px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-            box-sizing: border-box;
-            text-align: center;
-            line-height: normal;
-        }
+      /* 回到上一步按鈕樣式 */
+.back-step-btn {
+    width: 195px;
+    height: 62px;
+    padding: 12px 18px;
+    font-size: calc(1.3rem + 10px);
+    border-radius: 6px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    box-sizing: border-box;
+    text-align: center;
+    line-height: normal;
+    position: absolute; top: 20px; right: 0px; z-index: 25;
+    background: #6c757d; color: white; border: none; cursor: pointer;
+    transition: background 0.2s, opacity 0.3s ease;
+}
+.back-step-btn:hover { background: #5a6268; }
+
+/* 快速導覽選單樣式（可單獨調整寬度 width） */
+#quick-nav-select {
+    width: 190px;     /* 👈 在這裡調整快速導覽的寬度（原本是 195px） */
+    height: 62px;     
+    padding: 12px 18px;
+    font-size: calc(1.3rem + 10px);
+    border-radius: 6px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    box-sizing: border-box;
+    text-align: center;
+    line-height: normal;
+    background: rgba(0, 123, 255, 0.9); color: white;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    cursor: pointer; outline: none;
+}
+#quick-nav-select option { background: #333; color: white; }
+
 
         /* 回到上一步按鈕樣式（已向右平移 0.5 公分） */
         .back-step-btn {
