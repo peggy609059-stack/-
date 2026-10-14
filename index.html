@@ -209,43 +209,38 @@
             padding: 6px 12px !important;
         }
 
-        /* ===== 新手強制教學覆蓋層樣式 ===== */
-        #tutorial-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.82); z-index: 100; display: flex;
-            justify-content: center; align-items: center;
+        /* ===== 環境圖內嵌式教學引導卡片 (置於畫面正下方或浮動) ===== */
+        #environment-tutorial-card {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95); padding: 20px 30px; border-radius: 12px;
+            width: 600px; max-width: 90vw; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            z-index: 100; text-align: center; border-top: 5px solid #007bff;
         }
-        #tutorial-card {
-            background: #fff; padding: 30px; border-radius: 12px; width: 520px; max-width: 90vw;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6); text-align: center; position: relative;
+        #environment-tutorial-card h3 { color: #007bff; margin-top: 0; font-size: calc(1.4rem + 5px); }
+        #environment-tutorial-card p { color: #444; font-size: calc(1.1rem + 5px); line-height: 1.5; margin-bottom: 20px; }
+        .env-tutorial-btns { display: flex; justify-content: space-between; gap: 15px; }
+        .env-btn {
+            flex: 1; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold;
+            font-size: calc(1rem + 5px); cursor: pointer; transition: background 0.2s;
         }
-        #tutorial-card h2 { color: #007bff; margin-top: 0; font-size: calc(1.5rem + 5px); }
-        #tutorial-card p { color: #444; font-size: calc(1.1rem + 5px); line-height: 1.6; margin-bottom: 25px; min-height: 80px; }
-        .tutorial-buttons { display: flex; justify-content: space-between; gap: 15px; }
-        .tutorial-btn {
-            flex: 1; padding: 12px 18px; border: none; border-radius: 6px; font-weight: bold;
-            font-size: calc(1rem + 5px); cursor: pointer; transition: background 0.2s, opacity 0.2s;
-        }
-        .tutorial-btn-prev { background: #6c757d; color: white; }
-        .tutorial-btn-prev:hover { background: #5a6268; }
-        .tutorial-btn-prev:disabled { opacity: 0.4; cursor: not-allowed; }
-        .tutorial-btn-next { background: #007bff; color: white; }
-        .tutorial-btn-next:hover { background: #0056b3; }
-        #tutorial-step-indicator { font-size: 1rem; color: #007bff; font-weight: bold; margin-bottom: 12px; }
+        .env-btn-prev { background: #6c757d; color: white; }
+        .env-btn-prev:hover { background: #5a6268; }
+        .env-btn-prev:disabled { opacity: 0.4; cursor: not-allowed; }
+        .env-btn-next { background: #007bff; color: white; }
+        .env-btn-next:hover { background: #0056b3; }
+        #env-step-indicator { font-size: 0.95rem; color: #666; font-weight: bold; margin-bottom: 6px; }
     </style>
 </head>
 <body>
 
-    <!-- 新手強制教學彈窗（無略過按鈕） -->
-    <div id="tutorial-overlay">
-        <div id="tutorial-card">
-            <div id="tutorial-step-indicator">教學步驟 1 / 6</div>
-            <h2 id="tutorial-title">1. 空間介紹說明</h2>
-            <p id="tutorial-desc">右下角隨時提供當前區域的詳細介紹。您可以點擊「關閉介紹」將其收合，或點擊「展開空間介紹」再次查看。</p>
-            <div class="tutorial-buttons">
-                <button class="tutorial-btn tutorial-btn-prev" id="tutorial-prev-btn" onclick="prevTutorialStep()" disabled>上一步</button>
-                <button class="tutorial-btn tutorial-btn-next" id="tutorial-next-btn" onclick="nextTutorialStep()">下一步</button>
-            </div>
+    <!-- 環境內嵌式強制教學引導卡片 -->
+    <div id="environment-tutorial-card">
+        <div id="env-step-indicator">導覽教學 1 / 6</div>
+        <h3 id="env-title">1. 空間介紹說明</h3>
+        <p id="env-desc">請看畫面右下角！這裡隨時提供當前區域的詳細介紹，您可以點擊收合或展開。</p>
+        <div class="env-tutorial-btns">
+            <button class="env-btn env-btn-prev" id="env-prev-btn" onclick="prevEnvStep()" disabled>上一步</button>
+            <button class="env-btn env-btn-next" id="env-next-btn" onclick="nextEnvStep()">下一步</button>
         </div>
     </div>
 
@@ -485,66 +480,75 @@
 
         let navigationHistory = ["counter"];
 
-        // ===== 強制新手教學邏輯（無略過） =====
-        const tutorialSteps = [
+        // ===== 環境內嵌式教學引導邏輯 =====
+        const envTutorialSteps = [
             {
                 title: "1. 空間介紹說明",
-                desc: "右下角隨時提供當前區域的詳細介紹。您可以點擊「關閉介紹」將其收合，或點擊「展開空間介紹」再次查看。"
+                desc: "請看畫面右下角！這裡隨時提供當前區域的詳細介紹，您可以點擊收合或展開。",
+                action: () => { viewer.lookAt(0, 0, 100, 1000); }
             },
             {
                 title: "2. 左右旋轉視角",
-                desc: "您可以自由向左或向右旋轉視角，直接用滑鼠按住拖曳或用手指滑動，從不同角度觀看周圍環境。"
+                desc: "您可以直接用滑鼠按住畫面左右拖曳，或用手指滑動，自由旋轉視角觀察周圍。",
+                action: () => { viewer.lookAt(0, 90, 90, 1000); }
             },
             {
                 title: "3. 箭頭引導按鈕",
-                desc: "透過畫面中的箭頭指標引導前往下一個地點，讓參訪過程更加清楚、順暢。"
+                desc: "畫面中的指標按鈕就是前往下一個參訪地點的通道，直接點擊即可移動。",
+                action: () => { viewer.lookAt(0, 120, 90, 1000); }
             },
             {
                 title: "4. 快速導覽按鈕",
-                desc: "您可以點選左上角的「快速導覽」選單，直接跳轉前往自己想參觀的地點，節省尋找路線的時間。"
+                desc: "請看畫面左上角！點選「快速導覽」選單可以直接跳轉到您想參觀的特定區域。",
+                action: () => { viewer.lookAt(0, -90, 90, 1000); }
             },
             {
                 title: "5. 地圖定位",
-                desc: "透過左下角導覽地圖，讓您了解自己目前所在的位置與相對關係。點擊地圖還可以放大全圖觀看。"
+                desc: "請看畫面左下角！小地圖會顯示您目前位置，點擊地圖還可以放大全圖觀看。",
+                action: () => { viewer.lookAt(0, 0, 100, 1000); }
             },
             {
                 title: "6. 返回上一步按鈕",
-                desc: "如果想重新查看先前參觀過的地點，可以點選右上角「回到上一步」，再次瀏覽該空間。"
+                desc: "請看畫面右上角！如果想重新查看先前參觀過的地方，點擊「回到上一步」即可折返。",
+                action: () => { viewer.lookAt(0, 0, 100, 1000); }
             }
         ];
-        let currentTutorialStep = 0;
+        let currentEnvStep = 0;
 
-        function updateTutorialCard() {
-            const step = tutorialSteps[currentTutorialStep];
-            document.getElementById('tutorial-step-indicator').innerText = `教學步驟 ${currentTutorialStep + 1} / ${tutorialSteps.length}`;
-            document.getElementById('tutorial-title').innerText = step.title;
-            document.getElementById('tutorial-desc').innerText = step.desc;
+        function updateEnvTutorialCard() {
+            const step = envTutorialSteps[currentEnvStep];
+            document.getElementById('env-step-indicator').innerText = `導覽教學 ${currentEnvStep + 1} / ${envTutorialSteps.length}`;
+            document.getElementById('env-title').innerText = step.title;
+            document.getElementById('env-desc').innerText = step.desc;
 
             // 控制上一步按鈕狀態
-            document.getElementById('tutorial-prev-btn').disabled = (currentTutorialStep === 0);
+            document.getElementById('env-prev-btn').disabled = (currentEnvStep === 0);
 
             // 控制下一步按鈕文字
-            if (currentTutorialStep === tutorialSteps.length - 1) {
-                document.getElementById('tutorial-next-btn').innerText = "開始參訪";
+            if (currentEnvStep === envTutorialSteps.length - 1) {
+                document.getElementById('env-next-btn').innerText = "開始參訪";
             } else {
-                document.getElementById('tutorial-next-btn').innerText = "下一步";
+                document.getElementById('env-next-btn').innerText = "下一步";
+            }
+
+            // 執行對應視角移動
+            if (step.action) step.action();
+        }
+
+        function nextEnvStep() {
+            if (currentEnvStep < envTutorialSteps.length - 1) {
+                currentEnvStep++;
+                updateEnvTutorialCard();
+            } else {
+                // 完成全部步驟後隱藏教學卡片
+                document.getElementById('environment-tutorial-card').style.display = 'none';
             }
         }
 
-        function nextTutorialStep() {
-            if (currentTutorialStep < tutorialSteps.length - 1) {
-                currentTutorialStep++;
-                updateTutorialCard();
-            } else {
-                // 完成全部步驟後才關閉
-                document.getElementById('tutorial-overlay').style.display = 'none';
-            }
-        }
-
-        function prevTutorialStep() {
-            if (currentTutorialStep > 0) {
-                currentTutorialStep--;
-                updateTutorialCard();
+        function prevEnvStep() {
+            if (currentEnvStep > 0) {
+                currentEnvStep--;
+                updateEnvTutorialCard();
             }
         }
         // ==================================
@@ -737,7 +741,7 @@
             showInfo("counter");
             updateMapMarker("counter");
             document.getElementById('info-modal').classList.add('collapsed');
-            updateTutorialCard(); // 初始化教學步驟內容
+            updateEnvTutorialCard(); // 初始化環境內嵌教學
         };
     </script>
 
