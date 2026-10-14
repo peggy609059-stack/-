@@ -152,7 +152,7 @@
         .pnlm-hotspot-base { transform: scale(4); transform-origin: center center; }
         .pnlm-tooltip span { font-size: calc(1.1rem + 5px) !important; padding: 6px 12px !important; }
 
-        /* ===== 教學提示框往下移 5px (改為 top: 25px) ===== */
+        /* ===== 教學提示框 ===== */
         #interactive-tutorial-banner {
             position: absolute; top: 25px; left: 50%; transform: translateX(-50%);
             width: 380px; 
@@ -169,7 +169,7 @@
             letter-spacing: 1px;
         }
 
-        /* 超大、加粗的紅色動態箭頭 */
+        /* 加大加粗的紅色動態箭頭 */
         .big-red-arrow {
             position: absolute; z-index: 95; font-size: 85px; font-weight: 900; color: #ff0000;
             text-shadow: 0 0 15px #ffffff, 0 0 30px #ff0000;
@@ -403,8 +403,8 @@
                 arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 75px; right: 90px;">⬇</div>`;
             } 
             else if (step === 2) {
-                textElement.innerHTML = "<strong>如何關閉空間介紹</strong><br>請點擊「✖ 關閉介紹」收合視窗！";
-                // 箭頭指著彈出視窗內的關閉按鈕上方
+                textElement.innerHTML = "左上角隨時可以關閉空間介紹。 請您點擊「關閉介紹」將其收合。";
+                // 箭頭精準指著彈出視窗內的「關閉介紹」按鈕上方
                 arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 270px; right: 190px;">⬇</div>`;
             }
             else if (step === 3) {
@@ -452,7 +452,9 @@
                 document.getElementById('dynamic-arrow-container').innerHTML = '';
                 setTutorialStep(2); 
             } else if (tutorialStep === 2 && wasCollapsed) {
-                setTutorialStep(3); // 成功關閉 -> 進入步驟 3 (滑動畫面)
+                // 成功點擊關閉介紹後，立刻清除箭頭並進入步驟 3
+                document.getElementById('dynamic-arrow-container').innerHTML = '';
+                setTutorialStep(3); 
             }
         }
 
