@@ -320,7 +320,7 @@
             },
             "escape_wash": {
                 "title": "逃生區與洗手台｜安全疏散與衛生便利",
-                "desc": "位於教室區右側，設置緊急逃生動線以確保突發狀況時的安全疏散；同時配有洗手台，方便長輩在活動前後或用餐前後就近洗手維持衛生。",
+                "desc": "位於教室區右側，設置緊急逃生動線以確保突發狀況時的安全疏散;同時配有洗手台，方便長輩在活動前後或用餐前後就近洗手維持衛生。",
                 "keepOriginal": true
             },
             "activity": {
@@ -445,17 +445,18 @@
             if (event) event.stopPropagation();
             const modal = document.getElementById('info-modal');
             const wasCollapsed = modal.classList.contains('collapsed');
-            modal.classList.toggle('collapsed');
-
-            if (tutorialStep === 1 && !wasCollapsed) {
-                // 成功點開展開空間介紹後，立刻清除箭頭並進入步驟 2
+            
+            // 步驟 1 點擊展開時立即清除箭頭並進入步驟 2
+            if (tutorialStep === 1 && wasCollapsed) {
                 document.getElementById('dynamic-arrow-container').innerHTML = '';
-                setTutorialStep(2); 
-            } else if (tutorialStep === 2 && wasCollapsed) {
-                // 成功點擊關閉介紹後，立刻清除箭頭並進入步驟 3
+                setTutorialStep(2);
+            } 
+            else if (tutorialStep === 2 && !wasCollapsed) {
                 document.getElementById('dynamic-arrow-container').innerHTML = '';
-                setTutorialStep(3); 
+                setTutorialStep(3);
             }
+
+            modal.classList.toggle('collapsed');
         }
 
         function checkInfoToggle(event) {
