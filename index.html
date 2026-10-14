@@ -107,17 +107,17 @@
             line-height: normal;
         }
 
-        /* 回到上一步按鈕樣式（已往右移 0.5 公分：right 改為 12px） */
+        /* 回到上一步按鈕樣式 */
         .back-step-btn {
-            position: absolute; top: 20px; right: 12px; z-index: 25;
+            position: absolute; top: 20px; right: 20px; z-index: 25;
             background: #6c757d; color: white; border: none; cursor: pointer;
             transition: background 0.2s, opacity 0.3s ease;
         }
         .back-step-btn:hover { background: #5a6268; }
 
-        /* 快速導覽選單樣式（已往右移 0.5 公分：left 改為 219px，對應原本寬度 + 間距） */
+        /* 快速導覽選單樣式 */
         #quick-nav-container {
-            position: absolute; top: 20px; left: 219px; z-index: 25;
+            position: absolute; top: 20px; left: 20px; z-index: 25;
             transition: opacity 0.3s ease;
         }
         #quick-nav-select {
@@ -200,7 +200,7 @@
 </head>
 <body>
 
-    <!-- 快速導覽選單（已往右移 0.5 公分） -->
+    <!-- 快速導覽選單（移至左上角） -->
     <div id="quick-nav-container">
         <select id="quick-nav-select" onchange="quickJump(this.value)">
             <option value="" disabled selected>快速導覽</option>
@@ -239,7 +239,7 @@
         </div>
     </div>
 
-    <!-- 回到上一步按鈕（已往右移 0.5 公分） -->
+    <!-- 回到上一步按鈕（移至右上角） -->
     <button class="back-step-btn" onclick="goBackStep()">回到上一步</button>
 
     <!-- 空間介紹彈跳視窗 -->
