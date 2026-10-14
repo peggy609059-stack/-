@@ -64,6 +64,22 @@
         #info-modal h3 { margin: 0 0 8px 0; font-size: calc(1.7rem + 10px); color: #007bff; }
         #info-modal p { margin: 0; font-size: calc(1.2rem + 10px); line-height: 1.6; color: #555; }
 
+        /* 放大空間介紹中的關閉按鈕 */
+        #info-modal .close-btn {
+            font-size: calc(1.3rem + 8px);
+            padding: 8px 14px;
+            cursor: pointer;
+            background: #f8f9fa;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+        #info-modal .close-btn:hover {
+            background: #e2e6ea;
+        }
+
         /* 空間介紹中的廚房與逃生區文字維持原大小 */
         #info-modal.keep-original-size h3 { font-size: 1.7rem; }
         #info-modal.keep-original-size p { font-size: 1.2rem; }
@@ -93,57 +109,40 @@
             white-space: nowrap;
         }
 
-      /* 回到上一步按鈕樣式 */
-.back-step-btn {
-    width: 185px;
-    height: 62px;
-    padding: 12px 18px;
-    font-size: calc(1.3rem + 10px);
-    border-radius: 6px;
-    font-weight: bold;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    box-sizing: border-box;
-    text-align: center;
-    line-height: normal;
-    position: absolute; top: 20px; right: 0px; z-index: 25;
-    background: #6c757d; color: white; border: none; cursor: pointer;
-    transition: background 0.2s, opacity 0.3s ease;
-}
-.back-step-btn:hover { background: #5a6268; }
-
-/* 快速導覽選單樣式（可單獨調整寬度 width） */
-#quick-nav-select {
-    width: 170px;     /* 👈 在這裡調整快速導覽的寬度（原本是 195px） */
-    height: 62px;     
-    padding: 12px 18px;
-    font-size: calc(1.3rem + 10px);
-    border-radius: 6px;
-    font-weight: bold;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    box-sizing: border-box;
-    text-align: center;
-    line-height: normal;
-    background: rgba(0, 123, 255, 0.9); color: white;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    cursor: pointer; outline: none;
-}
-#quick-nav-select option { background: #333; color: white; }
-
-
-        /* 回到上一步按鈕樣式（已向右平移 0.5 公分） */
+        /* 回到上一步按鈕樣式 */
         .back-step-btn {
+            width: 185px;
+            height: 62px;
+            padding: 12px 18px;
+            font-size: calc(1.3rem + 10px);
+            border-radius: 6px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            box-sizing: border-box;
+            text-align: center;
+            line-height: normal;
             position: absolute; top: 20px; right: 0px; z-index: 25;
             background: #6c757d; color: white; border: none; cursor: pointer;
             transition: background 0.2s, opacity 0.3s ease;
         }
         .back-step-btn:hover { background: #5a6268; }
 
-        /* 快速導覽選單樣式（已向右平移 0.5 公分） */
+        /* 快速導覽選單樣式 */
         #quick-nav-container {
             position: absolute; top: 20px; left: 40px; z-index: 25;
             transition: opacity 0.3s ease;
         }
         #quick-nav-select {
+            width: 170px;
+            height: 62px;     
+            padding: 12px 18px;
+            font-size: calc(1.3rem + 10px);
+            border-radius: 6px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            box-sizing: border-box;
+            text-align: center;
+            line-height: normal;
             background: rgba(0, 123, 255, 0.9); color: white;
             border: 1px solid rgba(255, 255, 255, 0.4);
             cursor: pointer; outline: none;
@@ -222,7 +221,7 @@
 </head>
 <body>
 
-    <!-- 快速導覽選單（已向右平移） -->
+    <!-- 快速導覽選單 -->
     <div id="quick-nav-container">
         <select id="quick-nav-select" onchange="quickJump(this.value)">
             <option value="" disabled selected>快速導覽</option>
@@ -261,7 +260,7 @@
         </div>
     </div>
 
-    <!-- 回到上一步按鈕（已向右平移） -->
+    <!-- 回到上一步按鈕 -->
     <button class="back-step-btn" onclick="goBackStep()">回到上一步</button>
 
     <!-- 空間介紹彈跳視窗 -->
