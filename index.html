@@ -152,10 +152,10 @@
         .pnlm-hotspot-base { transform: scale(4); transform-origin: center center; }
         .pnlm-tooltip span { font-size: calc(1.1rem + 5px) !important; padding: 6px 12px !important; }
 
-        /* ===== 教學提示框放在上方正中央，寬度為兩側按鈕長度總和 ===== */
+        /* ===== 教學提示框往下移 5px (改為 top: 25px) ===== */
         #interactive-tutorial-banner {
-            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-            width: 380px; /* 快速導覽(170px) + 返回上一步(185px) 左右間距總和 */
+            position: absolute; top: 25px; left: 50%; transform: translateX(-50%);
+            width: 380px; 
             background: rgba(0, 123, 255, 0.95); color: white; padding: 12px 15px;
             border-radius: 10px; z-index: 100; font-size: calc(1.1rem + 2px); font-weight: bold;
             box-shadow: 0 6px 20px rgba(0,0,0,0.6); text-align: center; border: 2px solid white;
@@ -200,7 +200,7 @@
 </head>
 <body>
 
-    <!-- 互動教學提示橫幅（置於上方正中央，寬度對齊兩側按鈕） -->
+    <!-- 互動教學提示橫幅 -->
     <div id="interactive-tutorial-banner">
         <div class="tutorial-mode-title">【教學模式】</div>
         <div id="tutorial-text">載入中...</div>
@@ -398,7 +398,7 @@
             arrowContainer.innerHTML = ''; // 清除舊箭頭
 
             if (step === 1) {
-                textElement.innerHTML = "<strong>如何查看空間介紹</strong><br>右下角隨時提供當前區域的詳細介紹。您可以點擊「展開空間介紹」將其展開。";
+                textElement.innerHTML = "<strong>如何查看空間介紹</strong><br>右下角隨時提供當前區域的詳細介紹。請您可以點擊「展開空間介紹」將其展開。";
                 // 箭頭精準指著右下角「展開空間介紹」按鈕上方
                 arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 75px; right: 90px;">⬇</div>`;
             } 
@@ -448,7 +448,9 @@
             modal.classList.toggle('collapsed');
 
             if (tutorialStep === 1 && !wasCollapsed) {
-                setTutorialStep(2); // 成功點開 -> 進入步驟 2 (關閉介紹)
+                // 成功點開展開空間介紹後，立刻清除箭頭並進入步驟 2
+                document.getElementById('dynamic-arrow-container').innerHTML = '';
+                setTutorialStep(2); 
             } else if (tutorialStep === 2 && wasCollapsed) {
                 setTutorialStep(3); // 成功關閉 -> 進入步驟 3 (滑動畫面)
             }
