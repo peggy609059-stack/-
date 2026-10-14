@@ -152,12 +152,12 @@
         .pnlm-hotspot-base { transform: scale(4); transform-origin: center center; }
         .pnlm-tooltip span { font-size: calc(1.1rem + 5px) !important; padding: 6px 12px !important; }
 
-        /* ===== 教學浮動提示與大紅色箭頭樣式 ===== */
+        /* ===== 教學提示框固定在畫面正中央 ===== */
         #interactive-tutorial-banner {
-            position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
-            background: rgba(0, 123, 255, 0.95); color: white; padding: 15px 30px;
-            border-radius: 10px; z-index: 100; font-size: calc(1.3rem + 5px); font-weight: bold;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.5); text-align: center; border: 2px solid white;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0, 123, 255, 0.95); color: white; padding: 20px 40px;
+            border-radius: 12px; z-index: 100; font-size: calc(1.4rem + 5px); font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7); text-align: center; border: 3px solid white;
             pointer-events: none; max-width: 80vw;
         }
 
@@ -192,7 +192,7 @@
 </head>
 <body>
 
-    <!-- 互動教學頂部提示橫幅 -->
+    <!-- 互動教學提示橫幅（置中顯示） -->
     <div id="interactive-tutorial-banner">新手互動教學載入中...</div>
 
     <!-- 動態大紅箭頭容器 -->
@@ -371,10 +371,11 @@
         });
 
         let navigationHistory = ["counter"];
-        let tutorialStep = 1; // 總共 6 個教學步驟
-        let swipeDistanceCount = 0; // 用於計算滑動量
+        let tutorialStep = 1;
+        let totalMoved = 0;
+        let isDragging = false;
+        let startX = 0;
 
-        // 初始化教學
         function initTutorial() {
             setTutorialStep(1);
         }
@@ -387,15 +388,16 @@
 
             if (step === 1) {
                 banner.innerText = "【步驟 1/6】請點擊右下角的「展開空間介紹」！";
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 80px; right: 230px;">⬆</div>`;
+                // 箭頭精準指向右下角收合按鈕
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 40px; right: 110px;">↙</div>`;
             } 
             else if (step === 2) {
-                banner.innerText = "【步驟 1/6-2】請點擊「關閉介紹」收合視窗！";
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 120px; right: 330px;">⬇</div>`;
+                banner.innerText = "【步驟 1/6-2】請點擊「✖ 關閉介紹」收合視窗！";
+                // 箭頭精準指向彈出視窗內的關閉按鈕
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 230px; right: 190px;">↙</div>`;
             }
             else if (step === 3) {
                 banner.innerText = "【步驟 2/6】請按住畫面左右滑動，旋轉一圈觀察環境！";
-                // 顯示左右滑動指引
                 const swipeDiv = document.createElement('div');
                 swipeDiv.className = 'swipe-hint-overlay';
                 swipeDiv.id = 'swipe-overlay-hint';
@@ -427,8 +429,6 @@
             }
         }
 
-        // ===== 步驟控制與互動監聽 =====
-
         // 1. 空間介紹點擊監聽
         function toggleInfoModal(event) {
             if (event) event.stopPropagation();
@@ -437,43 +437,35 @@
             modal.classList.toggle('collapsed');
 
             if (tutorialStep === 1 && !wasCollapsed) {
-                // 使用者成功點開了
-                setTutorialStep(2);
+                setTutorialStep(2); // 進入步驟 1-2 (點擊關閉)
             } else if (tutorialStep === 2 && wasCollapsed) {
-                // 使用者成功關閉了 -> 進入下一步 (滑動畫面)
-                setTutorialStep(3);
+                setTutorialStep(3); // 進入步驟 2 (滑動畫面)
             }
         }
 
         function checkInfoToggle(event) {
             const modal = document.getElementById('info-modal');
             if (modal.classList.contains('collapsed') && tutorialStep === 1) {
-                // 點擊展開
                 toggleInfoModal(event);
             }
         }
 
         // 2. 監聽畫面滑動 (步驟3)
-        let isDragging = false;
-        let startX = 0;
-        let totalMoved = 0;
-
         document.getElementById('panorama').addEventListener('mousedown', (e) => { if (tutorialStep === 3) { isDragging = true; startX = e.clientX; } });
         window.addEventListener('mousemove', (e) => {
             if (isDragging && tutorialStep === 3) {
                 totalMoved += Math.abs(e.clientX - startX);
                 startX = e.clientX;
-                if (totalMoved > 400) { // 累積滑動夠大圈
+                if (totalMoved > 400) {
                     isDragging = false;
                     const hint = document.getElementById('swipe-overlay-hint');
                     if (hint) hint.remove();
-                    setTutorialStep(4); // 進入步驟3：箭頭引導
+                    setTutorialStep(4);
                 }
             }
         });
         window.addEventListener('mouseup', () => { isDragging = false; });
 
-        // 觸控支援
         document.getElementById('panorama').addEventListener('touchstart', (e) => { if (tutorialStep === 3) { isDragging = true; startX = e.touches[0].clientX; } });
         window.addEventListener('touchmove', (e) => {
             if (isDragging && tutorialStep === 3) {
@@ -495,13 +487,11 @@
                 navigationHistory.push(sceneId);
             }
 
-            // 若在教學步驟4中點了箭頭切換到鞋櫃
             if (tutorialStep === 4 && sceneId === "shoes") {
-                setTutorialStep(5); // 進入步驟4：快速導覽
+                setTutorialStep(5);
             }
 
             const info = sceneInfo[sceneId];
-            const modal = document.getElementById('info-modal');
             if (info) {
                 document.getElementById('modal-title').innerText = info.title;
                 document.getElementById('modal-desc').innerText = info.desc;
@@ -512,7 +502,7 @@
         function quickJump(value) {
             if (!value) return;
             if (tutorialStep === 5) {
-                setTutorialStep(6); // 進入步驟5：地圖
+                setTutorialStep(6);
             }
             viewer.loadScene(value);
             document.getElementById('quick-nav-select').selectedIndex = 0;
@@ -522,7 +512,7 @@
         function handleMiniMapClick() {
             if (tutorialStep === 6) {
                 openLargeMap();
-                setTutorialStep(7); // 進入步驟6：返回上一步
+                setTutorialStep(7);
             } else {
                 openLargeMap();
             }
@@ -541,7 +531,7 @@
         // 6. 返回上一步監聽 (最後步驟)
         function handleBackStepClick() {
             if (tutorialStep === 7) {
-                setTutorialStep(8); // 完成教學！
+                setTutorialStep(8);
             } else {
                 goBackStep();
             }
@@ -557,7 +547,6 @@
             }
         }
 
-        // 地圖標記更新
         function updateMapMarker(sceneId) {
             const pos = sceneCoordinates[sceneId];
             const miniMarker = document.getElementById('map-marker');
@@ -573,16 +562,11 @@
             }
         }
 
-        function openKitchenFlatView(event) { /* 保留平面圖功能 */ }
-        function openEscapeWashFlatView(event) { /* 保留平面圖功能 */ }
-        function closeFlatView() {}
-        function returnToClass() {}
-
         window.onload = function() {
             showInfo("counter");
             updateMapMarker("counter");
             document.getElementById('info-modal').classList.add('collapsed');
-            initTutorial(); // 啟動互動強制教學
+            initTutorial();
         };
 
         function showInfo(sceneId) {
