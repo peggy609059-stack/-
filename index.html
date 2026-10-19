@@ -140,4 +140,503 @@
             background: #fff; padding: 15px; border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
-        #map-modal-img { max-width: 75vw; max-height: 70vh; display: block; border-radius: 4
+        #map-modal-img { max-width: 75vw; max-height: 70vh; display: block; border-radius: 4px; }
+        #map-modal-img-wrapper { position: relative; display: inline-block; }
+        .close-map-btn {
+            position: absolute; top: -15px; right: -15px; background: #dc3545;
+            color: white; border: none; width: 35px; height: 35px; border-radius: 50%;
+            font-size: calc(1.2rem + 5px); cursor: pointer; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            z-index: 60;
+        }
+
+        .pnlm-hotspot-base { transform: scale(4); transform-origin: center center; }
+        .pnlm-tooltip span { font-size: calc(1.1rem + 5px) !important; padding: 6px 12px !important; }
+
+        /* 教學提示框 - 固定在快速導覽與回到上一步正下方 */
+        #interactive-tutorial-banner {
+            position: absolute; top: 92px; left: 50%; transform: translateX(-50%);
+            width: min(92vw, 450px); 
+            background: rgba(0, 123, 255, 0.95); color: white; padding: 12px 15px;
+            border-radius: 10px; z-index: 100; font-size: calc(1.1rem + 7px); font-weight: bold;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6); text-align: center; border: 2px solid white;
+            box-sizing: border-box; line-height: 1.4;
+        }
+        /* 【教學模式】標題保持原大小 */
+        .tutorial-mode-title {
+            font-size: calc(1.2rem + 4px);
+            color: #ffe066;
+            margin-bottom: 4px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+        /* 教學提示內文放大 5px */
+        #tutorial-text {
+            font-size: calc(1.1rem + 7px);
+        }
+        /* 教學上一步按鈕樣式 */
+        .tutorial-prev-btn {
+            margin-top: 8px;
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: calc(0.9rem + 3px);
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+        .tutorial-prev-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            color: #ffe066;
+        }
+
+        /* 環狀 360 度滑動教學提示特效 */
+        .swipe-hint-overlay {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 90; display: flex; justify-content: center; align-items: center;
+            pointer-events: none; background: rgba(0, 0, 0, 0.25);
+        }
+        .circular-swipe-guide {
+            display: flex; flex-direction: column; align-items: center;
+            background: rgba(0, 0, 0, 0.75); padding: 25px 40px; border-radius: 20px;
+            border: 3px dashed #ffe066; box-shadow: 0 0 30px rgba(255,224,102,0.5);
+            animation: pulseBox 1.5s infinite ease-in-out;
+        }
+        .circular-icon {
+            font-size: 70px; color: #ffe066;
+            animation: spinCircular 3s infinite linear;
+            margin-bottom: 10px;
+        }
+        .circular-text {
+            font-size: calc(1.3rem + 4px); color: #fff; font-weight: bold; letter-spacing: 1px;
+        }
+        @keyframes spinCircular {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes pulseBox {
+            0% { transform: scale(1); opacity: 0.85; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.85; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 互動教學提示橫幅 (位於快速導覽與回到上一步正下方) -->
+    <div id="interactive-tutorial-banner">
+        <div class="tutorial-mode-title">【教學模式】</div>
+        <div id="tutorial-text">載入中...</div>
+        <div>
+            <button id="tutorial-prev-btn" class="tutorial-prev-btn" onclick="prevTutorialStep()" style="display: none;">↩ 教學上一步</button>
+        </div>
+    </div>
+
+    <!-- 快速導覽選單 -->
+    <div id="quick-nav-container">
+        <select id="quick-nav-select" onchange="quickJump(this.value)">
+            <option value="" disabled selected>快速導覽</option>
+            <option value="counter">櫃檯</option>
+            <option value="shoes">鞋櫃</option>
+            <option value="locker">櫃子</option>
+            <option value="activity">活動區</option>
+            <option value="safe_home">平安家</option>
+            <option value="happy">快樂家</option>
+            <option value="Perfect">圓滿家</option>
+            <option value="Attend class">教室區</option>
+            <option value="openKitchen">廚房</option>
+            <option value="openEscape">逃生區與洗手台</option>
+            <option value="accessible_toilet">無障礙廁所</option>
+            <option value="toilet1">性別友善廁所</option>
+            <option value="toilet2">性別友善廁所與無障礙廁所</option>
+        </select>
+    </div>
+
+    <!-- 左下角小地圖 -->
+    <div id="mini-map-container" onclick="handleMiniMapClick()" title="點擊放大全圖">
+        <div class="map-zoom-icon">🔍</div>
+        <img id="mini-map-img" src="1791951164235.jpg" alt="小地圖" onerror="this.src='https://placehold.co/180x120/333/fff?text=Map'">
+        <div id="map-marker" class="map-marker"></div>
+    </div>
+
+    <!-- 放大版地圖 Modal -->
+    <div id="map-modal" onclick="closeLargeMap(event)">
+        <div id="map-modal-content" onclick="event.stopPropagation()">
+            <button class="close-map-btn" onclick="closeLargeMap()">✖</button>
+            <h3 style="margin-top: 0; color: #333; text-align: center; font-size: calc(1.4rem + 5px);">中心平面導覽圖</h3>
+            <div id="map-modal-img-wrapper">
+                <img id="map-modal-img" src="1791951164235.jpg" alt="大張地圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Large+Map'">
+                <div id="map-modal-marker" class="map-marker"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 回到上一步按鈕 -->
+    <button class="back-step-btn" onclick="handleBackStepClick()">回到上一步</button>
+
+    <!-- 空間介紹彈跳視窗 -->
+    <div id="info-modal" onclick="checkInfoToggle(event)">
+        <button class="close-btn" onclick="toggleInfoModal(event)">✖ 關閉介紹</button>
+        <h3 id="modal-title">區域名稱</h3>
+        <p id="modal-desc">區域介紹內容...</p>
+    </div>
+
+    <div id="panorama"></div>
+
+    <!-- 平面照片檢視容器 -->
+    <div id="flat-view-container">
+        <img id="flat-image" src="廚房.jpg" alt="平面圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Flat+Image'">
+
+        <div id="flat-detail-panel">
+            <h3 id="flat-detail-title">區域名稱</h3>
+            <p id="flat-detail-desc">詳細介紹內容...</p>
+            <button class="back-to-class-btn" onclick="returnToClass()">返回教室區</button>
+        </div>
+    </div>
+
+    <script>
+        const sceneInfo = {
+            "counter": {
+                "title": "櫃檯｜長輩接送區",
+                "desc": "提供家屬及交通車接送長輩的交接空間，方便長輩每日安全進出中心。"
+            },
+            "shoes": {
+                "title": "鞋櫃區｜培養生活自主性",
+                "desc": "讓長輩自己練習穿脫鞋子，維持原有生活習慣，營造像回家一樣的生活感。"
+            },
+            "locker": {
+                "title": "置物櫃｜一人一櫃",
+                "desc": "每位長輩都有自己的專屬置物櫃，可放置個人物品，保有自己的小空間。"
+            },
+            "safe_home": {
+                "title": "平安家（日照生活室）",
+                "desc": "提供午休與日常休息空間，設有固定座位。"
+            },
+            "happy": {
+                "title": "快樂家（日照生活室）",
+                "desc": "兼具休息區與小教室功能，有幾位長輩的專屬座位與活動區域。"
+            },
+            "accessible_toilet": {
+                "title": "無障礙廁所",
+                "desc": "適合輪椅、助行器或下肢較無力的長輩使用。設有求救鈴。"
+            },
+            "toilet1": {
+                "title": "性別友善廁所",
+                "desc": "設有三個小便斗、三間廁所及衛生紙取用區，外側左方設有洗手台。每間皆設有求救鈴。"
+            },
+            "toilet2": {
+                "title": "性別友善廁所與無障礙廁所",
+                "desc": "設有三間廁所及衛生紙取用區，外側左右兩邊皆有洗手台。無障礙廁所適合輪椅、助行器或下肢較無力的長輩使用。每間皆設有求救鈴。"
+            },
+            "Attend class": {
+                "title": "教室區｜活動、運動與用餐",
+                "desc": "提供長輩進行運動-手作-唱歌等團體活動，也是午餐及點心的主要使用空間，增加長輩彼此交流的機會。"
+            },
+            "Perfect": {
+                "title": "圓滿家（日照生活室）",
+                "desc": "提供午休與休息使用，同樣設有固定座位。"
+            },
+            "kitchen": {
+                "title": "廚房｜依需求準備餐食與安全設計",
+                "desc": "負責準備長輩的午餐與點心，並依照長輩的咀嚼能力與飲食需求準備餐食。與教室區保持良好視線，工作人員備餐時也能兼顧長輩安全。",
+                "keepOriginal": true
+            },
+            "escape_wash": {
+                "title": "逃生區與洗手台｜安全疏散與衛生便利",
+                "desc": "位於教室區右側，設置緊急逃生動線以確保突發狀況時的安全疏散;同時配有洗手台，方便長輩在活動前後或用餐前後就近洗手維持衛生。",
+                "keepOriginal": true
+            },
+            "activity": {
+                "title": "活動區｜休息與交流",
+                "desc": "設有沙發椅，提供午休及活動空檔休息使用，並有固定座位，讓長輩擁有熟悉的位置。"
+            }
+        };
+
+        const sceneCoordinates = {
+            "counter": { x: 86, y: 90 },
+            "shoes": { x: 86, y: 70 },
+            "locker": { x: 80, y: 58.5 },
+            "safe_home": { x: 65, y: 30 },
+            "happy": { x: 47.1, y: 30 },
+            "Perfect": { x: 30, y: 30 },
+            "Attend class": { x: 30, y: 64 },
+            "activity": { x: 83, y: 30 },
+            "accessible_toilet": { x: 60, y: 68 },
+            "toilet1": { x: 40, y: 85 },
+            "toilet2": { x: 57, y: 85 },
+            "kitchen": { x: 22, y: 90 },
+            "escape_wash": { x: 18, y: 30 }
+        };
+
+        const viewer = pannellum.viewer('panorama', {
+            "default": {
+                "firstScene": "counter",
+                "autoLoad": true,
+                "compass": false
+            },
+            "scenes": {
+                "counter": {
+                    "title": "櫃台", "type": "equirectangular", "panorama": "櫃台.jpg",
+                    "hotSpots": [{ "pitch": 0, "yaw": 120, "type": "scene", "text": "前往：鞋櫃", "sceneId": "shoes", "id": "hotspot_arrow_1" }]
+                },
+                "shoes": {
+                    "title": "鞋櫃", "type": "equirectangular", "panorama": "鞋櫃.jpg",
+                    "hotSpots": [
+                        { "pitch": 0, "yaw": 140, "type": "scene", "text": "返回：櫃台", "sceneId": "counter" },
+                        { "pitch": 0, "yaw": -90, "type": "scene", "text": "前往：走道", "sceneId": "aisle" }
+                    ]
+                },
+                "aisle": {
+                    "title": "走道", "type": "equirectangular", "panorama": "1.jpg",
+                    "hotSpots": []
+                },
+                "locker": { "title": "置物櫃", "type": "equirectangular", "panorama": "櫃子.jpg", "hotSpots": [] },
+                "corridor": { "title": "走廊", "type": "equirectangular", "panorama": "走廊.jpg", "hotSpots": [] },
+                "middle": { "title": "走廊2", "type": "equirectangular", "panorama": "中段.jpg", "hotSpots": [] },
+                "safe_home": { "title": "平安家", "type": "equirectangular", "panorama": "平安家.jpg", "hotSpots": [] },
+                "happy": { "title": "快樂家", "type": "equirectangular", "panorama": "快樂家.jpg", "hotSpots": [] },
+                "accessible_toilet": { "title": "無障礙廁所", "type": "equirectangular", "panorama": "廁所4.jpg", "hotSpots": [] },
+                "toilet2": { "title": "性別友善廁所與無障礙廁所", "type": "equirectangular", "panorama": "廁所2.jpg", "hotSpots": [] },
+                "toilet1": { "title": "性別友善廁所", "type": "equirectangular", "panorama": "廁所1.jpg", "hotSpots": [] },
+                "Perfect": { "title": "圓滿家", "type": "equirectangular", "panorama": "圓滿家.jpg", "hotSpots": [] },
+                "Attend class": { "title": "上課區", "type": "equirectangular", "panorama": "上課區.jpg", "hotSpots": [] },
+                "activity": { "title": "活動區", "type": "equirectangular", "panorama": "活動區.jpg", "hotSpots": [] }
+            }
+        });
+
+        let navigationHistory = ["counter"];
+        let tutorialStep = 1;
+        let totalMoved = 0;
+        let isDragging = false;
+        let startX = 0;
+
+        function initTutorial() {
+            setTutorialStep(1);
+        }
+
+        function setTutorialStep(step) {
+            tutorialStep = step;
+            const textElement = document.getElementById('tutorial-text');
+            const prevBtn = document.getElementById('tutorial-prev-btn');
+
+            // 移除可能存在的滑動特效覆蓋層
+            const oldHint = document.getElementById('swipe-overlay-hint');
+            if (oldHint) oldHint.remove();
+
+            // 控制教學上一步按鈕顯示
+            if (step > 1 && step < 9) {
+                prevBtn.style.display = 'inline-block';
+            } else {
+                prevBtn.style.display = 'none';
+            }
+
+            if (step === 1) {
+                textElement.innerHTML = "<strong>如何查看空間介紹</strong><br>右下角隨時提供當前區域的詳細介紹。請點擊右下角的『展開空間介紹』！";
+            } 
+            else if (step === 2) {
+                textElement.innerHTML = "<strong>如何關閉空間介紹</strong><br>左上角隨時可以關閉空間介紹。請點擊『關閉介紹』將其收合！";
+            }
+            else if (step === 3) {
+                textElement.innerHTML = "<strong>如何環視周遭環境</strong><br>請按住畫面左右滑動，進行 360 度旋轉觀察！";
+                const swipeDiv = document.createElement('div');
+                swipeDiv.className = 'swipe-hint-overlay';
+                swipeDiv.id = 'swipe-overlay-hint';
+                swipeDiv.innerHTML = `
+                    <div class="circular-swipe-guide">
+                        <div class="circular-icon">🔄</div>
+                        <div class="circular-text">請左右拖曳畫面 360° 環視</div>
+                    </div>
+                `;
+                document.body.appendChild(swipeDiv);
+            }
+            else if (step === 4) {
+                textElement.innerHTML = "<strong>如何前往下一個地區</strong><br>請點擊畫面中的箭頭引導按鈕前往下個地點！";
+                viewer.setYaw(120);
+                viewer.setPitch(0);
+            }
+            else if (step === 5) {
+                textElement.innerHTML = "<strong>如何使用快速導覽</strong><br>請點擊左上角的『快速導覽』選單，並點選其中一個地點。";
+            }
+            else if (step === 6) {
+                textElement.innerHTML = "<strong>如何使用地圖定位</strong><br>請點擊左下角的小地圖將其放大！地圖點開後可以放大檢視";
+            }
+            else if (step === 7) {
+                textElement.innerHTML = "<strong>如何關閉地圖定位</strong><br>請點擊地圖右上角的✖";
+            }
+            else if (step === 8) {
+                textElement.innerHTML = "<strong>如何回到上一步</strong><br>請點擊右上角的『回到上一步』按鈕！";
+            }
+            else if (step === 9) {
+                textElement.innerHTML = "🎉 教學完成！即將帶您回到初始畫面開始正式參訪...";
+                setTimeout(() => {
+                    document.getElementById('interactive-tutorial-banner').style.display = 'none';
+                    viewer.loadScene("counter");
+                }, 2500);
+            }
+        }
+
+        // 教學模式：回到前一個步驟
+        function prevTutorialStep() {
+            if (tutorialStep > 1) {
+                setTutorialStep(tutorialStep - 1);
+            }
+        }
+
+        // 1. 空間介紹點擊監聽
+        function toggleInfoModal(event) {
+            if (event) event.stopPropagation();
+            const modal = document.getElementById('info-modal');
+            const wasCollapsed = modal.classList.contains('collapsed');
+            
+            if (tutorialStep === 1 && wasCollapsed) {
+                setTutorialStep(2);
+            } 
+            else if (tutorialStep === 2 && !wasCollapsed) {
+                setTutorialStep(3);
+            }
+
+            modal.classList.toggle('collapsed');
+        }
+
+        function checkInfoToggle(event) {
+            const modal = document.getElementById('info-modal');
+            if (modal.classList.contains('collapsed') && tutorialStep === 1) {
+                toggleInfoModal(event);
+            }
+        }
+
+        // 2. 監聽畫面滑動 (步驟3)
+        document.getElementById('panorama').addEventListener('mousedown', (e) => { if (tutorialStep === 3) { isDragging = true; startX = e.clientX; } });
+        window.addEventListener('mousemove', (e) => {
+            if (isDragging && tutorialStep === 3) {
+                totalMoved += Math.abs(e.clientX - startX);
+                startX = e.clientX;
+                if (totalMoved > 300) {
+                    isDragging = false;
+                    const hint = document.getElementById('swipe-overlay-hint');
+                    if (hint) hint.remove();
+                    setTutorialStep(4);
+                }
+            }
+        });
+        window.addEventListener('mouseup', () => { isDragging = false; });
+
+        document.getElementById('panorama').addEventListener('touchstart', (e) => { if (tutorialStep === 3) { isDragging = true; startX = e.touches[0].clientX; } });
+        window.addEventListener('touchmove', (e) => {
+            if (isDragging && tutorialStep === 3) {
+                totalMoved += Math.abs(e.touches[0].clientX - startX);
+                startX = e.touches[0].clientX;
+                if (totalMoved > 300) {
+                    isDragging = false;
+                    const hint = document.getElementById('swipe-overlay-hint');
+                    if (hint) hint.remove();
+                    setTutorialStep(4);
+                }
+            }
+        });
+
+        // 3. 箭頭引導按鈕點擊監聽 (步驟4)
+        viewer.on('scenechange', function(sceneId) {
+            updateMapMarker(sceneId);
+            if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
+                navigationHistory.push(sceneId);
+            }
+
+            if (tutorialStep === 4 && sceneId === "shoes") {
+                setTutorialStep(5);
+            }
+
+            const info = sceneInfo[sceneId];
+            if (info) {
+                document.getElementById('modal-title').innerText = info.title;
+                document.getElementById('modal-desc').innerText = info.desc;
+            }
+        });
+
+        // 4. 快速導覽選單監聽 (步驟5)
+        function quickJump(value) {
+            if (!value) return;
+            if (tutorialStep === 5) {
+                setTutorialStep(6);
+            }
+            viewer.loadScene(value);
+            document.getElementById('quick-nav-select').selectedIndex = 0;
+        }
+
+        // 5. 地圖點擊與放大監聽 (步驟6)
+        function handleMiniMapClick() {
+            if (tutorialStep === 6) {
+                openLargeMap();
+                setTutorialStep(7);
+            } else {
+                openLargeMap();
+            }
+        }
+
+        function openLargeMap() {
+            document.getElementById('map-modal').style.display = 'flex';
+        }
+
+        function closeLargeMap(event) {
+            if (!event || event.target.id === 'map-modal' || event.target.classList.contains('close-map-btn')) {
+                document.getElementById('map-modal').style.display = 'none';
+                if (tutorialStep === 7) {
+                    setTutorialStep(8);
+                }
+            }
+        }
+
+        // 6. 返回上一步監聽 (步驟8)
+        function handleBackStepClick() {
+            if (tutorialStep === 8) {
+                setTutorialStep(9);
+            } else {
+                goBackStep();
+            }
+        }
+
+        function goBackStep() {
+            if (navigationHistory.length > 1) {
+                navigationHistory.pop();
+                const prevScene = navigationHistory[navigationHistory.length - 1];
+                viewer.loadScene(prevScene);
+            } else {
+                alert("已經是起點囉！");
+            }
+        }
+
+        function updateMapMarker(sceneId) {
+            const pos = sceneCoordinates[sceneId];
+            const miniMarker = document.getElementById('map-marker');
+            const largeMarker = document.getElementById('map-modal-marker');
+            
+            if (pos) {
+                miniMarker.style.left = pos.x + '%';
+                miniMarker.style.top = pos.y + '%';
+                miniMarker.style.display = 'block';
+                largeMarker.style.left = pos.x + '%';
+                largeMarker.style.top = pos.y + '%';
+                largeMarker.style.display = 'block';
+            }
+        }
+
+        window.onload = function() {
+            showInfo("counter");
+            updateMapMarker("counter");
+            document.getElementById('info-modal').classList.add('collapsed');
+            initTutorial();
+        };
+
+        function showInfo(sceneId) {
+            const info = sceneInfo[sceneId];
+            if (info) {
+                document.getElementById('modal-title').innerText = info.title;
+                document.getElementById('modal-desc').innerText = info.desc;
+            }
+        }
+    </script>
+
+</body>
+</html>
