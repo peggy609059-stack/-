@@ -84,7 +84,7 @@
             font-size: calc(1.3rem + 10px); border-radius: 6px; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); box-sizing: border-box;
             text-align: center; line-height: normal;
-            position: absolute; top: 20px; right: 0px; z-index: 25;
+            position: absolute; top: 20px; right: 20px; z-index: 25;
             background: #6c757d; color: white; border: none; cursor: pointer;
             transition: background 0.2s, opacity 0.3s ease;
         }
@@ -92,7 +92,7 @@
 
         /* 快速導覽選單樣式 */
         #quick-nav-container {
-            position: absolute; top: 20px; left: 40px; z-index: 25;
+            position: absolute; top: 20px; left: 20px; z-index: 25;
             transition: opacity 0.3s ease;
         }
         #quick-nav-select {
@@ -152,10 +152,10 @@
         .pnlm-hotspot-base { transform: scale(4); transform-origin: center center; }
         .pnlm-tooltip span { font-size: calc(1.1rem + 5px) !important; padding: 6px 12px !important; }
 
-        /* 教學提示框 */
+        /* 教學提示框 - 改為置於頂部中央（快速導覽與回到上一步正下方） */
         #interactive-tutorial-banner {
-            position: absolute; top: 130px; left: 50%; transform: translateX(-50%);
-            width: 380px; 
+            position: absolute; top: 92px; left: 50%; transform: translateX(-50%);
+            width: min(92vw, 420px); 
             background: rgba(0, 123, 255, 0.95); color: white; padding: 12px 15px;
             border-radius: 10px; z-index: 100; font-size: calc(1.1rem + 2px); font-weight: bold;
             box-shadow: 0 6px 20px rgba(0,0,0,0.6); text-align: center; border: 2px solid white;
@@ -171,13 +171,13 @@
 
         /* 加大加粗的紅色動態箭頭 */
         .big-red-arrow {
-            position: absolute; z-index: 95; font-size: 85px; font-weight: 900; color: #ff0000;
+            position: absolute; z-index: 95; font-size: 75px; font-weight: 900; color: #ff0000;
             text-shadow: 0 0 15px #ffffff, 0 0 30px #ff0000;
             animation: bounceArrow 1s infinite alternate; pointer-events: none;
         }
         @keyframes bounceArrow {
             0% { transform: translateY(-2px) scale(1); }
-            100% { transform: translateY(15px) scale(1.15); }
+            100% { transform: translateY(12px) scale(1.15); }
         }
 
         /* 環狀 360 度滑動教學提示特效 */
@@ -213,7 +213,7 @@
 </head>
 <body>
 
-    <!-- 互動教學提示橫幅 -->
+    <!-- 互動教學提示橫幅 (置於快速導覽與回到上一步正下方) -->
     <div id="interactive-tutorial-banner">
         <div class="tutorial-mode-title">【教學模式】</div>
         <div id="tutorial-text">載入中...</div>
@@ -404,6 +404,7 @@
             setTutorialStep(1);
         }
 
+        // 動態依據手機上的實際 DOM 元素計算並放置箭頭，確保跨手機不跑版
         function setTutorialStep(step) {
             tutorialStep = step;
             const textElement = document.getElementById('tutorial-text');
@@ -411,12 +412,20 @@
             arrowContainer.innerHTML = ''; // 清除舊箭頭
 
             if (step === 1) {
-                textElement.innerHTML = "<strong>如何查看空間介紹</strong><br>右下角隨時提供當前區域的詳細介紹。請您可以點擊「展開空間介紹」將其展開。";
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 75px; right: 90px;">⬇</div>`;
+                textElement.innerHTML = "<strong>如何查看空間介紹</strong><br>右下角隨時提供當前區域的詳細介紹。請點擊「展開空間介紹」！";
+                const modalEl = document.getElementById('info-modal');
+                const rect = modalEl.getBoundingClientRect();
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.top - 75}px; left: ${rect.left + rect.width / 2 - 25}px;">⬇</div>`;
             } 
             else if (step === 2) {
-                textElement.innerHTML = "左上角隨時可以關閉空間介紹。 請您點擊「關閉介紹」將其收合。";
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 270px; right: 190px;">⬇</div>`;
+                textElement.innerHTML = "左上角隨時可以關閉空間介紹。請點擊「關閉介紹」將其收合！";
+                const closeBtn = document.querySelector('#info-modal .close-btn');
+                if (closeBtn) {
+                    const rect = closeBtn.getBoundingClientRect();
+                    arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.bottom + 5}px; left: ${rect.left + rect.width / 2 - 25}px;">⬆</div>`;
+                } else {
+                    arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 120px; right: 50px;">⬇</div>`;
+                }
             }
             else if (step === 3) {
                 textElement.innerHTML = "<strong>如何環視周遭環境</strong><br>請按住畫面左右滑動，進行 360 度旋轉觀察！";
@@ -434,24 +443,38 @@
             else if (step === 4) {
                 textElement.innerHTML = "<strong>如何使用箭頭引導</strong><br>請點擊畫面中的紅色箭頭引導按鈕前往下個地點！";
                 
-                // 自動將鏡頭轉向鞋櫃方向 (yaw: 120 對應櫃檯場景中前往鞋櫃的熱點)
+                // 自動將鏡頭轉向鞋櫃方向
                 viewer.setYaw(120);
                 viewer.setPitch(0);
 
-                // 將大紅箭頭精準指向鞋櫃熱點位置
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 52%; left: 62%;">⬅</div>`;
+                // 動態尋找畫面上的熱點元素並精準指向
+                setTimeout(() => {
+                    const hotspot = document.querySelector('.pnlm-hotspot-base');
+                    if (hotspot) {
+                        const rect = hotspot.getBoundingClientRect();
+                        arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.top - 80}px; left: ${rect.left + rect.width / 2 - 25}px;">⬇</div>`;
+                    } else {
+                        arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 50%; left: 50%;">⬅</div>`;
+                    }
+                }, 300);
             }
             else if (step === 5) {
                 textElement.innerHTML = "<strong>如何使用快速導覽</strong><br>請點擊左上角的「快速導覽」選單！";
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 88px; left: 218px;">⬆</div>`;
+                const navEl = document.getElementById('quick-nav-container');
+                const rect = navEl.getBoundingClientRect();
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.bottom + 5}px; left: ${rect.left + rect.width / 2 - 25}px;">⬆</div>`;
             }
             else if (step === 6) {
                 textElement.innerHTML = "<strong>如何使用地圖定位</strong><br>請點擊左下角的小地圖將其放大！";
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 158px; left: 208px;">⬇</div>`;
+                const mapEl = document.getElementById('mini-map-container');
+                const rect = mapEl.getBoundingClientRect();
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.top - 75}px; left: ${rect.left + rect.width / 2 - 25}px;">⬇</div>`;
             }
             else if (step === 7) {
                 textElement.innerHTML = "<strong>如何回到上一步</strong><br>請點擊右上角的「回到上一步」按鈕！";
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 88px; right: 198px;">⬆</div>`;
+                const btnEl = document.querySelector('.back-step-btn');
+                const rect = btnEl.getBoundingClientRect();
+                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.bottom + 5}px; left: ${rect.left + rect.width / 2 - 25}px;">⬆</div>`;
             }
             else if (step === 8) {
                 textElement.innerHTML = "🎉 教學完成！即將帶您回到初始畫面開始正式參訪...";
@@ -493,7 +516,7 @@
             if (isDragging && tutorialStep === 3) {
                 totalMoved += Math.abs(e.clientX - startX);
                 startX = e.clientX;
-                if (totalMoved > 400) {
+                if (totalMoved > 300) {
                     isDragging = false;
                     const hint = document.getElementById('swipe-overlay-hint');
                     if (hint) hint.remove();
@@ -508,7 +531,7 @@
             if (isDragging && tutorialStep === 3) {
                 totalMoved += Math.abs(e.touches[0].clientX - startX);
                 startX = e.touches[0].clientX;
-                if (totalMoved > 400) {
+                if (totalMoved > 300) {
                     isDragging = false;
                     const hint = document.getElementById('swipe-overlay-hint');
                     if (hint) hint.remove();
