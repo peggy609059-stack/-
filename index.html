@@ -173,23 +173,35 @@
         #tutorial-text {
             font-size: calc(1.1rem + 7px);
         }
-        /* 教學上一步按鈕樣式 */
-        .tutorial-prev-btn {
-            margin-top: 8px;
-            background: rgba(255, 255, 255, 0.25);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: calc(0.9rem + 3px);
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.2s ease;
-            display: inline-block;
+        /* 詢問是否再次教學的按鈕群組 */
+        #tutorial-choice-container {
+            margin-top: 10px;
+            display: none;
+            justify-content: center;
+            gap: 15px;
         }
-        .tutorial-prev-btn:hover {
-            background: rgba(255, 255, 255, 0.4);
-            color: #ffe066;
+        .tutorial-choice-btn {
+            padding: 6px 20px;
+            border-radius: 6px;
+            font-size: calc(1rem + 4px);
+            font-weight: bold;
+            cursor: pointer;
+            border: 2px solid white;
+            transition: all 0.2s ease;
+        }
+        .btn-yes {
+            background: #28a745;
+            color: white;
+        }
+        .btn-yes:hover {
+            background: #218838;
+        }
+        .btn-no {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-no:hover {
+            background: #c82333;
         }
 
         /* 環狀 360 度滑動教學提示特效 */
@@ -225,12 +237,13 @@
 </head>
 <body>
 
-    <!-- 互動教學提示橫幅 (位於快速導覽與回到上一步正下方) -->
+    <!-- 互動教學提示橫幅 -->
     <div id="interactive-tutorial-banner">
         <div class="tutorial-mode-title">【教學模式】</div>
         <div id="tutorial-text">載入中...</div>
-        <div>
-            <button id="tutorial-prev-btn" class="tutorial-prev-btn" onclick="prevTutorialStep()" style="display: none;">↩ 教學上一步</button>
+        <div id="tutorial-choice-container">
+            <button class="tutorial-choice-btn btn-yes" onclick="handleTutorialChoice(true)">是</button>
+            <button class="tutorial-choice-btn btn-no" onclick="handleTutorialChoice(false)">否</button>
         </div>
     </div>
 
@@ -419,17 +432,17 @@
         function setTutorialStep(step) {
             tutorialStep = step;
             const textElement = document.getElementById('tutorial-text');
-            const prevBtn = document.getElementById('tutorial-prev-btn');
+            const choiceContainer = document.getElementById('tutorial-choice-container');
 
             // 移除可能存在的滑動特效覆蓋層
             const oldHint = document.getElementById('swipe-overlay-hint');
             if (oldHint) oldHint.remove();
 
-            // 控制教學上一步按鈕顯示
-            if (step > 1 && step < 9) {
-                prevBtn.style.display = 'inline-block';
+            // 控制步驟8（是否再次教學）的按鈕顯示
+            if (step === 8) {
+                choiceContainer.style.display = 'flex';
             } else {
-                prevBtn.style.display = 'none';
+                choiceContainer.style.display = 'none';
             }
 
             if (step === 1) {
@@ -466,21 +479,21 @@
                 textElement.innerHTML = "<strong>如何關閉地圖定位</strong><br>請點擊地圖右上角的✖";
             }
             else if (step === 8) {
-                textElement.innerHTML = "<strong>如何回到上一步</strong><br>請點擊右上角的『回到上一步』按鈕！";
-            }
-            else if (step === 9) {
-                textElement.innerHTML = "🎉 教學完成！即將帶您回到初始畫面開始正式參訪...";
-                setTimeout(() => {
-                    document.getElementById('interactive-tutorial-banner').style.display = 'none';
-                    viewer.loadScene("counter");
-                }, 2500);
+                textElement.innerHTML = "🎉 教學完成！<br>是否要再次進行教學？";
             }
         }
 
-        // 教學模式：回到前一個步驟
-        function prevTutorialStep() {
-            if (tutorialStep > 1) {
-                setTutorialStep(tutorialStep - 1);
+        // 步驟8：處理是否再次教學的按鈕點擊
+        function handleTutorialChoice(isYes) {
+            if (isYes) {
+                // 點擊「是」：重置回到初始值與第一步
+                viewer.loadScene("counter");
+                navigationHistory = ["counter"];
+                setTutorialStep(1);
+            } else {
+                // 點擊「否」：隱藏教學橫幅，正式開始參訪
+                document.getElementById('interactive-tutorial-banner').style.display = 'none';
+                viewer.loadScene("counter");
             }
         }
 
@@ -588,13 +601,9 @@
             }
         }
 
-        // 6. 返回上一步監聽 (步驟8)
+        // 6. 返回上一步監聽
         function handleBackStepClick() {
-            if (tutorialStep === 8) {
-                setTutorialStep(9);
-            } else {
-                goBackStep();
-            }
+            goBackStep();
         }
 
         function goBackStep() {
