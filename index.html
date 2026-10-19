@@ -395,10 +395,10 @@
             const textElement = document.getElementById('tutorial-text');
 
             if (step === 1) {
-                textElement.innerHTML = "<strong>如何查看空間介紹</strong><br>右下角隨時提供當前區域的詳細介紹。請點擊「展開空間介紹」！";
+                textElement.innerHTML = "<strong>如何查看空間介紹</strong><br>右下角隨時提供當前區域的詳細介紹。請點擊右下角的『展開空間介紹』！";
             } 
             else if (step === 2) {
-                textElement.innerHTML = "<strong>如何關閉空間介紹</strong><br>左上角隨時可以關閉空間介紹。請點擊「關閉介紹」將其收合！";
+                textElement.innerHTML = "<strong>如何關閉空間介紹</strong><br>左上角隨時可以關閉空間介紹。請點擊『關閉介紹』將其收合！";
             }
             else if (step === 3) {
                 textElement.innerHTML = "<strong>如何環視周遭環境</strong><br>請按住畫面左右滑動，進行 360 度旋轉觀察！";
@@ -414,20 +414,23 @@
                 document.body.appendChild(swipeDiv);
             }
             else if (step === 4) {
-                textElement.innerHTML = "<strong>如何使用箭頭引導</strong><br>請點擊畫面中的紅色箭頭引導按鈕前往下個地點！";
+                textElement.innerHTML = "<strong>如何前往下一個地區</strong><br>請點擊畫面中的箭頭引導按鈕前往下個地點！";
                 viewer.setYaw(120);
                 viewer.setPitch(0);
             }
             else if (step === 5) {
-                textElement.innerHTML = "<strong>如何使用快速導覽</strong><br>請點擊左上角的「快速導覽」選單！";
+                textElement.innerHTML = "<strong>如何使用快速導覽</strong><br>請點擊左上角的『快速導覽』選單，並點選其中一個地點。";
             }
             else if (step === 6) {
-                textElement.innerHTML = "<strong>如何使用地圖定位</strong><br>請點擊左下角的小地圖將其放大！";
+                textElement.innerHTML = "<strong>如何使用地圖定位</strong><br>請點擊左下角的小地圖將其放大！地圖點開後可以放大檢視";
             }
             else if (step === 7) {
-                textElement.innerHTML = "<strong>如何回到上一步</strong><br>請點擊右上角的「回到上一步」按鈕！";
+                textElement.innerHTML = "<strong>如何關閉地圖定位</strong><br>請點擊地圖右上角的✖";
             }
             else if (step === 8) {
+                textElement.innerHTML = "<strong>如何回到上一步</strong><br>請點擊右上角的『回到上一步』按鈕！";
+            }
+            else if (step === 9) {
                 textElement.innerHTML = "🎉 教學完成！即將帶您回到初始畫面開始正式參訪...";
                 setTimeout(() => {
                     document.getElementById('interactive-tutorial-banner').style.display = 'none';
@@ -534,13 +537,16 @@
         function closeLargeMap(event) {
             if (!event || event.target.id === 'map-modal' || event.target.classList.contains('close-map-btn')) {
                 document.getElementById('map-modal').style.display = 'none';
+                if (tutorialStep === 7) {
+                    setTutorialStep(8);
+                }
             }
         }
 
-        // 6. 返回上一步監聽 (最後步驟)
+        // 6. 返回上一步監聽 (步驟8)
         function handleBackStepClick() {
-            if (tutorialStep === 7) {
-                setTutorialStep(8);
+            if (tutorialStep === 8) {
+                setTutorialStep(9);
             } else {
                 goBackStep();
             }
