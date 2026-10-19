@@ -422,10 +422,10 @@
                 const closeBtn = document.querySelector('#info-modal .close-btn');
                 if (closeBtn) {
                     const rect = closeBtn.getBoundingClientRect();
-                    // 將箭頭精準指向「關閉介紹」按鈕的上方，讓箭頭朝下指
+                    // 完美對應右下角展開面板左上角的「關閉介紹」按鈕
                     arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.top - 75}px; left: ${rect.left + rect.width / 2 - 25}px;">⬇</div>`;
                 } else {
-                    arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 150px; left: 50px;">⬇</div>`;
+                    arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 220px; right: 350px;">⬇</div>`;
                 }
             }
             else if (step === 3) {
@@ -448,14 +448,13 @@
                 viewer.setYaw(120);
                 viewer.setPitch(0);
 
-                // 延遲抓取熱點 DOM，確保環景畫面完全載入並產生熱點元素，解決「沒有箭頭」的問題
+                // 確保環景渲染完成後精準抓取熱點箭頭位置
                 setTimeout(() => {
                     const hotspot = document.querySelector('.pnlm-hotspot-base');
                     if (hotspot) {
                         const rect = hotspot.getBoundingClientRect();
                         arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.top - 75}px; left: ${rect.left + rect.width / 2 - 25}px;">⬇</div>`;
                     } else {
-                        // 備用防護：若找不到熱點元素時顯示於畫面中央
                         arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">⬅</div>`;
                     }
                 }, 400);
@@ -624,7 +623,7 @@
             }
         }
 
-        window.onload = function() {
+    window.onload = function() {
             showInfo("counter");
             updateMapMarker("counter");
             document.getElementById('info-modal').classList.add('collapsed');
