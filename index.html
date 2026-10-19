@@ -422,10 +422,10 @@
                 const closeBtn = document.querySelector('#info-modal .close-btn');
                 if (closeBtn) {
                     const rect = closeBtn.getBoundingClientRect();
-                    // 完美對應右下角展開面板左上角的「關閉介紹」按鈕
+                    // 完美對應展開後位於畫面中央偏下、左側的「關閉介紹」按鈕
                     arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.top - 75}px; left: ${rect.left + rect.width / 2 - 25}px;">⬇</div>`;
                 } else {
-                    arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 220px; right: 350px;">⬇</div>`;
+                    arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 55vh; left: 45vw;">⬇</div>`;
                 }
             }
             else if (step === 3) {
@@ -623,7 +623,7 @@
             }
         }
 
-    window.onload = function() {
+        window.onload = function() {
             showInfo("counter");
             updateMapMarker("counter");
             document.getElementById('info-modal').classList.add('collapsed');
