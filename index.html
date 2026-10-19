@@ -422,9 +422,10 @@
                 const closeBtn = document.querySelector('#info-modal .close-btn');
                 if (closeBtn) {
                     const rect = closeBtn.getBoundingClientRect();
-                    arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.bottom + 5}px; left: ${rect.left + rect.width / 2 - 25}px;">⬆</div>`;
+                    // 將箭頭精準指向「關閉介紹」按鈕的上方，讓箭頭朝下指
+                    arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.top - 75}px; left: ${rect.left + rect.width / 2 - 25}px;">⬇</div>`;
                 } else {
-                    arrowContainer.innerHTML = `<div class="big-red-arrow" style="bottom: 120px; right: 50px;">⬇</div>`;
+                    arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 150px; left: 50px;">⬇</div>`;
                 }
             }
             else if (step === 3) {
@@ -447,16 +448,17 @@
                 viewer.setYaw(120);
                 viewer.setPitch(0);
 
-                // 動態尋找畫面上的熱點元素並精準指向
+                // 延遲抓取熱點 DOM，確保環景畫面完全載入並產生熱點元素，解決「沒有箭頭」的問題
                 setTimeout(() => {
                     const hotspot = document.querySelector('.pnlm-hotspot-base');
                     if (hotspot) {
                         const rect = hotspot.getBoundingClientRect();
-                        arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.top - 80}px; left: ${rect.left + rect.width / 2 - 25}px;">⬇</div>`;
+                        arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.top - 75}px; left: ${rect.left + rect.width / 2 - 25}px;">⬇</div>`;
                     } else {
-                        arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 50%; left: 50%;">⬅</div>`;
+                        // 備用防護：若找不到熱點元素時顯示於畫面中央
+                        arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">⬅</div>`;
                     }
-                }, 300);
+                }, 400);
             }
             else if (step === 5) {
                 textElement.innerHTML = "<strong>如何使用快速導覽</strong><br>請點擊左上角的「快速導覽」選單！";
