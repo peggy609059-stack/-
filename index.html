@@ -151,76 +151,9 @@
 
         .pnlm-hotspot-base { transform: scale(4); transform-origin: center center; }
         .pnlm-tooltip span { font-size: calc(1.1rem + 5px) !important; padding: 6px 12px !important; }
-
-        /* 教學提示框 - 固定在快速導覽與回到上一步正下方 */
-        #interactive-tutorial-banner {
-            position: absolute; top: 92px; left: 50%; transform: translateX(-50%);
-            width: min(92vw, 420px); 
-            background: rgba(0, 123, 255, 0.95); color: white; padding: 12px 15px;
-            border-radius: 10px; z-index: 100; font-size: calc(1.1rem + 2px); font-weight: bold;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.6); text-align: center; border: 2px solid white;
-            pointer-events: none; box-sizing: border-box; line-height: 1.4;
-        }
-        .tutorial-mode-title {
-            font-size: calc(1.2rem + 4px);
-            color: #ffe066;
-            margin-bottom: 4px;
-            font-weight: 900;
-            letter-spacing: 1px;
-        }
-
-        /* 加大加粗的紅色動態箭頭 */
-        .big-red-arrow {
-            position: absolute; z-index: 95; font-size: 75px; font-weight: 900; color: #ff0000;
-            text-shadow: 0 0 15px #ffffff, 0 0 30px #ff0000;
-            animation: bounceArrow 1s infinite alternate; pointer-events: none;
-        }
-        @keyframes bounceArrow {
-            0% { transform: translateY(-2px) scale(1); }
-            100% { transform: translateY(12px) scale(1.15); }
-        }
-
-        /* 環狀 360 度滑動教學提示特效 */
-        .swipe-hint-overlay {
-            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 90; display: flex; justify-content: center; align-items: center;
-            pointer-events: none; background: rgba(0, 0, 0, 0.25);
-        }
-        .circular-swipe-guide {
-            display: flex; flex-direction: column; align-items: center;
-            background: rgba(0, 0, 0, 0.75); padding: 25px 40px; border-radius: 20px;
-            border: 3px dashed #ffe066; box-shadow: 0 0 30px rgba(255,224,102,0.5);
-            animation: pulseBox 1.5s infinite ease-in-out;
-        }
-        .circular-icon {
-            font-size: 70px; color: #ffe066;
-            animation: spinCircular 3s infinite linear;
-            margin-bottom: 10px;
-        }
-        .circular-text {
-            font-size: calc(1.3rem + 4px); color: #fff; font-weight: bold; letter-spacing: 1px;
-        }
-        @keyframes spinCircular {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes pulseBox {
-            0% { transform: scale(1); opacity: 0.85; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.85; }
-        }
     </style>
 </head>
 <body>
-
-    <!-- 互動教學提示橫幅 (位於快速導覽與回到上一步正下方) -->
-    <div id="interactive-tutorial-banner">
-        <div class="tutorial-mode-title">【教學模式】</div>
-        <div id="tutorial-text">載入中...</div>
-    </div>
-
-    <!-- 動態大紅箭頭容器 -->
-    <div id="dynamic-arrow-container"></div>
 
     <!-- 快速導覽選單 -->
     <div id="quick-nav-container">
@@ -243,7 +176,7 @@
     </div>
 
     <!-- 左下角小地圖 -->
-    <div id="mini-map-container" onclick="handleMiniMapClick()" title="點擊放大全圖">
+    <div id="mini-map-container" onclick="openLargeMap()" title="點擊放大全圖">
         <div class="map-zoom-icon">🔍</div>
         <img id="mini-map-img" src="1791951164235.jpg" alt="小地圖" onerror="this.src='https://placehold.co/180x120/333/fff?text=Map'">
         <div id="map-marker" class="map-marker"></div>
@@ -262,7 +195,7 @@
     </div>
 
     <!-- 回到上一步按鈕 -->
-    <button class="back-step-btn" onclick="handleBackStepClick()">回到上一步</button>
+    <button class="back-step-btn" onclick="goBackStep()">回到上一步</button>
 
     <!-- 空間介紹彈跳視窗 -->
     <div id="info-modal" onclick="checkInfoToggle(event)">
@@ -395,161 +328,26 @@
         });
 
         let navigationHistory = ["counter"];
-        let tutorialStep = 1;
-        let totalMoved = 0;
-        let isDragging = false;
-        let startX = 0;
-
-        function initTutorial() {
-            setTutorialStep(1);
-        }
-
-        // 動態依據手機上的實際 DOM 元素計算並放置箭頭，確保跨手機不跑版
-        function setTutorialStep(step) {
-            tutorialStep = step;
-            const textElement = document.getElementById('tutorial-text');
-            const arrowContainer = document.getElementById('dynamic-arrow-container');
-            arrowContainer.innerHTML = ''; // 清除舊箭頭
-
-            if (step === 1) {
-                textElement.innerHTML = "<strong>如何查看空間介紹</strong><br>右下角隨時提供當前區域的詳細介紹。請點擊「展開空間介紹」！";
-                const modalEl = document.getElementById('info-modal');
-                const rect = modalEl.getBoundingClientRect();
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.top - 75}px; left: ${rect.left + rect.width / 2 - 25}px;">⬇</div>`;
-            } 
-            else if (step === 2) {
-                textElement.innerHTML = "<strong>如何關閉空間介紹</strong><br>左上角隨時可以關閉空間介紹。請點擊「關閉介紹」將其收合！";
-                const closeBtn = document.querySelector('#info-modal .close-btn');
-                if (closeBtn) {
-                    const rect = closeBtn.getBoundingClientRect();
-                    // 完美對應展開後位於畫面中央偏下、左側的「關閉介紹」按鈕
-                    arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.top - 75}px; left: ${rect.left + rect.width / 2 - 25}px;">⬇</div>`;
-                } else {
-                    arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 55vh; left: 45vw;">⬇</div>`;
-                }
-            }
-            else if (step === 3) {
-                textElement.innerHTML = "<strong>如何環視周遭環境</strong><br>請按住畫面左右滑動，進行 360 度旋轉觀察！";
-                const swipeDiv = document.createElement('div');
-                swipeDiv.className = 'swipe-hint-overlay';
-                swipeDiv.id = 'swipe-overlay-hint';
-                swipeDiv.innerHTML = `
-                    <div class="circular-swipe-guide">
-                        <div class="circular-icon">🔄</div>
-                        <div class="circular-text">請左右拖曳畫面 360° 環視</div>
-                    </div>
-                `;
-                document.body.appendChild(swipeDiv);
-            }
-            else if (step === 4) {
-                textElement.innerHTML = "<strong>如何使用箭頭引導</strong><br>請點擊畫面中的紅色箭頭引導按鈕前往下個地點！";
-                
-                // 自動將鏡頭轉向鞋櫃方向
-                viewer.setYaw(120);
-                viewer.setPitch(0);
-
-                // 確保環景渲染完成後精準抓取熱點箭頭位置
-                setTimeout(() => {
-                    const hotspot = document.querySelector('.pnlm-hotspot-base');
-                    if (hotspot) {
-                        const rect = hotspot.getBoundingClientRect();
-                        arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.top - 75}px; left: ${rect.left + rect.width / 2 - 25}px;">⬇</div>`;
-                    } else {
-                        arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">⬅</div>`;
-                    }
-                }, 400);
-            }
-            else if (step === 5) {
-                textElement.innerHTML = "<strong>如何使用快速導覽</strong><br>請點擊左上角的「快速導覽」選單！";
-                const navEl = document.getElementById('quick-nav-container');
-                const rect = navEl.getBoundingClientRect();
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.bottom + 5}px; left: ${rect.left + rect.width / 2 - 25}px;">⬆</div>`;
-            }
-            else if (step === 6) {
-                textElement.innerHTML = "<strong>如何使用地圖定位</strong><br>請點擊左下角的小地圖將其放大！";
-                const mapEl = document.getElementById('mini-map-container');
-                const rect = mapEl.getBoundingClientRect();
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.top - 75}px; left: ${rect.left + rect.width / 2 - 25}px;">⬇</div>`;
-            }
-            else if (step === 7) {
-                textElement.innerHTML = "<strong>如何回到上一步</strong><br>請點擊右上角的「回到上一步」按鈕！";
-                const btnEl = document.querySelector('.back-step-btn');
-                const rect = btnEl.getBoundingClientRect();
-                arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.bottom + 5}px; left: ${rect.left + rect.width / 2 - 25}px;">⬆</div>`;
-            }
-            else if (step === 8) {
-                textElement.innerHTML = "🎉 教學完成！即將帶您回到初始畫面開始正式參訪...";
-                setTimeout(() => {
-                    document.getElementById('interactive-tutorial-banner').style.display = 'none';
-                    viewer.loadScene("counter");
-                }, 2500);
-            }
-        }
 
         // 1. 空間介紹點擊監聽
         function toggleInfoModal(event) {
             if (event) event.stopPropagation();
             const modal = document.getElementById('info-modal');
-            const wasCollapsed = modal.classList.contains('collapsed');
-            
-            if (tutorialStep === 1 && wasCollapsed) {
-                document.getElementById('dynamic-arrow-container').innerHTML = '';
-                setTutorialStep(2);
-            } 
-            else if (tutorialStep === 2 && !wasCollapsed) {
-                document.getElementById('dynamic-arrow-container').innerHTML = '';
-                setTutorialStep(3);
-            }
-
             modal.classList.toggle('collapsed');
         }
 
         function checkInfoToggle(event) {
             const modal = document.getElementById('info-modal');
-            if (modal.classList.contains('collapsed') && tutorialStep === 1) {
+            if (modal.classList.contains('collapsed')) {
                 toggleInfoModal(event);
             }
         }
 
-        // 2. 監聽畫面滑動 (步驟3)
-        document.getElementById('panorama').addEventListener('mousedown', (e) => { if (tutorialStep === 3) { isDragging = true; startX = e.clientX; } });
-        window.addEventListener('mousemove', (e) => {
-            if (isDragging && tutorialStep === 3) {
-                totalMoved += Math.abs(e.clientX - startX);
-                startX = e.clientX;
-                if (totalMoved > 300) {
-                    isDragging = false;
-                    const hint = document.getElementById('swipe-overlay-hint');
-                    if (hint) hint.remove();
-                    setTutorialStep(4);
-                }
-            }
-        });
-        window.addEventListener('mouseup', () => { isDragging = false; });
-
-        document.getElementById('panorama').addEventListener('touchstart', (e) => { if (tutorialStep === 3) { isDragging = true; startX = e.touches[0].clientX; } });
-        window.addEventListener('touchmove', (e) => {
-            if (isDragging && tutorialStep === 3) {
-                totalMoved += Math.abs(e.touches[0].clientX - startX);
-                startX = e.touches[0].clientX;
-                if (totalMoved > 300) {
-                    isDragging = false;
-                    const hint = document.getElementById('swipe-overlay-hint');
-                    if (hint) hint.remove();
-                    setTutorialStep(4);
-                }
-            }
-        });
-
-        // 3. 箭頭引導按鈕點擊監聽 (步驟4)
+        // 2. 景點切換與歷史紀錄監聽
         viewer.on('scenechange', function(sceneId) {
             updateMapMarker(sceneId);
             if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
                 navigationHistory.push(sceneId);
-            }
-
-            if (tutorialStep === 4 && sceneId === "shoes") {
-                setTutorialStep(5);
             }
 
             const info = sceneInfo[sceneId];
@@ -559,26 +357,14 @@
             }
         });
 
-        // 4. 快速導覽選單監聽 (步驟5)
+        // 3. 快速導覽選單監聽
         function quickJump(value) {
             if (!value) return;
-            if (tutorialStep === 5) {
-                setTutorialStep(6);
-            }
             viewer.loadScene(value);
             document.getElementById('quick-nav-select').selectedIndex = 0;
         }
 
-        // 5. 地圖點擊與放大監聽 (步驟6)
-        function handleMiniMapClick() {
-            if (tutorialStep === 6) {
-                openLargeMap();
-                setTutorialStep(7);
-            } else {
-                openLargeMap();
-            }
-        }
-
+        // 4. 地圖放大與關閉
         function openLargeMap() {
             document.getElementById('map-modal').style.display = 'flex';
         }
@@ -589,15 +375,7 @@
             }
         }
 
-        // 6. 返回上一步監聽 (最後步驟)
-        function handleBackStepClick() {
-            if (tutorialStep === 7) {
-                setTutorialStep(8);
-            } else {
-                goBackStep();
-            }
-        }
-
+        // 5. 返回上一步
         function goBackStep() {
             if (navigationHistory.length > 1) {
                 navigationHistory.pop();
@@ -627,7 +405,6 @@
             showInfo("counter");
             updateMapMarker("counter");
             document.getElementById('info-modal').classList.add('collapsed');
-            initTutorial();
         };
 
         function showInfo(sceneId) {
