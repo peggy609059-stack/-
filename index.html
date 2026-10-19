@@ -152,7 +152,7 @@
         .pnlm-hotspot-base { transform: scale(4); transform-origin: center center; }
         .pnlm-tooltip span { font-size: calc(1.1rem + 5px) !important; padding: 6px 12px !important; }
 
-        /* 教學提示框 - 改為置於頂部中央（快速導覽與回到上一步正下方） */
+        /* 教學提示框 - 固定在快速導覽與回到上一步正下方 */
         #interactive-tutorial-banner {
             position: absolute; top: 92px; left: 50%; transform: translateX(-50%);
             width: min(92vw, 420px); 
@@ -213,7 +213,7 @@
 </head>
 <body>
 
-    <!-- 互動教學提示橫幅 (置於快速導覽與回到上一步正下方) -->
+    <!-- 互動教學提示橫幅 (位於快速導覽與回到上一步正下方) -->
     <div id="interactive-tutorial-banner">
         <div class="tutorial-mode-title">【教學模式】</div>
         <div id="tutorial-text">載入中...</div>
@@ -418,7 +418,7 @@
                 arrowContainer.innerHTML = `<div class="big-red-arrow" style="top: ${rect.top - 75}px; left: ${rect.left + rect.width / 2 - 25}px;">⬇</div>`;
             } 
             else if (step === 2) {
-                textElement.innerHTML = "左上角隨時可以關閉空間介紹。請點擊「關閉介紹」將其收合！";
+                textElement.innerHTML = "<strong>如何關閉空間介紹</strong><br>左上角隨時可以關閉空間介紹。請點擊「關閉介紹」將其收合！";
                 const closeBtn = document.querySelector('#info-modal .close-btn');
                 if (closeBtn) {
                     const rect = closeBtn.getBoundingClientRect();
