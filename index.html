@@ -12,13 +12,19 @@
 
         /* 教學模式橫幅樣式 */
         #tutorial-banner {
-            position: absolute; top: calc(100px - 3vw); left: 50%; transform: translateX(-50%);
+            position: absolute; top: 100px; left: 50%; transform: translateX(-50%);
             z-index: 100; background: rgba(0, 0, 0, 0.88); color: white;
             padding: 18px 28px; border-radius: 12px; max-width: 650px; width: 90%;
             box-shadow: 0 8px 25px rgba(0,0,0,0.6); border: 2px solid #007bff;
             display: none; text-align: center; box-sizing: border-box;
             animation: fadeIn 0.3s ease;
+            transition: top 0.2s ease; /* 增加平滑過渡 */
         }
+        /* 針對第4步驟與第7步驟設定往上移動2 (100px - 2px = 98px) */
+        #tutorial-banner.step-up-2 {
+            top: 98px;
+        }
+
         @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -10px); } to { opacity: 1; transform: translate(-50%, 0); } }
         #tutorial-title { font-size: calc(1.3rem + 5px); color: #4dabf7; margin-bottom: 8px; font-weight: bold; }
         #tutorial-desc { font-size: calc(2.1rem ); line-height: 1.5; margin-bottom: 15px; }
@@ -576,12 +582,12 @@
             document.getElementById('tutorial-title').innerText = stepData.title;
             document.getElementById('tutorial-desc').innerHTML = stepData.desc;
 
-            // 針對步驟 5 和步驟 8 設定特定的 top 位置不動，其餘步驟往上移 3vw
+            // 處理第 4 步與第 7 步的框框往上移動 2 像素
             const banner = document.getElementById('tutorial-banner');
-            if (currentTutorialStep === 5 || currentTutorialStep === 8) {
-                banner.style.top = '100px';
+            if (currentTutorialStep === 4 || currentTutorialStep === 7) {
+                banner.classList.add('step-up-2');
             } else {
-                banner.style.top = 'calc(100px - 3vw)';
+                banner.classList.remove('step-up-2');
             }
 
             const btnGroup = document.getElementById('tutorial-btn-group');
@@ -739,96 +745,6 @@
             document.getElementById('info-modal').style.opacity = '1';
             document.getElementById('info-modal').style.pointerEvents = 'auto';
         }
-
-        function returnToClass() {
-            closeFlatView();
-            viewer.loadScene("Attend class");
-        }
-
-        function openLargeMap() {
-            document.getElementById('map-modal').style.display = 'flex';
-        }
-
-        function closeLargeMap(event) {
-            if (!event || event.target.id === 'map-modal' || event.target.classList.contains('close-map-btn')) {
-                document.getElementById('map-modal').style.display = 'none';
-            }
-        }
-
-        function toggleInfoModal(event) {
-            event.stopPropagation();
-            const modal = document.getElementById('info-modal');
-            modal.classList.toggle('collapsed');
-        }
-
-        function checkInfoToggle(event) {
-            const modal = document.getElementById('info-modal');
-            if (modal.classList.contains('collapsed')) {
-                modal.classList.remove('collapsed');
-            }
-        }
-
-        function quickJump(sceneId) {
-            if (sceneId) {
-                viewer.loadScene(sceneId);
-                document.getElementById('quick-nav-select').selectedIndex = 0;
-            }
-        }
-
-        function goBackStep() {
-            if (navigationHistory.length > 1) {
-                navigationHistory.pop();
-                let previousScene = navigationHistory[navigationHistory.length - 1];
-                viewer.loadScene(previousScene);
-            } else {
-                alert("已經是起點囉！");
-            }
-        }
-
-        viewer.on('scenechange', function(sceneId) {
-            if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
-                navigationHistory.push(sceneId);
-            }
-            const info = sceneInfo[sceneId];
-            const modal = document.getElementById('info-modal');
-            if (info) {
-                document.getElementById('modal-title').innerText = info.title;
-                document.getElementById('modal-desc').innerHTML = info.desc;
-                if (info.keepOriginal) {
-                    modal.classList.add('keep-original-size');
-                } else {
-                    modal.classList.remove('keep-original-size');
-                }
-            }
-
-            const coord = sceneCoordinates[sceneId];
-            if (coord) {
-                const marker = document.getElementById('map-marker');
-                const modalMarker = document.getElementById('map-modal-marker');
-                marker.style.left = coord.x + '%';
-                marker.style.top = coord.y + '%';
-                modalMarker.style.left = coord.x + '%';
-                modalMarker.style.top = coord.y + '%';
-            }
-        });
-
-        // 啟動時先載入預設的畫面資訊
-        window.addEventListener('DOMContentLoaded', () => {
-            const defaultInfo = sceneInfo["counter"];
-            if (defaultInfo) {
-                document.getElementById('modal-title').innerText = defaultInfo.title;
-                document.getElementById('modal-desc').innerHTML = defaultInfo.desc;
-            }
-            const defaultCoord = sceneCoordinates["counter"];
-            if (defaultCoord) {
-                document.getElementById('map-marker').style.left = defaultCoord.x + '%';
-                document.getElementById('map-marker').style.top = defaultCoord.y + '%';
-                document.getElementById('map-modal-marker').style.left = defaultCoord.x + '%';
-                document.getElementById('map-modal-marker').style.top = defaultCoord.y + '%';
-            }
-            // 頁面載入後自動開啟教學模式 (可依需求註解)
-            // startTutorial();
-        });
     </script>
 </body>
 </html>
