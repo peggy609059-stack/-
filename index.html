@@ -17,7 +17,6 @@
             padding: 18px 28px; border-radius: 12px; max-width: 650px; width: 90%;
             box-shadow: 0 8px 25px rgba(0,0,0,0.6); border: 2px solid #007bff;
             display: none; text-align: center; box-sizing: border-box;
-            transition: top 0.2s ease;
             animation: fadeIn 0.3s ease;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -10px); } to { opacity: 1; transform: translate(-50%, 0); } }
@@ -525,7 +524,6 @@
                 title: "導覽教學步驟 4",
                 desc: "如何前往下一個地區。請點擊畫面中的箭頭引導按鈕⬆️前往下個地點！",
                 showNextBtn: false,
-                topOffset: -2, // 往上移動 2
                 onEnter: () => {
                     document.getElementById('drag-guide-overlay').style.display = 'none';
                     viewer.setYaw(120);
@@ -544,8 +542,7 @@
             7: {
                 title: "導覽教學步驟 7",
                 desc: "如何關閉地圖定位。請點擊地圖右上角的✖或點擊空白處",
-                showNextBtn: false,
-                topOffset: -2 // 往上移動 2
+                showNextBtn: false
             },
             8: {
                 title: "導覽教學步驟 8",
@@ -578,10 +575,10 @@
             document.getElementById('tutorial-title').innerText = stepData.title;
             document.getElementById('tutorial-desc').innerHTML = stepData.desc;
 
-            // 處理步驟 4 與 7 的往上移動 2（微調 top 屬性）
+            // 針對第 4 步驟與第 7 步驟將框框（#tutorial-banner）位置往上移動 0.5（約 50px 微調）
             const banner = document.getElementById('tutorial-banner');
-            if (stepData.topOffset) {
-                banner.style.top = (100 + (stepData.topOffset * 10)) + 'px'; // 依數值往上調整
+            if (currentTutorialStep === 4 || currentTutorialStep === 7) {
+                banner.style.top = '50px';
             } else {
                 banner.style.top = '100px';
             }
@@ -746,106 +743,6 @@
             closeFlatView();
             viewer.loadScene("Attend class");
         }
-
-        function goBackStep() {
-            if (navigationHistory.length > 1) {
-                navigationHistory.pop();
-                let previousScene = navigationHistory[navigationHistory.length - 1];
-                viewer.loadScene(previousScene);
-                updateMiniMap(previousScene);
-                updateInfoModal(previousScene);
-            } else {
-                alert("已經是起點囉！");
-            }
-        }
-
-        function quickJump(sceneId) {
-            if (!sceneId) return;
-            if (sceneId === "openKitchen") {
-                viewer.loadScene("Attend class");
-                setTimeout(() => { openKitchenFlatView(); }, 300);
-                return;
-            }
-            if (sceneId === "openEscape") {
-                viewer.loadScene("Attend class");
-                setTimeout(() => { openEscapeWashFlatView(); }, 300);
-                return;
-            }
-            viewer.loadScene(sceneId);
-            navigationHistory.push(sceneId);
-            updateMiniMap(sceneId);
-            updateInfoModal(sceneId);
-            document.getElementById('quick-nav-select').selectedIndex = 0;
-        }
-
-        function updateMiniMap(sceneId) {
-            const coords = sceneCoordinates[sceneId];
-            if (coords) {
-                const marker = document.getElementById('map-marker');
-                marker.style.left = coords.x + '%';
-                marker.style.top = coords.y + '%';
-                const modalMarker = document.getElementById('map-modal-marker');
-                if(modalMarker) {
-                    modalMarker.style.left = coords.x + '%';
-                    modalMarker.style.top = coords.y + '%';
-                }
-            }
-        }
-
-        function updateInfoModal(sceneId) {
-            const info = sceneInfo[sceneId];
-            const modal = document.getElementById('info-modal');
-            if (info) {
-                document.getElementById('modal-title').innerText = info.title;
-                document.getElementById('modal-desc').innerText = info.desc;
-                if (info.keepOriginal) {
-                    modal.classList.add('keep-original-size');
-                } else {
-                    modal.classList.remove('keep-original-size');
-                }
-            }
-        }
-
-        function toggleInfoModal(event) {
-            event.stopPropagation();
-            const modal = document.getElementById('info-modal');
-            modal.classList.toggle('collapsed');
-        }
-
-        function checkInfoToggle(event) {
-            const modal = document.getElementById('info-modal');
-            if (modal.classList.contains('collapsed')) {
-                modal.classList.remove('collapsed');
-            }
-        }
-
-        function openLargeMap() {
-            document.getElementById('map-modal').style.display = 'flex';
-        }
-
-        function closeLargeMap(event) {
-            document.getElementById('map-modal').style.display = 'none';
-        }
-
-        viewer.on('scenechange', function(sceneId) {
-            if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
-                navigationHistory.push(sceneId);
-            }
-            updateMiniMap(sceneId);
-            updateInfoModal(sceneId);
-
-            // 教學模式中若切換場景符合，則推進步驟
-            if (currentTutorialStep === 4 && sceneId === "shoes") {
-                nextTutorialStep();
-            }
-        });
-
-        // 初始化載入第一個場景資訊與地圖座標
-        window.addEventListener('DOMContentLoaded', () => {
-            updateMiniMap("counter");
-            updateInfoModal("counter");
-            // 若需要自動開啟教學，可在此呼叫 startTutorial();
-        });
     </script>
 </body>
 </html>
