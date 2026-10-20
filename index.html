@@ -4,197 +4,247 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>智慧日照中心 - 實境模擬參訪系統</title>
+    <!-- Pannellum 360 Viewer CSS & JS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    <!-- FontAwesome 圖示 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    
     <style>
-        body { margin: 0; font-family: "Microsoft JhengHei", sans-serif; overflow: hidden; background: #000; font-size: calc(1rem + 5px); }
-        #panorama { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            font-family: "Microsoft JhengHei", -apple-system, BlinkMacSystemFont, Roboto, sans-serif; 
+            overflow: hidden; 
+            background: #111; 
+            color: #333;
+            user-select: none;
+        }
 
-        /* 平面圖片檢視器容器樣式 */
+        #panorama { 
+            width: 100vw; 
+            height: 100vh; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            z-index: 1;
+        }
+
+        /* ===== 平面圖片檢視器容器樣式 ===== */
         #flat-view-container {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.92); z-index: 20; display: none;
+            background: rgba(0, 0, 0, 0.92); z-index: 80; display: none;
             justify-content: center; align-items: center; flex-direction: column;
             padding: 20px; box-sizing: border-box;
+            backdrop-filter: blur(8px);
         }
         #flat-view-container img {
-            max-width: 80vw; max-height: 55vh; border-radius: 8px;
+            max-width: 80vw; max-height: 55vh; border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8); object-fit: contain;
             border: 2px solid rgba(255,255,255,0.2);
             margin-bottom: 15px;
         }
         #flat-detail-panel {
             background: rgba(255, 255, 255, 0.95);
-            color: #333; padding: 15px 25px; border-radius: 8px;
+            color: #333; padding: 20px 25px; border-radius: 12px;
             max-width: 75vw; width: 700px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            border-left: 5px solid #007bff; box-sizing: border-box; position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border-left: 6px solid #007bff; position: relative;
         }
-        #flat-detail-panel h3 { margin: 0 0 8px 0; font-size: calc(1.7rem + 10px); color: #007bff; }
-        #flat-detail-panel p { margin: 0; font-size: calc(1.6rem + 10px); line-height: 1.5; color: #555; }
-        
-        #flat-detail-panel.keep-original-size h3 { font-size: 1.7rem; }
-        #flat-detail-panel.keep-original-size p { font-size: 1.6rem; }
+        #flat-detail-panel h3 { margin: 0 0 10px 0; font-size: 1.8rem; color: #007bff; }
+        #flat-detail-panel p { margin: 0; font-size: 1.2rem; line-height: 1.6; color: #444; }
 
         .back-to-class-btn {
-            background: #dc3545; color: white; border: none; padding: 10px 18px;
-            font-size: calc(1.2rem + 5px); border-radius: 6px; cursor: pointer; font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s;
-            margin-top: 15px; display: inline-block;
+            background: #dc3545; color: white; border: none; padding: 12px 24px;
+            font-size: 1.2rem; border-radius: 8px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4); transition: all 0.2s;
+            margin-top: 15px; display: inline-flex; align-items: center; gap: 8px;
         }
-        .back-to-class-btn:hover { background: #c82333; }
+        .back-to-class-btn:hover { background: #c82333; transform: translateY(-2px); }
 
-        /* 空間介紹區域（右下角） */
+        /* ===== 空間介紹區域（右下角） ===== */
         #info-modal {
             position: absolute; bottom: 20px; right: 20px; z-index: 30;
-            background: rgba(255, 255, 255, 0.95); color: #333; padding: 15px 20px; border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4); max-width: 390px; width: 390px;
-            border-left: 5px solid #007bff; box-sizing: border-box;
-            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.95); color: #333; padding: 18px 22px; border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3); max-width: 380px; width: 380px;
+            border-left: 6px solid #007bff; transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
         }
-        #info-modal h3 { margin: 0 0 8px 0; font-size: calc(1.7rem + 10px); color: #007bff; }
-        #info-modal p { margin: 0; font-size: calc(1.2rem + 10px); line-height: 1.6; color: #555; }
+        #info-modal h3 { margin: 0 0 8px 0; font-size: 1.5rem; color: #007bff; display: flex; justify-content: space-between; align-items: center; }
+        #info-modal p { margin: 0; font-size: 1.05rem; line-height: 1.6; color: #444; }
 
         #info-modal .close-btn {
-            font-size: calc(1.3rem + 10px); padding: 8px 14px; cursor: pointer;
-            background: #f8f9fa; border: 1px solid #ccc; border-radius: 6px;
-            margin-bottom: 10px; font-weight: bold; color: #333;
+            font-size: 0.9rem; padding: 4px 10px; cursor: pointer;
+            background: #e9ecef; border: 1px solid #ced4da; border-radius: 6px;
+            font-weight: bold; color: #495057; transition: background 0.2s;
         }
-        #info-modal .close-btn:hover { background: #e2e6ea; }
-
-        #info-modal.keep-original-size h3 { font-size: 1.7rem; }
-        #info-modal.keep-original-size p { font-size: 1.2rem; }
+        #info-modal .close-btn:hover { background: #dee2e6; }
 
         #info-modal.collapsed {
-            padding: 10px 5px; cursor: pointer; background: rgba(0, 123, 255, 0.9);
-            border-left: none; bottom: 20px; right: 20px; width: 183px !important;
-            max-width: 183px !important; text-align: center;
+            padding: 12px; cursor: pointer; background: rgba(0, 123, 255, 0.95);
+            border-left: none; bottom: 20px; right: 20px; width: auto !important;
+            max-width: 200px !important; text-align: center; color: white;
+            border-radius: 30px; box-shadow: 0 4px 15px rgba(0,123,255,0.4);
         }
         #info-modal.collapsed h3,
         #info-modal.collapsed p,
         #info-modal.collapsed .close-btn { display: none; }
         #info-modal.collapsed::after {
-            content: "展開空間介紹"; font-size: calc(1.3rem + 10px);
+            content: "💡 展開空間介紹"; font-size: 1.1rem;
             color: #fff; font-weight: bold; white-space: nowrap;
         }
 
-        /* 回到上一步按鈕樣式 */
+        /* ===== 回到上一步按鈕樣式 ===== */
         .back-step-btn {
-            width: 185px; height: 62px; padding: 12px 18px;
-            font-size: calc(1.3rem + 10px); border-radius: 6px; font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4); box-sizing: border-box;
-            text-align: center; line-height: normal;
-            position: absolute; top: 20px; right: 0px; z-index: 25;
-            background: #6c757d; color: white; border: none; cursor: pointer;
-            transition: background 0.2s, opacity 0.3s ease;
+            height: 50px; padding: 0 20px;
+            font-size: 1.1rem; border-radius: 25px; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            position: absolute; top: 20px; right: 20px; z-index: 25;
+            background: rgba(108, 117, 125, 0.9); color: white; border: 1px solid rgba(255,255,255,0.3);
+            cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+            backdrop-filter: blur(5px);
         }
-        .back-step-btn:hover { background: #5a6268; }
+        .back-step-btn:hover { background: #5a6268; transform: translateY(-2px); }
+        .back-step-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-        /* 快速導覽選單樣式 */
+        /* ===== 快速導覽選單樣式 ===== */
         #quick-nav-container {
-            position: absolute; top: 20px; left: 40px; z-index: 25;
-            transition: opacity 0.3s ease;
+            position: absolute; top: 20px; left: 20px; z-index: 25;
         }
         #quick-nav-select {
-            width: 170px; height: 62px; padding: 12px 18px;
-            font-size: calc(1.3rem + 10px); border-radius: 6px; font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4); box-sizing: border-box;
-            text-align: center; line-height: normal;
+            height: 50px; padding: 0 20px;
+            font-size: 1.1rem; border-radius: 25px; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             background: rgba(0, 123, 255, 0.9); color: white;
             border: 1px solid rgba(255, 255, 255, 0.4); cursor: pointer; outline: none;
+            backdrop-filter: blur(5px); transition: all 0.2s;
         }
-        #quick-nav-select option { background: #333; color: white; }
+        #quick-nav-select:hover { background: #0056b3; }
+        #quick-nav-select option { background: #222; color: white; padding: 10px; }
 
-        /* 左下角小地圖樣式 */
+        /* ===== 左下角小地圖樣式 ===== */
         #mini-map-container {
-            position: absolute; bottom: 39px; left: 20px; z-index: 25;
-            width: 180px; height: 120px; background: rgba(0, 0, 0, 0.8);
-            border: 2px solid rgba(255, 255, 255, 0.5); border-radius: 8px;
-            overflow: hidden; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            position: absolute; bottom: 20px; left: 20px; z-index: 25;
+            width: 200px; height: 140px; background: rgba(0, 0, 0, 0.85);
+            border: 2px solid rgba(255, 255, 255, 0.6); border-radius: 12px;
+            overflow: hidden; cursor: pointer; box-shadow: 0 6px 20px rgba(0,0,0,0.5);
             transition: all 0.3s ease;
         }
-        #mini-map-container:hover { border-color: #007bff; transform: scale(1.05); }
-        #mini-map-img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        #mini-map-container:hover { border-color: #007bff; transform: scale(1.03); }
+        #mini-map-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
         
         .map-zoom-icon {
             position: absolute; top: 8px; right: 8px; z-index: 27;
-            background: rgba(0, 0, 0, 0.6); color: white; width: 26px; height: 26px;
+            background: rgba(0, 0, 0, 0.7); color: white; width: 28px; height: 28px;
             border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            font-size: calc(0.9rem + 5px); pointer-events: none; border: 1px solid rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem; border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
         .map-marker {
-            position: absolute; width: 14px; height: 14px; background: #dc3545;
+            position: absolute; width: 16px; height: 16px; background: #ff3547;
             border: 2px solid #fff; border-radius: 50%; transform: translate(-50%, -50%);
-            box-shadow: 0 0 6px rgba(0,0,0,0.8); transition: all 0.3s ease;
-            z-index: 26; pointer-events: none;
+            box-shadow: 0 0 10px #ff3547; z-index: 26; pointer-events: none;
+            animation: pulseMarker 1.5s infinite;
+        }
+        @keyframes pulseMarker {
+            0% { box-shadow: 0 0 0 0 rgba(255, 53, 71, 0.7); }
+            70% { box-shadow: 0 0 0 12px rgba(255, 53, 71, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 53, 71, 0); }
         }
 
+        /* 全螢幕地圖 Modal */
         #map-modal {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.85); z-index: 50; display: none;
+            background: rgba(0, 0, 0, 0.85); z-index: 90; display: none;
             justify-content: center; align-items: center; flex-direction: column;
+            backdrop-filter: blur(5px);
         }
         #map-modal-content {
-            position: relative; max-width: 80vw; max-height: 80vh;
-            background: #fff; padding: 15px; border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            position: relative; background: #222; padding: 20px; border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.2);
         }
-        #map-modal-img { max-width: 75vw; max-height: 70vh; display: block; border-radius: 4px; }
         #map-modal-img-wrapper { position: relative; display: inline-block; }
+        #map-modal-img { max-width: 75vw; max-height: 70vh; display: block; border-radius: 8px; }
         .close-map-btn {
             position: absolute; top: -15px; right: -15px; background: #dc3545;
-            color: white; border: none; width: 35px; height: 35px; border-radius: 50%;
-            font-size: calc(1.2rem + 5px); cursor: pointer; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-            z-index: 60;
+            color: white; border: none; width: 36px; height: 36px; border-radius: 50%;
+            font-size: 1.2rem; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            z-index: 95; display: flex; justify-content: center; align-items: center;
         }
+        .close-map-btn:hover { background: #bd2130; }
 
-        .pnlm-hotspot-base { transform: scale(4); transform-origin: center center; }
-        .pnlm-tooltip span { font-size: calc(1.1rem + 5px) !important; padding: 6px 12px !important; }
+        /* 地圖上的可點擊區域按鈕 */
+        .interactive-map-node {
+            position: absolute; width: 22px; height: 22px; background: #007bff;
+            border: 2px solid white; border-radius: 50%; transform: translate(-50%, -50%);
+            cursor: pointer; transition: all 0.2s; z-index: 92;
+        }
+        .interactive-map-node:hover { transform: translate(-50%, -50%) scale(1.3); background: #28a745; }
+        .interactive-map-node.active { background: #ff3547; box-shadow: 0 0 12px #ff3547; }
 
-        /* ===== 教學提示框往下移 15px (改為 top: 40px) ===== */
+        /* ===== 教學提示橫幅 ===== */
         #interactive-tutorial-banner {
             position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
-            width: 380px; 
-            background: rgba(0, 123, 255, 0.95); color: white; padding: 12px 15px;
-            border-radius: 10px; z-index: 100; font-size: calc(1.1rem + 2px); font-weight: bold;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.6); text-align: center; border: 2px solid white;
-            pointer-events: none; box-sizing: border-box; line-height: 1.4;
+            width: 420px; max-width: 90vw;
+            background: rgba(0, 123, 255, 0.95); color: white; padding: 14px 20px;
+            border-radius: 12px; z-index: 100; font-size: 1.05rem; font-weight: bold;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.5); text-align: center; border: 2px solid white;
+            line-height: 1.4; backdrop-filter: blur(5px);
+            transition: opacity 0.3s ease;
         }
         .tutorial-mode-title {
-            font-size: calc(1.2rem + 4px);
+            font-size: 1.2rem;
             color: #ffe066;
             margin-bottom: 4px;
             font-weight: 900;
             letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
-        /* 加大加粗的紅色動態箭頭 */
+        /* 熱點提示圖示與文字 */
+        .custom-hotspot {
+            height: 50px;
+            width: 50px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            border: 3px solid #007bff;
+            box-shadow: 0 0 15px rgba(0,123,255,0.8);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            color: #007bff;
+            transition: all 0.3s;
+        }
+        .custom-hotspot:hover {
+            transform: scale(1.2);
+            background: #007bff;
+            color: white;
+        }
+
+        /* Pannellum 客製 Tooltip 加強 */
+        .pnlm-tooltip span {
+            font-size: 1rem !important;
+            padding: 8px 14px !important;
+            border-radius: 6px !important;
+            background-color: rgba(0,0,0,0.85) !important;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* 輔助箭頭引導動畫 */
         .big-red-arrow {
-            position: absolute; z-index: 95; font-size: 85px; font-weight: 900; color: #ff0000;
-            text-shadow: 0 0 15px #ffffff, 0 0 30px #ff0000;
+            position: absolute; z-index: 95; font-size: 60px; color: #ff0000;
+            text-shadow: 0 0 10px #ffffff, 0 0 20px #ff0000;
             animation: bounceArrow 1s infinite alternate; pointer-events: none;
+            display: none;
         }
         @keyframes bounceArrow {
-            0% { transform: translateY(-2px) scale(1); }
-            100% { transform: translateY(15px) scale(1.15); }
-        }
-
-        /* 半透明滑動教學提示 */
-        .swipe-hint-overlay {
-            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 90; display: flex; justify-content: space-between; align-items: center;
-            padding: 0 50px; box-sizing: border-box; pointer-events: none;
-        }
-        .swipe-arrow {
-            font-size: 80px; color: rgba(255, 255, 255, 0.7);
-            background: rgba(0,0,0,0.4); padding: 20px; border-radius: 50%;
-            animation: pulseSwipe 1.2s infinite ease-in-out;
-        }
-        @keyframes pulseSwipe {
-            0% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.5; }
+            0% { transform: translateY(-5px); }
+            100% { transform: translateY(15px); }
         }
     </style>
 </head>
@@ -202,16 +252,364 @@
 
     <!-- 互動教學提示橫幅 -->
     <div id="interactive-tutorial-banner">
-        <div class="tutorial-mode-title">【教學模式】</div>
-        <div id="tutorial-text">載入中...</div>
+        <div class="tutorial-mode-title"><i class="fa-solid fa-graduation-cap"></i>【實境導覽教學模式】</div>
+        <div id="tutorial-text">歡迎來到智慧日照中心，請拖曳畫面探索四周環境，點擊標籤深入了解設施。</div>
     </div>
 
-    <!-- 全景容器 -->
+    <!-- 輔助引導箭頭 -->
+    <div id="guide-arrow" class="big-red-arrow"><i class="fa-solid fa-arrow-down"></i></div>
+
+    <!-- 快速導覽選單 -->
+    <div id="quick-nav-container">
+        <select id="quick-nav-select" onchange="switchSceneFromSelect(this.value)">
+            <option value="lobby">🏢 1. 入口與接待大廳</option>
+            <option value="activity">🎨 2. 多功能活動核心區</option>
+            <option value="rehab">🏋️ 3. 智慧復健訓練區</option>
+            <option value="rest">🛋️ 4. 多功能休憩與舒壓區</option>
+            <option value="bath">♿ 5. 無障礙無障礙衛浴間</option>
+        </select>
+    </div>
+
+    <!-- 回到上一步按鈕 -->
+    <button id="back-step-btn" class="back-step-btn" onclick="goBackStep()" disabled>
+        <i class="fa-solid fa-rotate-left"></i> 上一步
+    </button>
+
+    <!-- 360 全景 Viewport -->
     <div id="panorama"></div>
 
+    <!-- 右下角空間介紹 Modal -->
+    <div id="info-modal">
+        <h3>
+            <span id="info-title">載入中...</span>
+            <button class="close-btn" onclick="toggleInfoModal()">折疊</button>
+        </h3>
+        <p id="info-desc">正在讀取空間資料庫...</p>
+    </div>
+
+    <!-- 左下角小地圖 -->
+    <div id="mini-map-container" onclick="openMapModal()">
+        <img id="mini-map-img" src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=600&q=80" alt="平面配置圖">
+        <div id="mini-map-marker" class="map-marker" style="top: 50%; left: 30%;"></div>
+        <div class="map-zoom-icon"><i class="fa-solid fa-expand"></i></div>
+    </div>
+
+    <!-- 點擊放大平面圖 Modal -->
+    <div id="map-modal">
+        <div id="map-modal-content">
+            <button class="close-map-btn" onclick="closeMapModal()"><i class="fa-solid fa-xmark"></i></button>
+            <h3 style="color: white; margin-top: 0; margin-bottom: 12px; font-size: 1.3rem;"><i class="fa-solid fa-map-location-dot"></i> 日照中心全區平面導覽圖</h3>
+            <div id="map-modal-img-wrapper">
+                <img id="map-modal-img" src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1200&q=80" alt="平面配置全圖">
+                <!-- 地圖上的節點 -->
+                <div class="interactive-map-node" style="top: 75%; left: 25%;" title="入口與接待大廳" onclick="switchSceneFromMap('lobby')"></div>
+                <div class="interactive-map-node" style="top: 45%; left: 40%;" title="多功能活動核心區" onclick="switchSceneFromMap('activity')"></div>
+                <div class="interactive-map-node" style="top: 30%; left: 70%;" title="智慧復健訓練區" onclick="switchSceneFromMap('rehab')"></div>
+                <div class="interactive-map-node" style="top: 70%; left: 75%;" title="多功能休憩與舒壓區" onclick="switchSceneFromMap('rest')"></div>
+                <div class="interactive-map-node" style="top: 20%; left: 25%;" title="無障礙無障礙衛浴間" onclick="switchSceneFromMap('bath')"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 平面特寫圖片檢視器 Overlay -->
+    <div id="flat-view-container">
+        <img id="flat-view-img" src="" alt="設備特寫">
+        <div id="flat-detail-panel">
+            <h3 id="flat-view-title">設施詳細介紹</h3>
+            <p id="flat-view-desc">詳細說明文字內容...</p>
+            <button class="back-to-class-btn" onclick="closeFlatView()">
+                <i class="fa-solid fa-arrow-left"></i> 返回全景導覽
+            </button>
+        </div>
+    </div>
+
     <script>
-        // 這裡可以接續您的 JavaScript 初始化與全景設定
-        console.log("智慧日照中心系統載入完成");
+        // ===== 場景資料數據庫 =====
+        const scenesData = {
+            lobby: {
+                title: "🏢 入口與接待大廳",
+                panoramaUrl: "https://pannellum.org/images/cerro-toco-0.jpg", // 預設測試 360 圖
+                desc: "智慧日照中心的門面，配置自動臉部辨識體溫量測系統與人流差勤管理。長者到訪時可透過 AI 智慧手環完成自動報到與生理數據紀錄。",
+                mapCoords: { top: "75%", left: "25%" },
+                hotspots: [
+                    {
+                        pitch: -5, yaw: 20, type: "scene", sceneId: "activity",
+                        text: "前往：多功能活動區"
+                    },
+                    {
+                        pitch: 5, yaw: -30, type: "info",
+                        text: "💡 查看：AI 智慧報到門禁機",
+                        customHTML: createHotspotIcon("fa-id-card"),
+                        clickHandlerFunc: function() {
+                            showFlatDetail(
+                                "https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80",
+                                "AI 智慧報到與生理監測系統",
+                                "結合紅外線體溫感應與人臉辨識，3 秒內自動量測體溫、血壓及血氧狀況，數據即時連線至中央雲端照護系統與家屬 App。"
+                            );
+                        }
+                    }
+                ]
+            },
+            activity: {
+                title: "🎨 多功能活動核心區",
+                panoramaUrl: "https://pannellum.org/images/alma-real.jpg",
+                desc: "提供日常認知促進活動、音樂治療與團體課程。配備百吋互動觸控大螢幕與樂齡共融桌遊，有助於延緩失智與維持認知功能。",
+                mapCoords: { top: "45%", left: "40%" },
+                hotspots: [
+                    { pitch: 0, yaw: -90, type: "scene", sceneId: "lobby", text: "返回：接待大廳" },
+                    { pitch: -2, yaw: 80, type: "scene", sceneId: "rehab", text: "前往：智慧復健區" },
+                    { pitch: -5, yaw: 160, type: "scene", sceneId: "rest", text: "前往：休憩舒壓區" },
+                    {
+                        pitch: 10, yaw: 0, type: "info",
+                        text: "💡 特寫：互動認知桌遊與智慧白板",
+                        customHTML: createHotspotIcon("fa-tv"),
+                        clickHandlerFunc: function() {
+                            showFlatDetail(
+                                "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80",
+                                "互動式認知訓練系統",
+                                "多元遊戲化課程設計，透過打地鼠、拼圖與記憶力訓練，有效提升長者專注力與手眼協調度。"
+                            );
+                        }
+                    }
+                ]
+            },
+            rehab: {
+                title: "🏋️ 智慧復健訓練區",
+                panoramaUrl: "https://pannellum.org/images/boulder.jpg",
+                desc: "引進等速肌群訓練設備與平行桿步態分析系統，針對長者下肢肌力與平衡感進行精準科學化訓練，預防跌倒風險。",
+                mapCoords: { top: "30%", left: "70%" },
+                hotspots: [
+                    { pitch: -2, yaw: -100, type: "scene", sceneId: "activity", text: "返回：多功能活動區" },
+                    { pitch: 0, yaw: 110, type: "scene", sceneId: "bath", text: "前往：無障礙衛浴" },
+                    {
+                        pitch: -10, yaw: 15, type: "info",
+                        text: "💡 特寫：智慧等速肌力訓練機",
+                        customHTML: createHotspotIcon("fa-dumbbell"),
+                        clickHandlerFunc: function() {
+                            showFlatDetail(
+                                "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=800&q=80",
+                                "氣壓式等速肌力訓練設備",
+                                "採用氣壓阻力替代傳統重錘，降低關節受傷風險，並能即時記錄肌力輸出曲線與復健進度。"
+                            );
+                        }
+                    }
+                ]
+            },
+            rest: {
+                title: "🛋️ 多功能休憩與舒壓區",
+                panoramaUrl: "https://pannellum.org/images/cerro-toco-0.jpg",
+                desc: "提供舒適的午休電動躺椅、芳療香氛與柔和音樂環境。專為有情緒焦慮或高齡疲勞長者打造的尊榮紓壓空間。",
+                mapCoords: { top: "70%", left: "75%" },
+                hotspots: [
+                    { pitch: 0, yaw: -20, type: "scene", sceneId: "activity", text: "返回：多功能活動區" },
+                    {
+                        pitch: -8, yaw: 45, type: "info",
+                        text: "💡 特寫：多功能電動升降躺椅",
+                        customHTML: createHotspotIcon("fa-couch"),
+                        clickHandlerFunc: function() {
+                            showFlatDetail(
+                                "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80",
+                                "人體工學電動起身躺椅",
+                                "具備一鍵升降起身輔助功能，讓腰膝無力的長者輕鬆起立，並配備呼吸率與心跳離床監測。"
+                            );
+                        }
+                    }
+                ]
+            },
+            bath: {
+                title: "♿ 無障礙衛浴間",
+                panoramaUrl: "https://pannellum.org/images/alma-real.jpg",
+                desc: "全區採用無障礙高低位扶手、防滑地磚、緊急求助呼叫鈕與雷達毫米波跌倒偵測器，全方位保障長者隱私與個人安全。",
+                mapCoords: { top: "20%", left: "25%" },
+                hotspots: [
+                    { pitch: 0, yaw: -110, type: "scene", sceneId: "rehab", text: "返回：智慧復健區" },
+                    {
+                        pitch: -5, yaw: 30, type: "info",
+                        text: "💡 特寫：毫米波雷達防跌倒監測",
+                        customHTML: createHotspotIcon("fa-shield-halved"),
+                        clickHandlerFunc: function() {
+                            showFlatDetail(
+                                "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80",
+                                "非接觸式毫米波雷達安全系統",
+                                "無需攝影機即可透過雷達波精準辨識人體姿態，若發生意外跌倒或滯留過久將立即發送警告通知護理站。"
+                            );
+                        }
+                    }
+                ]
+            }
+        };
+
+        // ===== 系統全域變數 =====
+        let viewer = null;
+        let currentSceneId = "lobby";
+        let sceneHistory = [];
+        const tutorialSteps = [
+            "歡迎參訪！請用滑鼠或手指拖曳畫面 360 度探索空間。",
+            "點擊畫面上的「熱點標籤」或藍色按鈕可切換空間或觀看設施細節。",
+            "您也可以隨時使用左上角下拉選單或左下角小地圖進行快速跳轉！"
+        ];
+        let currentTutorialIndex = 0;
+
+        // 生成熱點 Custom DOM
+        function createHotspotIcon(iconClass) {
+            const div = document.createElement("div");
+            div.className = "custom-hotspot";
+            div.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+            return div;
+        }
+
+        // ===== 初始化 Pannellum =====
+        window.onload = function() {
+            initViewer(currentSceneId);
+            updateUI(currentSceneId);
+        };
+
+        function initViewer(startSceneId) {
+            const scene = scenesData[startSceneId];
+
+            viewer = pannellum.viewer('panorama', {
+                "default": {
+                    "firstScene": startSceneId,
+                    "author": "智慧日照中心",
+                    "sceneFadeDuration": 800,
+                    "autoLoad": true,
+                    "compass": true
+                },
+                "scenes": generatePannellumScenesConfig()
+            });
+
+            // 監聽場景變換完成事件
+            viewer.on('load', function() {
+                const activeSceneId = viewer.getScene();
+                if (activeSceneId !== currentSceneId) {
+                    if (currentSceneId) {
+                        sceneHistory.push(currentSceneId);
+                        document.getElementById("back-step-btn").disabled = false;
+                    }
+                    currentSceneId = activeSceneId;
+                    updateUI(currentSceneId);
+                }
+            });
+        }
+
+        // 將 JavaScript 資料結構轉為 Pannellum 設定檔
+        function generatePannellumScenesConfig() {
+            const config = {};
+            for (const [key, data] of Object.entries(scenesData)) {
+                config[key] = {
+                    title: data.title,
+                    type: "equirectangular",
+                    panorama: data.panoramaUrl,
+                    hotSpots: data.hotspots.map(hs => {
+                        const spot = {
+                            pitch: hs.pitch,
+                            yaw: hs.yaw,
+                            type: hs.type,
+                            text: hs.text
+                        };
+                        if (hs.sceneId) spot.sceneId = hs.sceneId;
+                        if (hs.customHTML) spot.createTooltipFunc = () => hs.customHTML;
+                        if (hs.clickHandlerFunc) spot.clickHandlerFunc = hs.clickHandlerFunc;
+                        return spot;
+                    })
+                };
+            }
+            return config;
+        }
+
+        // 更新 UI (選單、地圖標記、介紹卡片)
+        function updateUI(sceneId) {
+            const data = scenesData[sceneId];
+            if (!data) return;
+
+            // 1. 下拉選單同步
+            document.getElementById("quick-nav-select").value = sceneId;
+
+            // 2. 空間介紹卡片同步
+            document.getElementById("info-title").innerText = data.title;
+            document.getElementById("info-desc").innerText = data.desc;
+
+            // 3. 小地圖定位標記同步
+            const marker = document.getElementById("mini-map-marker");
+            marker.style.top = data.mapCoords.top;
+            marker.style.left = data.mapCoords.left;
+
+            // 4. 地圖 Modal 節點同步
+            const nodes = document.querySelectorAll(".interactive-map-node");
+            nodes.forEach(node => {
+                if (node.getAttribute("title") === data.title.split(" ")[1] || node.getAttribute("onclick").includes(sceneId)) {
+                    node.classList.add("active");
+                } else {
+                    node.classList.remove("active");
+                }
+            });
+
+            // 5. 更新教學導引文字
+            updateTutorialText();
+        }
+
+        // ===== 快速切換邏輯 =====
+        function loadScene(sceneId) {
+            if (viewer && scenesData[sceneId]) {
+                viewer.loadScene(sceneId);
+            }
+        }
+
+        function switchSceneFromSelect(sceneId) {
+            loadScene(sceneId);
+        }
+
+        function switchSceneFromMap(sceneId) {
+            closeMapModal();
+            loadScene(sceneId);
+        }
+
+        // 回到上一步
+        function goBackStep() {
+            if (sceneHistory.length > 0) {
+                const previousScene = sceneHistory.pop();
+                if (sceneHistory.length === 0) {
+                    document.getElementById("back-step-btn").disabled = true;
+                }
+                loadScene(previousScene);
+            }
+        }
+
+        // ===== 平面圖特寫 Overlay 控制 =====
+        function showFlatDetail(imgUrl, title, desc) {
+            document.getElementById("flat-view-img").src = imgUrl;
+            document.getElementById("flat-view-title").innerText = title;
+            document.getElementById("flat-view-desc").innerText = desc;
+            document.getElementById("flat-view-container").style.display = "flex";
+        }
+
+        function closeFlatView() {
+            document.getElementById("flat-view-container").style.display = "none";
+        }
+
+        // ===== 空間介紹視窗摺疊 =====
+        function toggleInfoModal() {
+            const modal = document.getElementById("info-modal");
+            modal.classList.toggle("collapsed");
+        }
+
+        // ===== 全螢幕地圖 Modal =====
+        function openMapModal() {
+            document.getElementById("map-modal").style.display = "flex";
+        }
+
+        function closeMapModal() {
+            document.getElementById("map-modal").style.display = "none";
+        }
+
+        // ===== 教學引導 Banner =====
+        function updateTutorialText() {
+            const tutorialText = document.getElementById("tutorial-text");
+            if (currentTutorialIndex < tutorialSteps.length) {
+                tutorialText.innerText = tutorialSteps[currentTutorialIndex];
+                currentTutorialIndex++;
+            }
+        }
     </script>
 </body>
 </html>
