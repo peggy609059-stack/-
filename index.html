@@ -719,44 +719,60 @@
                 navigationHistory.push(sceneId);
             }
 
+            // 更新右下角空間介紹
             const info = sceneInfo[sceneId];
             if (info) {
                 document.getElementById('modal-title').innerText = info.title;
                 document.getElementById('modal-desc').innerText = info.desc;
+            } else {
+                document.getElementById('modal-title').innerText = "未知區域";
+                document.getElementById('modal-desc').innerText = "目前尚無此區域的詳細介紹。";
             }
 
-            if (tutorialStep === 4 && sceneId === "shoes") {
+            if (tutorialStep === 4 && sceneId !== "counter") {
                 tutorialStep = 5;
                 updateTutorialUI();
             }
         });
 
-        // 監聽拖曳滑動以達成步驟 3 條件
-        const panoContainer = document.getElementById('panorama');
-        panoContainer.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            startX = e.clientX;
-            dragDistance = 0;
-        });
-        window.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            dragDistance += Math.abs(e.clientX - startX);
-            startX = e.clientX;
-            if (tutorialStep === 3 && dragDistance > 250) {
-                tutorialStep = 4;
-                updateTutorialUI();
+        // 監聽拖曳動作以推進教學步驟 3
+        const panoramaEl = document.getElementById('panorama');
+        panoramaEl.addEventListener('mousedown', () => { isDragging = true; dragDistance = 0; });
+        panoramaEl.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                dragDistance += Math.abs(e.movementX);
+                if (tutorialStep === 3 && dragDistance > 200) {
+                    tutorialStep = 4;
+                    updateTutorialUI();
+                }
             }
         });
-        window.addEventListener('mouseup', () => {
-            isDragging = false;
+        window.addEventListener('mouseup', () => { isDragging = false; });
+
+        // 觸控支援
+        panoramaEl.addEventListener('touchstart', () => { isDragging = true; dragDistance = 0; });
+        panoramaEl.addEventListener('touchmove', (e) => {
+            if (isDragging && e.touches.length > 0) {
+                dragDistance += 5;
+                if (tutorialStep === 3 && dragDistance > 150) {
+                    tutorialStep = 4;
+                    updateTutorialUI();
+                }
+            }
         });
+        window.addEventListener('touchend', () => { isDragging = false; });
 
-        window.onload = function() {
-            updateMapMarker("counter");
+        // 初始化載入第一個場景的介紹與地圖標記
+        window.addEventListener('DOMContentLoaded', () => {
+            const initialInfo = sceneInfo["counter"];
+            if (initialInfo) {
+                document.getElementById('modal-title').innerText = initialInfo.title;
+                document.getElementById('modal-desc').innerText = initialInfo.desc;
+            }
             document.getElementById('info-modal').classList.add('collapsed');
+            updateMapMarker("counter");
             updateTutorialUI();
-        };
+        });
     </script>
-
 </body>
 </html>
