@@ -20,12 +20,12 @@
             animation: fadeIn 0.3s ease;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -10px); } to { opacity: 1; transform: translate(-50%, 0); } }
-        #tutorial-title { font-size: calc(1.3rem + 5px); color: #4dabf7; margin-bottom: 8px; font-weight: bold; }
-        #tutorial-desc { font-size: calc(1.1rem + 3px); line-height: 1.5; margin-bottom: 15px; }
+        #tutorial-title { font-size: calc(1.3rem + 3px); color: #4dabf7; margin-bottom: 8px; font-weight: bold; }
+        #tutorial-desc { font-size: calc(1.1rem + 2px); line-height: 1.5; margin-bottom: 15px; }
         .tutorial-btn-group { display: flex; justify-content: center; gap: 12px; }
         .tutorial-btn {
             background: #007bff; color: white; border: none; padding: 8px 18px;
-            font-size: calc(1rem + 2px); border-radius: 6px; cursor: pointer; font-weight: bold;
+            font-size: calc(2rem + 2px); border-radius: 6px; cursor: pointer; font-weight: bold;
             transition: background 0.2s;
         }
         .tutorial-btn:hover { background: #0056b3; }
@@ -522,7 +522,7 @@
             },
             4: {
                 title: "導覽教學步驟 4",
-                desc: "如何前往下一個地區。請點擊畫面中的箭頭引導按鈕前往下個地點！",
+                desc: "如何前往下一個地區。請點擊畫面中的箭頭引導按鈕⬆️前往下個地點！",
                 showNextBtn: false,
                 onEnter: () => {
                     document.getElementById('drag-guide-overlay').style.display = 'none';
@@ -542,7 +542,7 @@
             },
             7: {
                 title: "導覽教學步驟 7",
-                desc: "如何關閉地圖定位。請點擊地圖右上角的✖",
+                desc: "如何關閉地圖定位。請點擊地圖右上角的✖或點擊圖片外的區域",
                 showNextBtn: false
             },
             8: {
