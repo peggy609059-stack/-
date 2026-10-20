@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
     <style>
-        body { margin: 0; font-family: "Microsoft JhengHei", sans-serif; overflow: hidden; background: #000; font-size: calc(1rem + 5px); }
+        body { margin: 0; font-family: "Microsoft JhengHei", sans-serif; overflow: hidden; background: #000; font-size: 1.7rem; }
         #panorama { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
 
         /* 平面圖片檢視器容器樣式：垂直置中排列 */
@@ -26,26 +26,24 @@
         #flat-detail-panel {
             background: rgba(255, 255, 255, 0.95);
             color: #333;
-            padding: 15px 25px;
+            padding: 25px 35px;
             border-radius: 8px;
-            max-width: 75vw;
-            width: 700px;
+            max-width: 85vw;
+            width: 800px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             border-left: 5px solid #007bff;
             box-sizing: border-box;
             position: relative;
         }
-        #flat-detail-panel h3 { margin: 0 0 8px 0; font-size: calc(1.7rem + 10px); color: #007bff; }
-        #flat-detail-panel p { margin: 0; font-size: calc(1.6rem + 10px); line-height: 1.5; color: #555; }
-        
-        #flat-detail-panel.keep-original-size h3 { font-size: 1.7rem; }
-        #flat-detail-panel.keep-original-size p { font-size: 1.6rem; }
+        #flat-detail-panel h3 { margin: 0 0 12px 0; font-size: 2.7rem; color: #007bff; }
+        #flat-detail-panel p { margin: 0; font-size: 2.6rem; line-height: 1.5; color: #555; }
 
+        /* 返回教室的紅色按鈕樣式 */
         .back-to-class-btn {
-            background: #dc3545; color: white; border: none; padding: 10px 18px;
-            font-size: calc(1.2rem + 5px); border-radius: 6px; cursor: pointer; font-weight: bold;
+            background: #dc3545; color: white; border: none; padding: 15px 24px;
+            font-size: 2.2rem; border-radius: 6px; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s;
-            margin-top: 15px;
+            margin-top: 20px;
             display: inline-block;
         }
         .back-to-class-btn:hover { background: #c82333; }
@@ -53,40 +51,25 @@
         /* 空間介紹區域（右下角） */
         #info-modal {
             position: absolute; bottom: 20px; right: 20px; z-index: 30;
-            background: rgba(255, 255, 255, 0.95); color: #333; padding: 15px 20px; border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4); max-width: 390px; width: 390px;
+            background: rgba(255, 255, 255, 0.95); color: #333; padding: 25px 30px; border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); max-width: 420px; width: 420px;
             border-left: 5px solid #007bff;
             box-sizing: border-box;
             transition: all 0.3s ease;
         }
-        #info-modal h3 { margin: 0 0 8px 0; font-size: calc(1.7rem + 10px); color: #007bff; }
-        #info-modal p { margin: 0; font-size: calc(1.2rem + 10px); line-height: 1.6; color: #555; }
+        #info-modal h3 { margin: 0 0 12px 0; font-size: 2.7rem; color: #007bff; }
+        #info-modal p { margin: 0; font-size: 2.2rem; line-height: 1.6; color: #555; }
 
-        #info-modal .close-btn {
-            font-size: calc(1.3rem + 10px);
-            padding: 8px 14px;
-            cursor: pointer;
-            background: #f8f9fa;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: #333;
-        }
-        #info-modal .close-btn:hover { background: #e2e6ea; }
-
-        #info-modal.keep-original-size h3 { font-size: 1.7rem; }
-        #info-modal.keep-original-size p { font-size: 1.2rem; }
-
+        /* 收合狀態 */
         #info-modal.collapsed {
-            padding: 10px 5px;
+            padding: 15px 10px;
             cursor: pointer;
             background: rgba(0, 123, 255, 0.9);
             border-left: none;
             bottom: 20px;
             right: 20px;
-            width: 183px !important;
-            max-width: 183px !important;
+            width: 245px !important;
+            max-width: 245px !important;
             text-align: center;
         }
         #info-modal.collapsed h3,
@@ -96,56 +79,47 @@
         }
         #info-modal.collapsed::after {
             content: "展開空間介紹";
-            font-size: calc(1.3rem + 10px);
+            font-size: 2.3rem;
             color: #fff;
             font-weight: bold;
             white-space: nowrap;
         }
 
-        /* 回到上一步按鈕樣式 */
+        #info-modal .close-btn {
+            background: rgba(0, 0, 0, 0.15); border: none; color: #333; padding: 6px 12px;
+            font-size: 1.8rem; border-radius: 4px; cursor: pointer; float: right; font-weight: bold;
+        }
+        #info-modal .close-btn:hover { background: rgba(0, 0, 0, 0.3); }
+
+        /* 回到上一步按鈕樣式（移到右上角） */
         .back-step-btn {
-            width: 185px;
-            height: 62px;
-            padding: 12px 18px;
-            font-size: calc(1.3rem + 10px);
-            border-radius: 6px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            position: absolute; top: 20px; right: 15px; z-index: 25;
+            background: #6c757d; color: white; border: none; padding: 14px 22px;
+            font-size: 2.3rem; border-radius: 6px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s, opacity 0.3s ease;
             box-sizing: border-box;
             text-align: center;
-            line-height: normal;
-            position: absolute; top: 20px; right: 0px; z-index: 25;
-            background: #6c757d; color: white; border: none; cursor: pointer;
-            transition: background 0.2s, opacity 0.3s ease;
         }
         .back-step-btn:hover { background: #5a6268; }
 
-        /* 快速導覽選單樣式 */
+        /* 快速導覽選單樣式（移到左上角） */
         #quick-nav-container {
-            position: absolute; top: 20px; left: 40px; z-index: 25;
+            position: absolute; top: 20px; left: 20px; z-index: 25;
             transition: opacity 0.3s ease;
         }
         #quick-nav-select {
-            width: 170px;
-            height: 62px;     
-            padding: 12px 18px;
-            font-size: calc(1.3rem + 10px);
-            border-radius: 6px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            background: rgba(0, 123, 255, 0.9); color: white; border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 14px 22px; font-size: 2.4rem; border-radius: 6px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); outline: none;
             box-sizing: border-box;
-            text-align: center;
-            line-height: normal;
-            background: rgba(0, 123, 255, 0.9); color: white;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            cursor: pointer; outline: none;
+            width: 200px;
         }
-        #quick-nav-select option { background: #333; color: white; }
+        #quick-nav-select option { background: #333; color: white; font-size: 2rem; }
 
         /* 左下角小地圖樣式 */
         #mini-map-container {
-            position: absolute; bottom: 39px; left: 20px; z-index: 25;
-            width: 180px; height: 120px; background: rgba(0, 0, 0, 0.8);
+            position: absolute; bottom: 20px; left: 20px; z-index: 25;
+            width: 250px; height: 170px; background: rgba(0, 0, 0, 0.8);
             border: 2px solid rgba(255, 255, 255, 0.5); border-radius: 8px;
             overflow: hidden; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4);
             transition: all 0.3s ease;
@@ -159,30 +133,32 @@
             pointer-events: none;
         }
         
+        /* 放大鏡圖示樣式 */
         .map-zoom-icon {
-            position: absolute; top: 8px; right: 8px; z-index: 27;
+            position: absolute; top: 10px; right: 10px; z-index: 27;
             background: rgba(0, 0, 0, 0.6); color: white;
-            width: 26px; height: 26px; border-radius: 50%;
+            width: 36px; height: 36px; border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            font-size: calc(0.9rem + 5px); pointer-events: none;
+            font-size: 1.5rem; pointer-events: none;
             border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
         .map-marker {
-            position: absolute; width: 14px; height: 14px; background: #dc3545;
-            border: 2px solid #fff; border-radius: 50%; transform: translate(-50%, -50%);
-            box-shadow: 0 0 6px rgba(0,0,0,0.8); transition: all 0.3s ease;
+            position: absolute; width: 20px; height: 20px; background: #dc3545;
+            border: 3px solid #fff; border-radius: 50%; transform: translate(-50%, -50%);
+            box-shadow: 0 0 8px rgba(0,0,0,0.8); transition: all 0.3s ease;
             z-index: 26; pointer-events: none;
         }
 
+        /* 放大版地圖 Modal 樣式 */
         #map-modal {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.85); z-index: 50; display: none;
             justify-content: center; align-items: center; flex-direction: column;
         }
         #map-modal-content {
-            position: relative; max-width: 80vw; max-height: 80vh;
-            background: #fff; padding: 15px; border-radius: 8px;
+            position: relative; max-width: 85vw; max-height: 85vh;
+            background: #fff; padding: 25px; border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
         #map-modal-img {
@@ -193,11 +169,39 @@
             display: inline-block;
         }
         .close-map-btn {
-            position: absolute; top: -15px; right: -15px; background: #dc3545;
-            color: white; border: none; width: 35px; height: 35px; border-radius: 50%;
-            font-size: calc(1.2rem + 5px); cursor: pointer; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            position: absolute; top: -18px; right: -18px; background: #dc3545;
+            color: white; border: none; width: 45px; height: 45px; border-radius: 50%;
+            font-size: 2rem; cursor: pointer; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
             z-index: 60;
         }
+
+        /* 教學導覽橫幅樣式 */
+        #tutorial-banner {
+            position: absolute; bottom: 230px; left: 20px; right: 20px; z-index: 100;
+            background: rgba(0, 0, 0, 0.9); color: white; padding: 15px 38px; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6); border: 2px solid #007bff;
+            display: flex; flex-direction: column; gap: 15px; max-width: 700px; margin: 0 auto;
+        }
+        #tutorial-banner h3 { margin: 0; font-size: 2.2rem; color: #007bff; }
+        #tutorial-banner p { margin: 0; font-size: 2.3rem; line-height: 1.6; color: #ddd; }
+        .tutorial-btns { display: flex; gap: 15px; margin-top: 10px; }
+        .tutorial-btn {
+            background: #007bff; color: white; border: none; padding: 12px 24px;
+            font-size: 2rem; border-radius: 6px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: background 0.2s;
+        }
+        .tutorial-btn:hover { background: #0056b3; }
+        .tutorial-btn.secondary { background: #6c757d; }
+        .tutorial-btn.secondary:hover { background: #5a6268; }
+
+        /* 環狀旋轉動態指引圖示樣式 */
+        #rotation-guide {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 150px; height: 150px; border: 6px dashed rgba(0, 123, 255, 0.8);
+            border-radius: 50%; z-index: 90; display: none; animation: spin 4s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
 
         .pnlm-hotspot-base {
             transform: scale(4);
@@ -205,37 +209,21 @@
         }
 
         .pnlm-tooltip span {
-            font-size: calc(1.1rem + 5px) !important;
-            padding: 6px 12px !important;
+            font-size: 2.1rem !important;
+            padding: 10px 18px !important;
         }
-
-        /* ===== 新手教學覆蓋層樣式 ===== */
-        #tutorial-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.75); z-index: 100; display: flex;
-            justify-content: center; align-items: center;
-        }
-        #tutorial-card {
-            background: #fff; padding: 30px; border-radius: 12px; width: 500px; max-width: 90vw;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; position: relative;
-        }
-        #tutorial-card h2 { color: #007bff; margin-top: 0; font-size: calc(1.5rem + 5px); }
-        #tutorial-card p { color: #555; font-size: calc(1.1rem + 5px); line-height: 1.6; margin-bottom: 25px; }
-        .tutorial-buttons { display: flex; justify-content: space-between; gap: 10px; }
-        .tutorial-btn {
-            flex: 1; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold;
-            font-size: calc(1rem + 5px); cursor: pointer; transition: background 0.2s;
-        }
-        .tutorial-btn-skip { background: #e2e6ea; color: #333; }
-        .tutorial-btn-skip:hover { background: #cbd3da; }
-        .tutorial-btn-next { background: #007bff; color: white; }
-        .tutorial-btn-next:hover { background: #0056b3; }
-        #tutorial-step-indicator { font-size: 0.9rem; color: #888; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-    <!-- 新手強制教學彈窗 -->
-    <div id="tutorial-overlay">
-        <div id="tutorial-card">
-            <div id="tutorial-step-indicato
+    <!-- 快速導覽選單（移到左上角） -->
+    <div id="quick-nav-container">
+        <select id="quick-nav-select" onchange="quickJump(this.value)">
+            <option value="" disabled selected>快速導覽</option>
+            <option value="counter">櫃檯</option>
+            <option value="shoes">鞋櫃</option>
+            <option value="aisle">走道</option>
+            <option value="locker">櫃子</option>
+            <option value="activity">活動區</option>
+            <option value="safe_home">平安家</option>
+            <option value="happy">快樂家</option>
