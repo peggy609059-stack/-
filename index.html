@@ -10,22 +10,22 @@
         body { margin: 0; font-family: "Microsoft JhengHei", sans-serif; overflow: hidden; background: #000; font-size: calc(1rem + 5px); }
         #panorama { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
 
-        /* 教學模式橫幅樣式 */
+        /* 教學模式橫幅樣式（放大字體） */
         #tutorial-banner {
             position: absolute; top: 100px; left: 50%; transform: translateX(-50%);
-            z-index: 100; background: rgba(0, 0, 0, 0.88); color: white;
-            padding: 18px 28px; border-radius: 12px; max-width: 650px; width: 90%;
+            z-index: 100; background: rgba(0, 0, 0, 0.9); color: white;
+            padding: 24px 35px; border-radius: 12px; max-width: 750px; width: 90%;
             box-shadow: 0 8px 25px rgba(0,0,0,0.6); border: 2px solid #007bff;
             display: none; text-align: center; box-sizing: border-box;
             animation: fadeIn 0.3s ease;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -10px); } to { opacity: 1; transform: translate(-50%, 0); } }
-        #tutorial-title { font-size: calc(1.3rem + 5px); color: #4dabf7; margin-bottom: 8px; font-weight: bold; }
-        #tutorial-desc { font-size: calc(1.1rem + 3px); line-height: 1.5; margin-bottom: 15px; }
-        .tutorial-btn-group { display: flex; justify-content: center; gap: 12px; }
+        #tutorial-title { font-size: calc(2.6rem + 10px); color: #4dabf7; margin-bottom: 12px; font-weight: bold; }
+        #tutorial-desc { font-size: calc(2.2rem + 6px); line-height: 1.5; margin-bottom: 20px; }
+        .tutorial-btn-group { display: flex; justify-content: center; gap: 15px; }
         .tutorial-btn {
-            background: #007bff; color: white; border: none; padding: 8px 18px;
-            font-size: calc(2rem + 2px); border-radius: 6px; cursor: pointer; font-weight: bold;
+            background: #007bff; color: white; border: none; padding: 12px 24px;
+            font-size: calc(1.8rem + 4px); border-radius: 6px; cursor: pointer; font-weight: bold;
             transition: background 0.2s;
         }
         .tutorial-btn:hover { background: #0056b3; }
@@ -526,7 +526,6 @@
                 showNextBtn: false,
                 onEnter: () => {
                     document.getElementById('drag-guide-overlay').style.display = 'none';
-                    // 當進入步驟 4 時，自動將視角轉到 yaw: 120 (前往鞋櫃的熱點方向)
                     viewer.setYaw(120);
                 }
             },
