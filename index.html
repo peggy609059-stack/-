@@ -252,7 +252,7 @@
 
     <!-- 教學模式橫幅 -->
     <div id="tutorial-banner">
-        <div id="tutorial-title">導覽教學步驟4：前往下一個地區</div>
+        <div id="tutorial-title">導覽教學步驟 1</div>
         <div id="tutorial-desc">載入中...</div>
         <div class="tutorial-btn-group" id="tutorial-btn-group">
             <button class="tutorial-btn" id="tutorial-next-btn" onclick="nextTutorialStep()">下一步</button>
@@ -498,69 +498,73 @@
         });
 
         // ================= 教學模式核心邏輯 =================
-        let currentTutorialStep = 4; // 直接從步驟 4 開始
+        let currentTutorialStep = 1;
         let dragDistanceSum = 0;
         let isMouseDownOnViewer = false;
         let lastMouseX = 0;
 
         const tutorialSteps = {
             1: {
-                title: "導覽教學步驟1：查看空間介紹",
+                title: "導覽教學步驟 1",
                 desc: "如何查看空間介紹。右下角隨時提供當前區域的詳細介紹。請點擊右下角的『展開空間介紹』！",
                 showNextBtn: false
             },
             2: {
-                title: "導覽教學步驟2：關閉空間介紹",
+                title: "導覽教學步驟 2",
                 desc: "如何關閉空間介紹。左上角隨時可以關閉空間介紹。請點擊『關閉介紹』將其收合！",
                 showNextBtn: false
             },
             3: {
-                title: "導覽教學步驟3：環視周遭環境",
+                title: "導覽教學步驟 3",
                 desc: "如何環視周遭環境。請按住畫面左右滑動，進行 360 度旋轉觀察！",
                 showNextBtn: false,
                 onEnter: () => { document.getElementById('drag-guide-overlay').style.display = 'flex'; }
             },
             4: {
-                title: "導覽教學步驟4：前往下一個地區",
+                title: "導覽教學步驟 4",
                 desc: "如何前往下一個地區。請點擊畫面中的箭頭引導按鈕前往下個地點！",
                 showNextBtn: false,
-                onEnter: () => { document.getElementById('drag-guide-overlay').style.display = 'none'; }
+                onEnter: () => {
+                    document.getElementById('drag-guide-overlay').style.display = 'none';
+                    // 當進入步驟 4 時，自動將視角轉到 yaw: 120 (前往鞋櫃的熱點方向)
+                    viewer.setYaw(120);
+                }
             },
             5: {
-                title: "導覽教學步驟5：使用快速導覽",
+                title: "導覽教學步驟 5",
                 desc: "如何使用快速導覽。請點擊右上角的『快速導覽』選單，並點選其中一個地點。",
                 showNextBtn: false
             },
             6: {
-                title: "導覽教學步驟6：使用地圖定位",
+                title: "導覽教學步驟 6",
                 desc: "如何使用地圖定位。請點擊左下角的小地圖將其放大！地圖點開後可以放大檢視",
                 showNextBtn: false
             },
             7: {
-                title: "導覽教學步驟7：關閉地圖定位",
+                title: "導覽教學步驟 7",
                 desc: "如何關閉地圖定位。請點擊地圖右上角的✖",
                 showNextBtn: false
             },
             8: {
-                title: "導覽教學步驟8：回到上一步",
-                desc: "如何回到上一步。請點擊右上角的『回到上一步』按鈕！",
+                title: "導覽教學步驟 8",
+                desc: "如何回到上一步。請點擊左上角的『回到上一步』按鈕！",
                 showNextBtn: false
             },
             9: {
-                title: "導覽教學步驟9：是否重新教學",
+                title: "導覽教學步驟 9",
                 desc: "是否要再教學一次？您可以點擊下方按鈕選擇是否重新進行導覽教學。",
                 showNextBtn: false,
                 customButtons: true
             },
             10: {
-                title: "導覽教學步驟10：教學完成",
+                title: "導覽教學步驟 10",
                 desc: "🎉 教學完成！即將帶您回到初始畫面開始正式參訪...",
                 showNextBtn: false
             }
         };
 
         function startTutorial() {
-            currentTutorialStep = 4; // 固定從步驟 4 開始
+            currentTutorialStep = 1;
             renderTutorialStep();
             document.getElementById('tutorial-banner').style.display = 'block';
         }
@@ -616,6 +620,52 @@
                 viewer.loadScene("counter");
             }, 2500);
         }
+
+        // 監聽畫面的滑動事件以達成步驟 3
+        const panoElement = document.getElementById('panorama');
+        panoElement.addEventListener('mousedown', (e) => {
+            isMouseDownOnViewer = true;
+            lastMouseX = e.clientX;
+        });
+        window.addEventListener('mousemove', (e) => {
+            if (!isMouseDownOnViewer) return;
+            if (currentTutorialStep === 3) {
+                let diff = Math.abs(e.clientX - lastMouseX);
+                dragDistanceSum += diff;
+                if (dragDistanceSum > 150) {
+                    dragDistanceSum = 0;
+                    document.getElementById('drag-guide-overlay').style.display = 'none';
+                    nextTutorialStep();
+                }
+            }
+            lastMouseX = e.clientX;
+        });
+        window.addEventListener('mouseup', () => {
+            isMouseDownOnViewer = false;
+        });
+        // 支援觸控滑動
+        panoElement.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                isMouseDownOnViewer = true;
+                lastMouseX = e.touches[0].clientX;
+            }
+        });
+        window.addEventListener('touchmove', (e) => {
+            if (!isMouseDownOnViewer) return;
+            if (currentTutorialStep === 3 && e.touches.length === 1) {
+                let diff = Math.abs(e.touches[0].clientX - lastMouseX);
+                dragDistanceSum += diff;
+                if (dragDistanceSum > 150) {
+                    dragDistanceSum = 0;
+                    document.getElementById('drag-guide-overlay').style.display = 'none';
+                    nextTutorialStep();
+                }
+            }
+            if(e.touches.length === 1) lastMouseX = e.touches[0].clientX;
+        });
+        window.addEventListener('touchend', () => {
+            isMouseDownOnViewer = false;
+        });
 
         // ================= 原有功能函數 =================
         let navigationHistory = ["counter"];
@@ -827,7 +877,7 @@
             updateMapMarker("counter");
             document.getElementById('info-modal').classList.add('collapsed');
             
-            // 啟動教學模式（預設直接從步驟 4 開始）
+            // 啟動教學模式
             startTutorial();
         };
     </script>
