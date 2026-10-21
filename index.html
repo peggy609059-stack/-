@@ -10,6 +10,21 @@
         body { margin: 0; font-family: "Microsoft JhengHei", sans-serif; overflow: hidden; background: #000; font-size: calc(1rem + 5px); }
         #panorama { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
 
+        /* 全螢幕解鎖音訊與進入按鈕遮罩 */
+        #audio-unlock-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.85); z-index: 999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; text-align: center; padding: 20px; box-sizing: border-box;
+        }
+        #audio-unlock-btn {
+            background: #28a745; color: white; border: none; padding: 20px 40px;
+            font-size: calc(1.5rem + 8px); border-radius: 12px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: background 0.2s;
+            margin-top: 20px;
+        }
+        #audio-unlock-btn:hover { background: #218838; }
+
         /* 教學模式橫幅樣式 */
         #tutorial-banner {
             position: absolute; top: 90px; left: 50%; transform: translateX(-50%);
@@ -254,7 +269,14 @@
 </head>
 <body>
 
-    <!-- 語音音檔專用播放器（完美支援 LINE 內建瀏覽器） -->
+    <!-- 首次進入強制解鎖音訊與進入系統的遮罩按鈕 -->
+    <div id="audio-unlock-overlay">
+        <h2 style="font-size: calc(1.6rem + 6px); margin-bottom: 10px;">蘆洲集賢社區長照機構線上參訪系統</h2>
+        <p style="font-size: calc(1.2rem + 4px); color: #ccc; margin-bottom: 20px;">歡迎蒞臨！請點擊下方按鈕以啟用語音導覽與參訪系統</p>
+        <button id="audio-unlock-btn" onclick="initializeSystem()">🔊 點擊開始導覽與語音</button>
+    </div>
+
+    <!-- 語音音檔專用播放器 -->
     <audio id="voice-audio-player" style="display:none;"></audio>
 
     <!-- 教學模式橫幅 -->
@@ -384,7 +406,7 @@
             },
             "escape_wash": {
                 "title": "逃生區與洗手台｜安全疏散與衛生便利",
-                "desc": "位於教室區右側，設置緊急逃生動線以確保突發狀況時的安全疏散; 同時配有洗手台，方便長輩在活動前後或用餐前後就近洗手維持衛生。",
+                "desc": "位於教室區右側，設置緊急逃生動線以確保突發狀況時的安全疏散；同時配有洗手台，方便長輩在活動前後或用餐前後就近洗手維持衛生。",
                 "keepOriginal": true
             },
             "activity": {
@@ -507,14 +529,13 @@
             }
         });
 
-        // ================= 改良版：利用 Google TTS 語音串流音檔（完美避開 LINE 瀏覽器靜音限制） =================
+        // ================= 語音播放與解鎖邏輯 =================
         function speakText(text) {
             const player = document.getElementById('voice-audio-player');
-            // 使用 Google 翻譯的免費 TTS 語音合成 API 串流產生機器人語音音檔
             const encodedText = encodeURIComponent(text);
             player.src = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=zh-TW&client=tw-ob`;
             player.play().catch(error => {
-                console.log("音檔播放被瀏覽器阻擋，等待使用者互動解鎖", error);
+                console.log("語音播放遭到攔截", error);
             });
         }
 
@@ -527,6 +548,28 @@
             if (currentTutorialStep === 2) {
                 nextTutorialStep();
             }
+        }
+
+        // 使用者點擊首頁遮罩按鈕：解鎖音訊並啟動系統
+        function initializeSystem() {
+            const player = document.getElementById('voice-audio-player');
+            // 播放無聲短音訊以強制解除 LINE 瀏覽器靜音鎖
+            player.src = "data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
+            player.play().then(() => {
+                // 隱藏解鎖遮罩
+                document.getElementById('audio-unlock-overlay').style.display = 'none';
+                // 顯示初始資訊並啟動教學
+                showInfo("counter");
+                updateMapMarker("counter");
+                document.getElementById('info-modal').classList.add('collapsed');
+                startTutorial();
+            }).catch(e => {
+                document.getElementById('audio-unlock-overlay').style.display = 'none';
+                showInfo("counter");
+                updateMapMarker("counter");
+                document.getElementById('info-modal').classList.add('collapsed');
+                startTutorial();
+            });
         }
 
         // ================= 教學模式核心邏輯 =================
@@ -911,14 +954,6 @@
                 }
             }
         }
-
-        window.onload = function() {
-            showInfo("counter");
-            updateMapMarker("counter");
-            document.getElementById('info-modal').classList.add('collapsed');
-            
-            startTutorial();
-        };
     </script>
 
 </body>
