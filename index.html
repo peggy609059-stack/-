@@ -510,10 +510,10 @@
                 alert("您的瀏覽器不支援語音播放功能！");
                 return;
             }
-            window.speechSynthesis.cancel(); // 停止先前的朗讀
+            window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'zh-TW'; // 設定為繁體中文
-            utterance.rate = 0.9;  // 稍微放慢語速，方便長輩聆聽
+            utterance.lang = 'zh-TW';
+            utterance.rate = 0.9;
             window.speechSynthesis.speak(utterance);
         }
 
@@ -846,7 +846,7 @@
             modal.classList.toggle('collapsed');
             
             if (modal.classList.contains('collapsed')) {
-                window.speechSynthesis.cancel(); // 收合時停止語音
+                window.speechSynthesis.cancel();
                 if (currentTutorialStep === 2) {
                     nextTutorialStep(); // 步驟 2 完成
                 }
@@ -886,7 +886,6 @@
                     modal.classList.remove('keep-original-size');
                 }
                 
-                // 自動朗讀切換後的區域介紹
                 speakText(info.title + "。" + info.desc);
             }
         });
@@ -910,7 +909,6 @@
             updateMapMarker("counter");
             document.getElementById('info-modal').classList.add('collapsed');
             
-            // 啟動教學模式
             startTutorial();
         };
     </script>
