@@ -303,7 +303,7 @@
             <button class="close-map-btn" onclick="closeLargeMap()">✖</button>
             <h3 style="margin-top: 0; color: #333; text-align: center; font-size: calc(1.4rem + 5px);">中心平面導覽圖</h3>
             <div id="map-modal-img-wrapper">
-                <img id="map-modal-img" src="1791951164235.jpg" alt="大張地圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Large+Map'">
+                <img id="map-modal-img" src="1791951164235.jpg" alt="大張地圖" onerror="this.src='https://placehold.go/800x600/333/fff?text=Large+Map'">
                 <div id="map-modal-marker" class="map-marker"></div>
             </div>
         </div>
@@ -504,53 +504,27 @@
             }
         });
 
-        // ================= Google TTS 語音系統 =================
-        let currentAudioPlayer = null;
-
+        // ================= 語音導覽核心邏輯 =================
         function speakText(text) {
-            // 停止先前的朗讀，避免語音重疊
-            if (currentAudioPlayer) {
-                currentAudioPlayer.pause();
-                currentAudioPlayer = null;
+            if (!('speechSynthesis' in window)) {
+                alert("您的瀏覽器不支援語音播放功能！");
+                return;
             }
-
-            // 使用 Google TTS 免費語音服務，將文字轉成高相容性的 MP3 串流連結
-            const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q=${encodeURIComponent(text)}&tl=zh-TW`;
-            
-            // 建立新音訊
-            currentAudioPlayer = new Audio(ttsUrl);
-            
-            // 設定播放速度
-            currentAudioPlayer.playbackRate = 0.9; 
-
-            // 執行播放
-            currentAudioPlayer.play().catch(function(error) {
-                console.error("語音播放失敗：", error);
-                alert("語音播放受阻，請再點擊一次按鈕。");
-            });
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-TW';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
         }
 
         function speakCurrentInfo(event) {
             if (event) event.stopPropagation();
-            
-            const titleEl = document.getElementById('modal-title');
-            const descEl = document.getElementById('modal-desc');
-            
-            let title = titleEl ? titleEl.innerText : "";
-            let desc = descEl ? descEl.innerText : "";
-            
-            // 如果找不到上面的 ID，改抓右下角 info-modal 或 flat-detail-panel 的文字（安全防錯機制）
-            if (!title && !desc) {
-                const modalH3 = document.querySelector('#info-modal h3') || document.querySelector('#flat-detail-panel h3');
-                const modalP = document.querySelector('#info-modal p') || document.querySelector('#flat-detail-panel p');
-                title = modalH3 ? modalH3.innerText : "";
-                desc = modalP ? modalP.innerText : "";
-            }
-
+            const title = document.getElementById('modal-title').innerText;
+            const desc = document.getElementById('modal-desc').innerText;
             speakText(title + "。" + desc);
 
-            // 當在步驟 2 點擊播放語音時，自動進入下一個教學步驟
-            if (typeof currentTutorialStep !== 'undefined' && currentTutorialStep === 2) {
+            // 當在步驟 2 點擊播放語音時，自動進入下一個步驟
+            if (currentTutorialStep === 2) {
                 nextTutorialStep();
             }
         }
@@ -665,7 +639,6 @@
         }
 
         function restartTutorialYes() {
-            if (currentAudioPlayer) { currentAudioPlayer.pause(); currentAudioPlayer = null; }
             viewer.loadScene("counter");
             currentTutorialStep = 1;
             renderTutorialStep();
@@ -673,8 +646,8 @@
 
         function restartTutorialNo() {
             document.getElementById('tutorial-banner').style.display = 'none';
-            if (currentAudioPlayer) { currentAudioPlayer.pause(); currentAudioPlayer = null; }
             viewer.loadScene("counter");
+            window.speechSynthesis.cancel();
         }
 
         function finishTutorial() {
@@ -883,7 +856,7 @@
             modal.classList.toggle('collapsed');
             
             if (modal.classList.contains('collapsed')) {
-                if (currentAudioPlayer) { currentAudioPlayer.pause(); currentAudioPlayer = null; }
+                window.speechSynthesis.cancel();
                 if (currentTutorialStep === 3) {
                     nextTutorialStep(); // 步驟 3 完成
                 }
