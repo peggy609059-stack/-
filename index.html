@@ -96,7 +96,7 @@
         }
         .back-to-class-btn:hover { background: #c82333; }
 
-        /* 繼續導覽教學按鈕（固定於右下角介紹框上方） */
+        /* 繼續導覽教學按鈕（位於右下角空間介紹上方） */
         #restart-tutorial-trigger {
             position: absolute; bottom: 150px; right: 20px; z-index: 30;
             background: #28a745; color: white; border: none; padding: 10px 18px;
@@ -278,6 +278,7 @@
         <div id="tutorial-title">導覽教學步驟 1</div>
         <div id="tutorial-desc">載入中...</div>
         <div class="tutorial-btn-group" id="tutorial-btn-group">
+            <button class="tutorial-btn secondary" id="tutorial-prev-btn" onclick="prevTutorialStep()">上一部</button>
             <button class="tutorial-btn" id="tutorial-next-btn" onclick="nextTutorialStep()">下一步</button>
         </div>
     </div>
@@ -403,7 +404,7 @@
             },
             "escape_wash": {
                 "title": "逃生區與洗手台｜安全疏散與衛生便利",
-                "desc": "位於教室區右側，設置緊急逃生動線以確保突發狀況時的安全疏散;同時配有洗手台，方便長輩在活動前後或用餐前後就近洗手維持衛生。",
+                "desc": "位於教室區右側，設置緊急逃生動線以確保突發狀況時的安全疏散；同時配有洗手台，方便長輩在活動前後或用餐前後就近洗手維持衛生。",
                 "keepOriginal": true
             },
             "activity": {
@@ -559,29 +560,24 @@
         const tutorialSteps = {
             1: {
                 title: "導覽教學步驟 1",
-                desc: "如何查看空間介紹。右下角隨時提供當前區域的詳細介紹。請點擊右下角的『展開空間介紹』！",
-                showNextBtn: false
+                desc: "如何查看空間介紹。右下角隨時提供當前區域的詳細介紹。請點擊右下角的『展開空間介紹』！"
             },
             2: {
                 title: "導覽教學步驟 2",
-                desc: "如何播放語音導覽。您可以點擊介紹視窗中的『🔊 播放語音』按鈕來聆聽介紹！請點擊播放語音！",
-                showNextBtn: false
+                desc: "如何播放語音導覽。您可以點擊介紹視窗中的『🔊 播放語音』按鈕來聆聽介紹！請點擊播放語音！"
             },
             3: {
                 title: "導覽教學步驟 3",
-                desc: "如何關閉空間介紹。左上角隨時可以關閉空間介紹。請點擊『關閉介紹』將其收合！",
-                showNextBtn: false
+                desc: "如何關閉空間介紹。左上角隨時可以關閉空間介紹。請點擊『關閉介紹』將其收合！"
             },
             4: {
                 title: "導覽教學步驟 4",
                 desc: "如何環視周遭環境。請按住畫面左右滑動，進行 360 度旋轉觀察！",
-                showNextBtn: false,
                 onEnter: () => { document.getElementById('drag-guide-overlay').style.display = 'flex'; }
             },
             5: {
                 title: "導覽教學步驟 5",
                 desc: "如何前往下一個地區。請點擊畫面中的箭頭引導按鈕⬆️前往下個地點！",
-                showNextBtn: false,
                 onEnter: () => {
                     document.getElementById('drag-guide-overlay').style.display = 'none';
                     viewer.setYaw(120);
@@ -589,34 +585,28 @@
             },
             6: {
                 title: "導覽教學步驟 6",
-                desc: "如何使用快速導覽。請點擊右上角的『快速導覽』選單，並點選其中一個地點。",
-                showNextBtn: false
+                desc: "如何使用快速導覽。請點擊右上角的『快速導覽』選單，並點選其中一個地點。"
             },
             7: {
                 title: "導覽教學步驟 7",
-                desc: "如何使用地圖定位。請點擊左下角的小地圖將其放大！地圖點開後可以放大檢視",
-                showNextBtn: false
+                desc: "如何使用地圖定位。請點擊左下角的小地圖將其放大！地圖點開後可以放大檢視"
             },
             8: {
                 title: "導覽教學步驟 8",
-                desc: "如何關閉地圖定位。請點擊地圖右上角的✖或點擊圖片外的區域",
-                showNextBtn: false
+                desc: "如何關閉地圖定位。請點擊地圖右上角的✖或點擊圖片外的區域"
             },
             9: {
                 title: "導覽教學步驟 9",
-                desc: "如何回到上一步。請點擊左上角的『回到上一步』按鈕！",
-                showNextBtn: false
+                desc: "如何回到上一步。請點擊左上角的『回到上一步』按鈕！"
             },
             10: {
                 title: "導覽教學步驟 10",
                 desc: "是否要再教學一次？您可以點擊下方按鈕選擇是否重新進行導覽教學。",
-                showNextBtn: false,
                 customButtons: true
             },
             11: {
                 title: "導覽教學步驟 11",
-                desc: "🎉 教學完成！即將帶您回到初始畫面開始正式參訪...",
-                showNextBtn: false
+                desc: "🎉 教學完成！即將帶您回到初始畫面開始正式參訪..."
             }
         };
 
@@ -650,16 +640,32 @@
                 speakText(title + "。" + plainDesc);
             }
 
+            // 控制上一部按鈕在第一步時隱藏或禁用
+            const prevBtn = document.getElementById('tutorial-prev-btn');
+            if (currentTutorialStep === 1) {
+                prevBtn.style.display = 'none';
+            } else {
+                prevBtn.style.display = 'inline-block';
+            }
+
             const btnGroup = document.getElementById('tutorial-btn-group');
             if (stepData.customButtons) {
                 btnGroup.innerHTML = `
+                    <button class="tutorial-btn secondary" id="tutorial-prev-btn" onclick="prevTutorialStep()">上一部</button>
                     <button class="tutorial-btn" onclick="restartTutorialYes()">是，重新教學</button>
                     <button class="tutorial-btn secondary" onclick="restartTutorialNo()">否，開始參訪</button>
                 `;
-            } else if (stepData.showNextBtn) {
-                btnGroup.innerHTML = `<button class="tutorial-btn" onclick="nextTutorialStep()">下一步</button>`;
             } else {
-                btnGroup.innerHTML = `<span style="font-size:1.1rem; color:#adb5bd; font-style:italic;"></span>`;
+                // 維持標準的上一部與下一步按鈕配置
+                btnGroup.innerHTML = `
+                    <button class="tutorial-btn secondary" id="tutorial-prev-btn" onclick="prevTutorialStep()" ${currentTutorialStep === 1 ? 'style="display:none;"' : ''}>上一部</button>
+                    <button class="tutorial-btn" id="tutorial-next-btn" onclick="nextTutorialStep()">${currentTutorialStep === 11 ? '完成' : '下一步'}</button>
+                `;
+            }
+
+            // 關閉滑動指引（如果離開了步驟 4）
+            if (currentTutorialStep !== 4) {
+                document.getElementById('drag-guide-overlay').style.display = 'none';
             }
 
             if (stepData.onEnter) {
@@ -673,6 +679,13 @@
                 renderTutorialStep();
             } else {
                 finishTutorial();
+            }
+        }
+
+        function prevTutorialStep() {
+            if (currentTutorialStep > 1) {
+                currentTutorialStep--;
+                renderTutorialStep();
             }
         }
 
