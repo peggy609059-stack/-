@@ -10,21 +10,6 @@
         body { margin: 0; font-family: "Microsoft JhengHei", sans-serif; overflow: hidden; background: #000; font-size: calc(1rem + 5px); }
         #panorama { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; }
 
-        /* 全螢幕解鎖音訊與進入按鈕遮罩 */
-        #audio-unlock-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.85); z-index: 999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            color: white; text-align: center; padding: 20px; box-sizing: border-box;
-        }
-        #audio-unlock-btn {
-            background: #28a745; color: white; border: none; padding: 20px 40px;
-            font-size: calc(1.5rem + 8px); border-radius: 12px; cursor: pointer; font-weight: bold;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: background 0.2s;
-            margin-top: 20px;
-        }
-        #audio-unlock-btn:hover { background: #218838; }
-
         /* 教學模式橫幅樣式 */
         #tutorial-banner {
             position: absolute; top: 90px; left: 50%; transform: translateX(-50%);
@@ -269,16 +254,6 @@
 </head>
 <body>
 
-    <!-- 首次進入強制解鎖音訊與進入系統的遮罩按鈕 -->
-    <div id="audio-unlock-overlay">
-        <h2 style="font-size: calc(1.6rem + 6px); margin-bottom: 10px;">蘆洲集賢社區長照機構線上參訪系統</h2>
-        <p style="font-size: calc(1.2rem + 4px); color: #ccc; margin-bottom: 20px;">歡迎蒞臨！請點擊下方按鈕以啟用語音導覽與參訪系統</p>
-        <button id="audio-unlock-btn" onclick="initializeSystem()">🔊 點擊開始導覽與語音</button>
-    </div>
-
-    <!-- 語音音檔專用播放器 -->
-    <audio id="voice-audio-player" style="display:none;"></audio>
-
     <!-- 教學模式橫幅 -->
     <div id="tutorial-banner">
         <div id="tutorial-title">導覽教學步驟 1</div>
@@ -328,7 +303,7 @@
             <button class="close-map-btn" onclick="closeLargeMap()">✖</button>
             <h3 style="margin-top: 0; color: #333; text-align: center; font-size: calc(1.4rem + 5px);">中心平面導覽圖</h3>
             <div id="map-modal-img-wrapper">
-                <img id="map-modal-img" src="1791951164235.jpg" alt="大張地圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Large+Map'">
+                <img id="map-modal-img" src="1791951164235.jpg" alt="大張地圖" onerror="this.src='https://placehold.go/800x600/333/fff?text=Large+Map'">
                 <div id="map-modal-marker" class="map-marker"></div>
             </div>
         </div>
@@ -529,14 +504,17 @@
             }
         });
 
-        // ================= 語音播放與解鎖邏輯 =================
+        // ================= 語音導覽核心邏輯 =================
         function speakText(text) {
-            const player = document.getElementById('voice-audio-player');
-            const encodedText = encodeURIComponent(text);
-            player.src = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=zh-TW&client=tw-ob`;
-            player.play().catch(error => {
-                console.log("語音播放遭到攔截", error);
-            });
+            if (!('speechSynthesis' in window)) {
+                alert("您的瀏覽器不支援語音播放功能！");
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-TW';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
         }
 
         function speakCurrentInfo(event) {
@@ -545,28 +523,10 @@
             const desc = document.getElementById('modal-desc').innerText;
             speakText(title + "。" + desc);
 
+            // 當在步驟 2 點擊播放語音時，自動進入下一個步驟
             if (currentTutorialStep === 2) {
                 nextTutorialStep();
             }
-        }
-
-        // 使用者點擊首頁遮罩按鈕：解鎖音訊並啟動系統
-        function initializeSystem() {
-            const player = document.getElementById('voice-audio-player');
-            player.src = "data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
-            player.play().then(() => {
-                document.getElementById('audio-unlock-overlay').style.display = 'none';
-                showInfo("counter");
-                updateMapMarker("counter");
-                document.getElementById('info-modal').classList.add('collapsed');
-                startTutorial();
-            }).catch(e => {
-                document.getElementById('audio-unlock-overlay').style.display = 'none';
-                showInfo("counter");
-                updateMapMarker("counter");
-                document.getElementById('info-modal').classList.add('collapsed');
-                startTutorial();
-            });
         }
 
         // ================= 教學模式核心邏輯 =================
@@ -583,7 +543,7 @@
             },
             2: {
                 title: "導覽教學步驟 2",
-                desc: "如何播放語音導覽。您可以點擊介紹視窗中的『🔊 播放語音』按鈕來聆聽機器人介紹！請點擊播放語音！",
+                desc: "如何播放語音導覽。您可以點擊介紹視窗中的『🔊 播放語音』按鈕來聆聽介紹！請點擊播放語音！",
                 showNextBtn: false
             },
             3: {
@@ -687,7 +647,7 @@
         function restartTutorialNo() {
             document.getElementById('tutorial-banner').style.display = 'none';
             viewer.loadScene("counter");
-            document.getElementById('voice-audio-player').pause();
+            window.speechSynthesis.cancel();
         }
 
         function finishTutorial() {
@@ -896,7 +856,7 @@
             modal.classList.toggle('collapsed');
             
             if (modal.classList.contains('collapsed')) {
-                document.getElementById('voice-audio-player').pause();
+                window.speechSynthesis.cancel();
                 if (currentTutorialStep === 3) {
                     nextTutorialStep(); // 步驟 3 完成
                 }
@@ -951,6 +911,14 @@
                 }
             }
         }
+
+        window.onload = function() {
+            showInfo("counter");
+            updateMapMarker("counter");
+            document.getElementById('info-modal').classList.add('collapsed');
+            
+            startTutorial();
+        };
     </script>
 
 </body>
