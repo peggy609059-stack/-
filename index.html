@@ -553,12 +553,9 @@
         // 使用者點擊首頁遮罩按鈕：解鎖音訊並啟動系統
         function initializeSystem() {
             const player = document.getElementById('voice-audio-player');
-            // 播放無聲短音訊以強制解除 LINE 瀏覽器靜音鎖
             player.src = "data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
             player.play().then(() => {
-                // 隱藏解鎖遮罩
                 document.getElementById('audio-unlock-overlay').style.display = 'none';
-                // 顯示初始資訊並啟動教學
                 showInfo("counter");
                 updateMapMarker("counter");
                 document.getElementById('info-modal').classList.add('collapsed');
