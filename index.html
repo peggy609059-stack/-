@@ -24,6 +24,15 @@
         #tutorial-title { font-size: calc(1.7rem + 8px); color: #4dabf7; margin-bottom: 12px; font-weight: bold; }
         #tutorial-desc { font-size: calc(1.4rem + 6px); line-height: 1.6; margin-bottom: 18px; }
         
+        /* 教學橫幅右上角關閉按鈕 */
+        .close-tutorial-btn {
+            position: absolute; top: 15px; right: 15px; background: #dc3545;
+            color: white; border: none; width: 35px; height: 35px; border-radius: 50%;
+            font-size: calc(1.2rem + 5px); cursor: pointer; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            display: flex; justify-content: center; align-items: center; z-index: 101;
+        }
+        .close-tutorial-btn:hover { background: #c82333; }
+
         .tutorial-btn-group { display: flex; justify-content: center; gap: 15px; }
         .tutorial-btn {
             background: #007bff; color: white; border: none; padding: 10px 22px;
@@ -86,6 +95,15 @@
             display: inline-block;
         }
         .back-to-class-btn:hover { background: #c82333; }
+
+        /* 繼續導覽教學按鈕（固定於右下角介紹框上方） */
+        #restart-tutorial-trigger {
+            position: absolute; bottom: 150px; right: 20px; z-index: 30;
+            background: #28a745; color: white; border: none; padding: 10px 18px;
+            font-size: calc(1.2rem + 5px); border-radius: 8px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s;
+        }
+        #restart-tutorial-trigger:hover { background: #218838; }
 
         /* 空間介紹區域（右下角） */
         #info-modal {
@@ -256,6 +274,7 @@
 
     <!-- 教學模式橫幅 -->
     <div id="tutorial-banner">
+        <button class="close-tutorial-btn" onclick="closeTutorialManual()" title="關閉教學">✖</button>
         <div id="tutorial-title">導覽教學步驟 1</div>
         <div id="tutorial-desc">載入中...</div>
         <div class="tutorial-btn-group" id="tutorial-btn-group">
@@ -308,6 +327,9 @@
             </div>
         </div>
     </div>
+
+    <!-- 繼續導覽教學按鈕（位於右下角空間介紹上方） -->
+    <button id="restart-tutorial-trigger" onclick="startTutorial()">📖 繼續導覽教學</button>
 
     <!-- 空間介紹彈跳視窗（含語音按鈕） -->
     <div id="info-modal" onclick="checkInfoToggle(event)">
@@ -381,7 +403,7 @@
             },
             "escape_wash": {
                 "title": "逃生區與洗手台｜安全疏散與衛生便利",
-                "desc": "位於教室區右側，設置緊急逃生動線以確保突發狀況時的安全疏散；同時配有洗手台，方便長輩在活動前後或用餐前後就近洗手維持衛生。",
+                "desc": "位於教室區右側，設置緊急逃生動線以確保突發狀況時的安全疏散;同時配有洗手台，方便長輩在活動前後或用餐前後就近洗手維持衛生。",
                 "keepOriginal": true
             },
             "activity": {
@@ -604,6 +626,12 @@
             document.getElementById('tutorial-banner').style.display = 'block';
         }
 
+        function closeTutorialManual() {
+            document.getElementById('tutorial-banner').style.display = 'none';
+            document.getElementById('drag-guide-overlay').style.display = 'none';
+            window.speechSynthesis.cancel();
+        }
+
         function renderTutorialStep() {
             const stepData = tutorialSteps[currentTutorialStep];
             if (!stepData) return;
@@ -614,7 +642,6 @@
             document.getElementById('tutorial-title').innerText = title;
             document.getElementById('tutorial-desc').innerHTML = stepData.desc;
 
-            // 針對步驟 1 加入微幅延遲，確保瀏覽器語音引擎準備就緒
             if (currentTutorialStep === 1) {
                 setTimeout(() => {
                     speakText(title + "。" + plainDesc);
@@ -729,6 +756,8 @@
             document.getElementById('mini-map-container').style.pointerEvents = 'none';
             document.getElementById('info-modal').style.opacity = '0';
             document.getElementById('info-modal').style.pointerEvents = 'none';
+            document.getElementById('restart-tutorial-trigger').style.opacity = '0';
+            document.getElementById('restart-tutorial-trigger').style.pointerEvents = 'none';
 
             const info = sceneInfo["kitchen"];
             const panel = document.getElementById('flat-detail-panel');
@@ -754,6 +783,8 @@
             document.getElementById('mini-map-container').style.pointerEvents = 'none';
             document.getElementById('info-modal').style.opacity = '0';
             document.getElementById('info-modal').style.pointerEvents = 'none';
+            document.getElementById('restart-tutorial-trigger').style.opacity = '0';
+            document.getElementById('restart-tutorial-trigger').style.pointerEvents = 'none';
 
             const info = sceneInfo["escape_wash"];
             const panel = document.getElementById('flat-detail-panel');
@@ -778,6 +809,8 @@
             document.getElementById('mini-map-container').style.pointerEvents = 'auto';
             document.getElementById('info-modal').style.opacity = '1';
             document.getElementById('info-modal').style.pointerEvents = 'auto';
+            document.getElementById('restart-tutorial-trigger').style.opacity = '1';
+            document.getElementById('restart-tutorial-trigger').style.pointerEvents = 'auto';
         }
 
         function returnToClass() {
