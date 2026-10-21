@@ -96,7 +96,7 @@
         }
         .back-to-class-btn:hover { background: #c82333; }
 
-        /* 繼續導覽教學按鈕（寬度設定為 183px 與收合後的展開空間介紹按鈕同寬） */
+        /* 導覽教學按鈕（寬度設定為 183px 與收合後的展開空間介紹按鈕同寬） */
         #restart-tutorial-trigger {
             position: absolute; bottom: 95px; right: 20px; z-index: 30;
             background: #28a745; color: white; border: none; padding: 12px 10px;
@@ -280,7 +280,7 @@
         <div id="tutorial-title">導覽教學步驟 1</div>
         <div id="tutorial-desc">載入中...</div>
         <div class="tutorial-btn-group" id="tutorial-btn-group">
-            <button class="tutorial-btn secondary" id="tutorial-prev-btn" onclick="prevTutorialStep()">上一部</button>
+            <button class="tutorial-btn secondary" id="tutorial-prev-btn" onclick="prevTutorialStep()">上一步</button>
             <button class="tutorial-btn" id="tutorial-next-btn" onclick="nextTutorialStep()">下一步</button>
         </div>
     </div>
@@ -332,7 +332,7 @@
     </div>
 
     <!-- 繼續導覽教學按鈕（寬度與展開空間介紹同寬） -->
-    <button id="restart-tutorial-trigger" onclick="startTutorial()">繼續導覽教學</button>
+    <button id="restart-tutorial-trigger" onclick="startTutorial()">導覽教學</button>
 
     <!-- 空間介紹彈跳視窗（含語音按鈕） -->
     <div id="info-modal" onclick="checkInfoToggle(event)">
@@ -652,7 +652,7 @@
             const btnGroup = document.getElementById('tutorial-btn-group');
             if (stepData.customButtons) {
                 btnGroup.innerHTML = `
-                    <button class="tutorial-btn secondary" id="tutorial-prev-btn" onclick="prevTutorialStep()">上一部</button>
+                    <button class="tutorial-btn secondary" id="tutorial-prev-btn" onclick="prevTutorialStep()">上一步</button>
                     <button class="tutorial-btn" onclick="restartTutorialYes()">是，重新教學</button>
                     <button class="tutorial-btn secondary" onclick="restartTutorialNo()">否，開始參訪</button>
                 `;
