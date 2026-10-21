@@ -611,6 +611,10 @@
             document.getElementById('tutorial-title').innerText = stepData.title;
             document.getElementById('tutorial-desc').innerHTML = stepData.desc;
 
+            // 教學步驟更新時自動語音朗讀（過濾掉HTML標籤以便語音順暢朗讀）
+            const plainDesc = stepData.desc.replace(/<[^>]+>/g, '');
+            speakText(stepData.title + "。" + plainDesc);
+
             const btnGroup = document.getElementById('tutorial-btn-group');
             if (stepData.customButtons) {
                 btnGroup.innerHTML = `
@@ -867,7 +871,6 @@
             if (modal.classList.contains('collapsed')) {
                 modal.classList.remove('collapsed');
                 
-                // 點擊展開時自動唸出當前空間介紹
                 const title = document.getElementById('modal-title').innerText;
                 const desc = document.getElementById('modal-desc').innerText;
                 speakText(title + "。" + desc);
