@@ -609,14 +609,19 @@
             if (!stepData) return;
 
             const title = stepData.title;
-            // 移除 HTML 標籤（例如按鈕名稱中的特殊符號）以確保語音朗讀順暢
             const plainDesc = stepData.desc.replace(/<[^>]*>?/gm, '');
 
             document.getElementById('tutorial-title').innerText = title;
             document.getElementById('tutorial-desc').innerHTML = stepData.desc;
 
-            // 教學步驟切換時自動唸出該步驟標題與內容
-            speakText(title + "。" + plainDesc);
+            // 針對步驟 1 加入微幅延遲，確保瀏覽器語音引擎準備就緒
+            if (currentTutorialStep === 1) {
+                setTimeout(() => {
+                    speakText(title + "。" + plainDesc);
+                }, 300);
+            } else {
+                speakText(title + "。" + plainDesc);
+            }
 
             const btnGroup = document.getElementById('tutorial-btn-group');
             if (stepData.customButtons) {
