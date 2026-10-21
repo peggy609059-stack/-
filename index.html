@@ -303,7 +303,7 @@
             <button class="close-map-btn" onclick="closeLargeMap()">✖</button>
             <h3 style="margin-top: 0; color: #333; text-align: center; font-size: calc(1.4rem + 5px);">中心平面導覽圖</h3>
             <div id="map-modal-img-wrapper">
-                <img id="map-modal-img" src="1791951164235.jpg" alt="大張地圖" onerror="this.src='https://placehold.go/800x600/333/fff?text=Large+Map'">
+                <img id="map-modal-img" src="1791951164235.jpg" alt="大張地圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Large+Map'">
                 <div id="map-modal-marker" class="map-marker"></div>
             </div>
         </div>
@@ -523,7 +523,6 @@
             const desc = document.getElementById('modal-desc').innerText;
             speakText(title + "。" + desc);
 
-            // 當在步驟 2 點擊播放語音時，自動進入下一個步驟
             if (currentTutorialStep === 2) {
                 nextTutorialStep();
             }
@@ -867,6 +866,12 @@
             const modal = document.getElementById('info-modal');
             if (modal.classList.contains('collapsed')) {
                 modal.classList.remove('collapsed');
+                
+                // 點擊展開時自動唸出當前空間介紹
+                const title = document.getElementById('modal-title').innerText;
+                const desc = document.getElementById('modal-desc').innerText;
+                speakText(title + "。" + desc);
+
                 if (currentTutorialStep === 1) {
                     nextTutorialStep(); // 步驟 1 完成
                 }
