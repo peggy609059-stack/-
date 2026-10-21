@@ -303,7 +303,7 @@
             <button class="close-map-btn" onclick="closeLargeMap()">✖</button>
             <h3 style="margin-top: 0; color: #333; text-align: center; font-size: calc(1.4rem + 5px);">中心平面導覽圖</h3>
             <div id="map-modal-img-wrapper">
-                <img id="map-modal-img" src="1791951164235.jpg" alt="大張地圖" onerror="this.src='https://placehold.go/800x600/333/fff?text=Large+Map'">
+                <img id="map-modal-img" src="1791951164235.jpg" alt="大張地圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Large+Map'">
                 <div id="map-modal-marker" class="map-marker"></div>
             </div>
         </div>
@@ -504,12 +504,26 @@
             }
         });
 
-        // ================= 語音導覽核心邏輯 =================
+        // ================= 語音導覽核心邏輯（解鎖 LINE 語音限制） =================
+        let isAudioUnlocked = false;
+
+        function unlockAudio() {
+            if (isAudioUnlocked) return;
+            if ('speechSynthesis' in window) {
+                // 透過發送一段空白或無聲的語音來解鎖瀏覽器/LINE App 的音訊權限
+                const dummy = new SpeechSynthesisUtterance("");
+                dummy.volume = 0;
+                window.speechSynthesis.speak(dummy);
+                isAudioUnlocked = true;
+            }
+        }
+
         function speakText(text) {
             if (!('speechSynthesis' in window)) {
                 alert("您的瀏覽器不支援語音播放功能！");
                 return;
             }
+            unlockAudio();
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'zh-TW';
@@ -523,7 +537,6 @@
             const desc = document.getElementById('modal-desc').innerText;
             speakText(title + "。" + desc);
 
-            // 當在步驟 2 點擊播放語音時，自動進入下一個步驟
             if (currentTutorialStep === 2) {
                 nextTutorialStep();
             }
@@ -661,6 +674,7 @@
         // 監聽畫面的滑動事件以達成步驟 4
         const panoElement = document.getElementById('panorama');
         panoElement.addEventListener('mousedown', (e) => {
+            unlockAudio();
             isMouseDownOnViewer = true;
             lastMouseX = e.clientX;
         });
@@ -682,6 +696,7 @@
         });
         // 支援觸控滑動
         panoElement.addEventListener('touchstart', (e) => {
+            unlockAudio();
             if (e.touches.length === 1) {
                 isMouseDownOnViewer = true;
                 lastMouseX = e.touches[0].clientX;
@@ -708,6 +723,7 @@
         let navigationHistory = ["counter"];
 
         function openKitchenFlatView(event) {
+            unlockAudio();
             const container = document.getElementById('flat-view-container');
             document.getElementById('flat-image').src = "廚房.jpg";
             container.style.display = 'flex';
@@ -733,6 +749,7 @@
         }
 
         function openEscapeWashFlatView(event) {
+            unlockAudio();
             const container = document.getElementById('flat-view-container');
             document.getElementById('flat-image').src = "逃生.jpg";
             container.style.display = 'flex';
@@ -758,6 +775,7 @@
         }
 
         function closeFlatView() {
+            unlockAudio();
             const container = document.getElementById('flat-view-container');
             container.style.display = 'none';
 
@@ -781,6 +799,7 @@
         });
 
         function goBackStep() {
+            unlockAudio();
             if (currentTutorialStep === 9) {
                 nextTutorialStep(); // 步驟 9 完成
             }
@@ -794,6 +813,7 @@
         }
 
         function quickJump(value) {
+            unlockAudio();
             if (!value) return;
 
             if (currentTutorialStep === 6) {
@@ -833,6 +853,7 @@
         }
 
         function openLargeMap() {
+            unlockAudio();
             if (currentTutorialStep === 7) {
                 nextTutorialStep(); // 步驟 7 完成
             }
@@ -840,6 +861,7 @@
         }
 
         function closeLargeMap(event) {
+            unlockAudio();
             if (!event || event.target.id === 'map-modal' || event.target.classList.contains('close-map-btn')) {
                 if (currentTutorialStep === 8) {
                     nextTutorialStep(); // 步驟 8 完成
@@ -851,6 +873,7 @@
         let currentSceneId = "counter";
 
         function toggleInfoModal(event) {
+            unlockAudio();
             if (event) event.stopPropagation();
             const modal = document.getElementById('info-modal');
             modal.classList.toggle('collapsed');
@@ -864,6 +887,7 @@
         }
 
         function checkInfoToggle(event) {
+            unlockAudio();
             const modal = document.getElementById('info-modal');
             if (modal.classList.contains('collapsed')) {
                 modal.classList.remove('collapsed');
@@ -917,6 +941,11 @@
             updateMapMarker("counter");
             document.getElementById('info-modal').classList.add('collapsed');
             
+            // 偵測並提示 LINE 瀏覽器使用者
+            if (navigator.userAgent.indexOf("Line") > -1) {
+                console.log("偵測到 LINE 內建瀏覽器運行");
+            }
+
             startTutorial();
         };
     </script>
