@@ -96,9 +96,9 @@
         }
         .back-to-class-btn:hover { background: #c82333; }
 
-        /* 繼續導覽教學按鈕（位於右下角空間介紹上方） */
+        /* 繼續導覽教學按鈕（位於右下角空間介紹上方，已往下調整位置） */
         #restart-tutorial-trigger {
-            position: absolute; bottom: 150px; right: 20px; z-index: 30;
+            position: absolute; bottom: 95px; right: 20px; z-index: 30;
             background: #28a745; color: white; border: none; padding: 10px 18px;
             font-size: calc(1.2rem + 5px); border-radius: 8px; cursor: pointer; font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.2s;
@@ -640,7 +640,6 @@
                 speakText(title + "。" + plainDesc);
             }
 
-            // 控制上一部按鈕在第一步時隱藏或禁用
             const prevBtn = document.getElementById('tutorial-prev-btn');
             if (currentTutorialStep === 1) {
                 prevBtn.style.display = 'none';
@@ -656,14 +655,12 @@
                     <button class="tutorial-btn secondary" onclick="restartTutorialNo()">否，開始參訪</button>
                 `;
             } else {
-                // 維持標準的上一部與下一步按鈕配置
                 btnGroup.innerHTML = `
                     <button class="tutorial-btn secondary" id="tutorial-prev-btn" onclick="prevTutorialStep()" ${currentTutorialStep === 1 ? 'style="display:none;"' : ''}>上一部</button>
                     <button class="tutorial-btn" id="tutorial-next-btn" onclick="nextTutorialStep()">${currentTutorialStep === 11 ? '完成' : '下一步'}</button>
                 `;
             }
 
-            // 關閉滑動指引（如果離開了步驟 4）
             if (currentTutorialStep !== 4) {
                 document.getElementById('drag-guide-overlay').style.display = 'none';
             }
