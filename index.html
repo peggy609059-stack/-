@@ -263,7 +263,7 @@
         </div>
     </div>
 
-    <!-- 步驟 3 專用環狀滑動提示指引圖示 -->
+    <!-- 步驟 4 專用環狀滑動提示指引圖示 -->
     <div id="drag-guide-overlay">
         <div class="drag-icon-circle">↔️</div>
         <p style="margin-top: 10px; font-weight: bold;">請按住畫面左右滑動</p>
@@ -303,7 +303,7 @@
             <button class="close-map-btn" onclick="closeLargeMap()">✖</button>
             <h3 style="margin-top: 0; color: #333; text-align: center; font-size: calc(1.4rem + 5px);">中心平面導覽圖</h3>
             <div id="map-modal-img-wrapper">
-                <img id="map-modal-img" src="1791951164235.jpg" alt="大張地圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Large+Map'">
+                <img id="map-modal-img" src="1791951164235.jpg" alt="大張地圖" onerror="this.src='https://placehold.go/800x600/333/fff?text=Large+Map'">
                 <div id="map-modal-marker" class="map-marker"></div>
             </div>
         </div>
@@ -522,6 +522,11 @@
             const title = document.getElementById('modal-title').innerText;
             const desc = document.getElementById('modal-desc').innerText;
             speakText(title + "。" + desc);
+
+            // 當在步驟 2 點擊播放語音時，自動進入下一個步驟
+            if (currentTutorialStep === 2) {
+                nextTutorialStep();
+            }
         }
 
         // ================= 教學模式核心邏輯 =================
@@ -538,17 +543,22 @@
             },
             2: {
                 title: "導覽教學步驟 2",
-                desc: "如何關閉空間介紹。左上角隨時可以關閉空間介紹。請點擊『關閉介紹』將其收合！",
+                desc: "如何播放語音導覽。您可以點擊介紹視窗中的『🔊 播放語音』按鈕來聆聽介紹！請點擊播放語音！",
                 showNextBtn: false
             },
             3: {
                 title: "導覽教學步驟 3",
+                desc: "如何關閉空間介紹。左上角隨時可以關閉空間介紹。請點擊『關閉介紹』將其收合！",
+                showNextBtn: false
+            },
+            4: {
+                title: "導覽教學步驟 4",
                 desc: "如何環視周遭環境。請按住畫面左右滑動，進行 360 度旋轉觀察！",
                 showNextBtn: false,
                 onEnter: () => { document.getElementById('drag-guide-overlay').style.display = 'flex'; }
             },
-            4: {
-                title: "導覽教學步驟 4",
+            5: {
+                title: "導覽教學步驟 5",
                 desc: "如何前往下一個地區。請點擊畫面中的箭頭引導按鈕⬆️前往下個地點！",
                 showNextBtn: false,
                 onEnter: () => {
@@ -556,34 +566,34 @@
                     viewer.setYaw(120);
                 }
             },
-            5: {
-                title: "導覽教學步驟 5",
-                desc: "如何使用快速導覽。請點擊右上角的『快速導覽』選單，並點選其中一個地點。",
-                showNextBtn: false
-            },
             6: {
                 title: "導覽教學步驟 6",
-                desc: "如何使用地圖定位。請點擊左下角的小地圖將其放大！地圖點開後可以放大檢視",
+                desc: "如何使用快速導覽。請點擊右上角的『快速導覽』選單，並點選其中一個地點。",
                 showNextBtn: false
             },
             7: {
                 title: "導覽教學步驟 7",
-                desc: "如何關閉地圖定位。請點擊地圖右上角的✖或點擊圖片外的區域",
+                desc: "如何使用地圖定位。請點擊左下角的小地圖將其放大！地圖點開後可以放大檢視",
                 showNextBtn: false
             },
             8: {
                 title: "導覽教學步驟 8",
-                desc: "如何回到上一步。請點擊左上角的『回到上一步』按鈕！",
+                desc: "如何關閉地圖定位。請點擊地圖右上角的✖或點擊圖片外的區域",
                 showNextBtn: false
             },
             9: {
                 title: "導覽教學步驟 9",
+                desc: "如何回到上一步。請點擊左上角的『回到上一步』按鈕！",
+                showNextBtn: false
+            },
+            10: {
+                title: "導覽教學步驟 10",
                 desc: "是否要再教學一次？您可以點擊下方按鈕選擇是否重新進行導覽教學。",
                 showNextBtn: false,
                 customButtons: true
             },
-            10: {
-                title: "導覽教學步驟 10",
+            11: {
+                title: "導覽教學步驟 11",
                 desc: "🎉 教學完成！即將帶您回到初始畫面開始正式參訪...",
                 showNextBtn: false
             }
@@ -620,7 +630,7 @@
         }
 
         function nextTutorialStep() {
-            if (currentTutorialStep < 10) {
+            if (currentTutorialStep < 11) {
                 currentTutorialStep++;
                 renderTutorialStep();
             } else {
@@ -648,7 +658,7 @@
             }, 2500);
         }
 
-        // 監聽畫面的滑動事件以達成步驟 3
+        // 監聽畫面的滑動事件以達成步驟 4
         const panoElement = document.getElementById('panorama');
         panoElement.addEventListener('mousedown', (e) => {
             isMouseDownOnViewer = true;
@@ -656,7 +666,7 @@
         });
         window.addEventListener('mousemove', (e) => {
             if (!isMouseDownOnViewer) return;
-            if (currentTutorialStep === 3) {
+            if (currentTutorialStep === 4) {
                 let diff = Math.abs(e.clientX - lastMouseX);
                 dragDistanceSum += diff;
                 if (dragDistanceSum > 150) {
@@ -679,7 +689,7 @@
         });
         window.addEventListener('touchmove', (e) => {
             if (!isMouseDownOnViewer) return;
-            if (currentTutorialStep === 3 && e.touches.length === 1) {
+            if (currentTutorialStep === 4 && e.touches.length === 1) {
                 let diff = Math.abs(e.touches[0].clientX - lastMouseX);
                 dragDistanceSum += diff;
                 if (dragDistanceSum > 150) {
@@ -771,8 +781,8 @@
         });
 
         function goBackStep() {
-            if (currentTutorialStep === 8) {
-                nextTutorialStep(); // 步驟 8 完成
+            if (currentTutorialStep === 9) {
+                nextTutorialStep(); // 步驟 9 完成
             }
             if (navigationHistory.length > 1) {
                 navigationHistory.pop();
@@ -786,8 +796,8 @@
         function quickJump(value) {
             if (!value) return;
 
-            if (currentTutorialStep === 5) {
-                nextTutorialStep(); // 步驟 5 完成
+            if (currentTutorialStep === 6) {
+                nextTutorialStep(); // 步驟 6 完成
             }
 
             if (value === "openKitchen") {
@@ -823,16 +833,16 @@
         }
 
         function openLargeMap() {
-            if (currentTutorialStep === 6) {
-                nextTutorialStep(); // 步驟 6 完成
+            if (currentTutorialStep === 7) {
+                nextTutorialStep(); // 步驟 7 完成
             }
             document.getElementById('map-modal').style.display = 'flex';
         }
 
         function closeLargeMap(event) {
             if (!event || event.target.id === 'map-modal' || event.target.classList.contains('close-map-btn')) {
-                if (currentTutorialStep === 7) {
-                    nextTutorialStep(); // 步驟 7 完成
+                if (currentTutorialStep === 8) {
+                    nextTutorialStep(); // 步驟 8 完成
                 }
                 document.getElementById('map-modal').style.display = 'none';
             }
@@ -847,8 +857,8 @@
             
             if (modal.classList.contains('collapsed')) {
                 window.speechSynthesis.cancel();
-                if (currentTutorialStep === 2) {
-                    nextTutorialStep(); // 步驟 2 完成
+                if (currentTutorialStep === 3) {
+                    nextTutorialStep(); // 步驟 3 完成
                 }
             }
         }
@@ -871,8 +881,8 @@
                 navigationHistory.push(sceneId);
             }
 
-            if (currentTutorialStep === 4 && sceneId === "shoes") {
-                nextTutorialStep(); // 步驟 4 完成
+            if (currentTutorialStep === 5 && sceneId === "shoes") {
+                nextTutorialStep(); // 步驟 5 完成
             }
 
             const info = sceneInfo[sceneId];
@@ -885,8 +895,6 @@
                 } else {
                     modal.classList.remove('keep-original-size');
                 }
-                
-                // 已移除自動語音播放，改由手動點擊按鈕觸發
             }
         });
 
