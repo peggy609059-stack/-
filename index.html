@@ -56,6 +56,20 @@
         }
         @keyframes rotateRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* 首次點擊解鎖音訊提示遮罩 */
+        #audio-unlock-overlay {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.4); z-index: 200; display: flex;
+            justify-content: center; align-items: center; cursor: pointer;
+        }
+        .unlock-box {
+            background: rgba(0, 123, 255, 0.95); color: white; padding: 25px 40px;
+            border-radius: 12px; font-size: calc(1.5rem + 5px); font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: center;
+            border: 2px solid white; animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+
         /* 平面圖片檢視器容器樣式：垂直置中排列 */
         #flat-view-container {
             position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -272,6 +286,13 @@
 </head>
 <body>
 
+    <!-- 首次載入解鎖瀏覽器音訊限制遮罩 -->
+    <div id="audio-unlock-overlay" onclick="unlockAudioAndStart()">
+        <div class="unlock-box">
+            🔊 點擊此處開始參訪與語音導覽
+        </div>
+    </div>
+
     <!-- 教學模式橫幅 -->
     <div id="tutorial-banner">
         <button class="close-tutorial-btn" onclick="closeTutorialManual()" title="關閉教學">✖</button>
@@ -357,7 +378,6 @@
 
     <script>
         // ================= 語音檔對應設定 =================
-        // 導覽教學步驟語音檔對應
         const tutorialAudioFiles = {
             1: "1.mp3",
             2: "2.mp3",
@@ -372,7 +392,6 @@
             11: "tutorial_step11.mp3"
         };
 
-        // 各空間介紹語音檔對應
         const sceneAudioFiles = {
             "counter": "櫃台.mp3",
             "shoes": "鞋櫃.mp3",
@@ -407,7 +426,6 @@
             const audioFile = sceneAudioFiles[currentSceneId];
             playAudio(audioFile);
 
-            // 若正處於教學步驟 2，點擊播放語音後自動進入下一步
             if (currentTutorialStep === 2) {
                 nextTutorialStep();
             }
@@ -643,6 +661,12 @@
             }
         };
 
+        // 首次點擊以解除瀏覽器音訊限制並立刻播放步驟 1
+        function unlockAudioAndStart() {
+            document.getElementById('audio-unlock-overlay').style.display = 'none';
+            startTutorial();
+        }
+
         function startTutorial() {
             currentTutorialStep = 1;
             renderTutorialStep();
@@ -651,10 +675,10 @@
 
         function closeTutorialManual() {
             document.getElementById('tutorial-banner').style.display = 'none';
-            document.getElementById('drag-guide-overlay').style.display = 'none';
+            document.getElementById('drag-guide-overlay').style.display = 'none'; // 關閉步驟4旋轉箭頭圖示
             if (currentAudio) {
                 currentAudio.pause();
-                currentAudio.currentTime = 0;
+                currentAudio.currentTime = 0; // 取消教學步驟聲音
             }
         }
 
@@ -722,6 +746,7 @@
 
         function restartTutorialNo() {
             document.getElementById('tutorial-banner').style.display = 'none';
+            document.getElementById('drag-guide-overlay').style.display = 'none';
             if (currentAudio) {
                 currentAudio.pause();
                 currentAudio.currentTime = 0;
@@ -733,6 +758,7 @@
             renderTutorialStep();
             setTimeout(() => {
                 document.getElementById('tutorial-banner').style.display = 'none';
+                document.getElementById('drag-guide-overlay').style.display = 'none';
                 if (currentAudio) {
                     currentAudio.pause();
                     currentAudio.currentTime = 0;
@@ -1006,7 +1032,7 @@
             updateMapMarker("counter");
             document.getElementById('info-modal').classList.add('collapsed');
             
-            startTutorial();
+            // 進入頁面時先停留在解鎖畫面，等待使用者點擊（符合瀏覽器播放音訊規範）
         };
     </script>
 
