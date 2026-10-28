@@ -96,7 +96,7 @@
         }
         .back-to-class-btn:hover { background: #c82333; }
 
-        /* 導覽教學按鈕（寬度與展開空間介紹同寬） */
+        /* 導覽教學按鈕 */
         #restart-tutorial-trigger {
             position: absolute; bottom: 95px; right: 20px; z-index: 30;
             background: #28a745; color: white; border: none; padding: 12px 10px;
@@ -329,13 +329,14 @@
         </div>
     </div>
 
-    <!-- 導覽教學按鈕（寬度與展開空間介紹同寬） -->
+    <!-- 導覽教學按鈕 -->
     <button id="restart-tutorial-trigger" onclick="startTutorial()">導覽教學</button>
 
-    <!-- 空間介紹彈跳視窗 -->
+    <!-- 空間介紹彈跳視窗（含語音播放按鈕） -->
     <div id="info-modal" onclick="checkInfoToggle(event)">
         <div class="modal-top-actions">
             <button class="close-btn" onclick="toggleInfoModal(event)">✖ 關閉介紹</button>
+            <button class="close-btn" id="play-scene-audio-btn" onclick="playCurrentSceneAudio(event)">🔊 播放語音</button>
         </div>
         <h3 id="modal-title">區域名稱</h3>
         <p id="modal-desc">區域介紹內容...</p>
@@ -355,6 +356,63 @@
     </div>
 
     <script>
+        // ================= 語音檔對應設定 =================
+        // 導覽教學步驟語音檔對應
+        const tutorialAudioFiles = {
+            1: "1.mp3",
+            2: "2.mp3",
+            3: "3.mp3",
+            4: "4.mp3",
+            5: "5.mp3",
+            6: "6.mp3",
+            7: "7.mp3",
+            8: "8.mp3",
+            9: "9.mp3",
+            10: "tutorial_step10.mp3",
+            11: "tutorial_step11.mp3"
+        };
+
+        // 各空間介紹語音檔對應
+        const sceneAudioFiles = {
+            "counter": "櫃台.mp3",
+            "shoes": "鞋櫃.mp3",
+            "locker": "置物櫃.mp3",
+            "safe_home": "平安.mp3",
+            "happy": "快樂.mp3",
+            "accessible_toilet": "無障礙.mp3",
+            "toilet1": "性別.mp3",
+            "toilet2": "無性別.mp3",
+            "Attend class": "教室.mp3",
+            "Perfect": "圓滿.mp3",
+            "kitchen": "廚房.mp3",
+            "escape_wash": "逃生.mp3",
+            "activity": "活動.mp3"
+        };
+
+        // 全域語音播放控制
+        let currentAudio = null;
+        function playAudio(filename) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            if (filename) {
+                currentAudio = new Audio(filename);
+                currentAudio.play().catch(e => console.log("音檔播放失敗或檔案不存在:", e));
+            }
+        }
+
+        function playCurrentSceneAudio(event) {
+            if (event) event.stopPropagation();
+            const audioFile = sceneAudioFiles[currentSceneId];
+            playAudio(audioFile);
+
+            // 若正處於教學步驟 2，點擊播放語音後自動進入下一步
+            if (currentTutorialStep === 2) {
+                nextTutorialStep();
+            }
+        }
+
         const sceneInfo = {
             "counter": {
                 "title": "櫃檯｜長輩接送區",
@@ -585,17 +643,6 @@
             }
         };
 
-        // 語音播放輔助函式
-        function speakTutorialStep(text) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // 停止先前的聲音，避免語音重疊
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'zh-TW'; // 設定為繁體中文
-                utterance.rate = 1.0;     // 語速
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-
         function startTutorial() {
             currentTutorialStep = 1;
             renderTutorialStep();
@@ -603,23 +650,23 @@
         }
 
         function closeTutorialManual() {
-            // 關閉教學時：停止語音並隱藏所有教學圖示與橫幅
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-            }
             document.getElementById('tutorial-banner').style.display = 'none';
             document.getElementById('drag-guide-overlay').style.display = 'none';
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
         }
 
         function renderTutorialStep() {
             const stepData = tutorialSteps[currentTutorialStep];
             if (!stepData) return;
 
+            // 播放對應的教學語音
+            playAudio(tutorialAudioFiles[currentTutorialStep]);
+
             document.getElementById('tutorial-title').innerText = stepData.title;
             document.getElementById('tutorial-desc').innerHTML = stepData.desc;
-
-            // 立即播放當前步驟的語音
-            speakTutorialStep(stepData.title + "。 " + stepData.desc);
 
             const prevBtn = document.getElementById('tutorial-prev-btn');
             if (currentTutorialStep === 1) {
@@ -674,20 +721,22 @@
         }
 
         function restartTutorialNo() {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-            }
             document.getElementById('tutorial-banner').style.display = 'none';
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
             viewer.loadScene("counter");
         }
 
         function finishTutorial() {
             renderTutorialStep();
             setTimeout(() => {
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                }
                 document.getElementById('tutorial-banner').style.display = 'none';
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                }
                 viewer.loadScene("counter");
             }, 2500);
         }
