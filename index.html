@@ -675,10 +675,10 @@
 
         function closeTutorialManual() {
             document.getElementById('tutorial-banner').style.display = 'none';
-            document.getElementById('drag-guide-overlay').style.display = 'none'; // 關閉步驟4旋轉箭頭圖示
+            document.getElementById('drag-guide-overlay').style.display = 'none'; // 同時取消步驟 4 的旋轉箭頭圖示
             if (currentAudio) {
                 currentAudio.pause();
-                currentAudio.currentTime = 0; // 取消教學步驟聲音
+                currentAudio.currentTime = 0; // 同時取消教學步驟聲音
             }
         }
 
@@ -1031,8 +1031,6 @@
             showInfo("counter");
             updateMapMarker("counter");
             document.getElementById('info-modal').classList.add('collapsed');
-            
-            // 進入頁面時先停留在解鎖畫面，等待使用者點擊（符合瀏覽器播放音訊規範）
         };
     </script>
 
