@@ -421,12 +421,14 @@
             }
         }
 
+        // 獨立的空間介紹語音播放函式（正確對應各空間名稱語音）
         function playCurrentSceneAudio(event) {
             if (event) event.stopPropagation();
             const audioFile = sceneAudioFiles[currentSceneId];
             playAudio(audioFile);
 
-            if (currentTutorialStep === 2) {
+            // 若正處於教學步驟 2，點擊播放語音後自動進入下一步
+            if (document.getElementById('tutorial-banner').style.display === 'block' && currentTutorialStep === 2) {
                 nextTutorialStep();
             }
         }
@@ -675,10 +677,10 @@
 
         function closeTutorialManual() {
             document.getElementById('tutorial-banner').style.display = 'none';
-            document.getElementById('drag-guide-overlay').style.display = 'none'; // 同時取消步驟 4 的旋轉箭頭圖示
+            document.getElementById('drag-guide-overlay').style.display = 'none'; // 徹底隱藏步驟 4 的旋轉圖示
             if (currentAudio) {
                 currentAudio.pause();
-                currentAudio.currentTime = 0; // 同時取消教學步驟聲音
+                currentAudio.currentTime = 0; // 停止並清除教學聲音
             }
         }
 
@@ -775,7 +777,8 @@
         });
         window.addEventListener('mousemove', (e) => {
             if (!isMouseDownOnViewer) return;
-            if (currentTutorialStep === 4) {
+            // 只有當教學橫幅正在顯示 且處於步驟 4 時才觸發滑動完成
+            if (document.getElementById('tutorial-banner').style.display === 'block' && currentTutorialStep === 4) {
                 let diff = Math.abs(e.clientX - lastMouseX);
                 dragDistanceSum += diff;
                 if (dragDistanceSum > 150) {
@@ -798,7 +801,7 @@
         });
         window.addEventListener('touchmove', (e) => {
             if (!isMouseDownOnViewer) return;
-            if (currentTutorialStep === 4 && e.touches.length === 1) {
+            if (document.getElementById('tutorial-banner').style.display === 'block' && currentTutorialStep === 4 && e.touches.length === 1) {
                 let diff = Math.abs(e.touches[0].clientX - lastMouseX);
                 dragDistanceSum += diff;
                 if (dragDistanceSum > 150) {
@@ -896,7 +899,7 @@
         });
 
         function goBackStep() {
-            if (currentTutorialStep === 9) {
+            if (document.getElementById('tutorial-banner').style.display === 'block' && currentTutorialStep === 9) {
                 nextTutorialStep(); // 步驟 9 完成
             }
             if (navigationHistory.length > 1) {
@@ -911,7 +914,7 @@
         function quickJump(value) {
             if (!value) return;
 
-            if (currentTutorialStep === 6) {
+            if (document.getElementById('tutorial-banner').style.display === 'block' && currentTutorialStep === 6) {
                 nextTutorialStep(); // 步驟 6 完成
             }
 
@@ -948,7 +951,7 @@
         }
 
         function openLargeMap() {
-            if (currentTutorialStep === 7) {
+            if (document.getElementById('tutorial-banner').style.display === 'block' && currentTutorialStep === 7) {
                 nextTutorialStep(); // 步驟 7 完成
             }
             document.getElementById('map-modal').style.display = 'flex';
@@ -956,7 +959,7 @@
 
         function closeLargeMap(event) {
             if (!event || event.target.id === 'map-modal' || event.target.classList.contains('close-map-btn')) {
-                if (currentTutorialStep === 8) {
+                if (document.getElementById('tutorial-banner').style.display === 'block' && currentTutorialStep === 8) {
                     nextTutorialStep(); // 步驟 8 完成
                 }
                 document.getElementById('map-modal').style.display = 'none';
@@ -971,7 +974,7 @@
             modal.classList.toggle('collapsed');
             
             if (modal.classList.contains('collapsed')) {
-                if (currentTutorialStep === 3) {
+                if (document.getElementById('tutorial-banner').style.display === 'block' && currentTutorialStep === 3) {
                     nextTutorialStep(); // 步驟 3 完成
                 }
             }
@@ -982,7 +985,7 @@
             if (modal.classList.contains('collapsed')) {
                 modal.classList.remove('collapsed');
 
-                if (currentTutorialStep === 1) {
+                if (document.getElementById('tutorial-banner').style.display === 'block' && currentTutorialStep === 1) {
                     nextTutorialStep(); // 步驟 1 完成
                 }
             }
@@ -996,7 +999,7 @@
                 navigationHistory.push(sceneId);
             }
 
-            if (currentTutorialStep === 5 && sceneId === "shoes") {
+            if (document.getElementById('tutorial-banner').style.display === 'block' && currentTutorialStep === 5 && sceneId === "shoes") {
                 nextTutorialStep(); // 步驟 5 完成
             }
 
