@@ -96,7 +96,7 @@
         }
         .back-to-class-btn:hover { background: #c82333; }
 
-        /* 導覽教學按鈕（寬度與展開空間介紹同寬） */
+        /* 導覽教學按鈕（寬度設定為 183px 與收合後的展開空間介紹按鈕同寬） */
         #restart-tutorial-trigger {
             position: absolute; bottom: 95px; right: 20px; z-index: 30;
             background: #28a745; color: white; border: none; padding: 12px 10px;
@@ -121,7 +121,7 @@
         .modal-top-actions {
             display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;
         }
-        #info-modal .close-btn {
+        #info-modal .close-btn, #info-modal .speak-btn {
             font-size: calc(1.1rem + 8px);
             padding: 8px 12px;
             cursor: pointer;
@@ -131,7 +131,9 @@
             font-weight: bold;
             color: #333;
         }
-        #info-modal .close-btn:hover { background: #e2e6ea; }
+        #info-modal .close-btn:hover, #info-modal .speak-btn:hover { background: #e2e6ea; }
+        #info-modal .speak-btn { background: #e7f5ff; border-color: #3182ce; color: #2b6cb0; }
+        #info-modal .speak-btn:hover { background: #bee3f8; }
 
         #info-modal.keep-original-size h3 { font-size: 1.7rem; }
         #info-modal.keep-original-size p { font-size: 1.2rem; }
@@ -272,9 +274,6 @@
 </head>
 <body>
 
-    <!-- 空間介紹專用音訊檔（請將 src 替換為您的音訊檔案名稱） -->
-    <audio id="space-audio" src="voice_11762.aac" preload="auto"></audio>
-
     <!-- 教學模式橫幅 -->
     <div id="tutorial-banner">
         <button class="close-tutorial-btn" onclick="closeTutorialManual()" title="關閉教學">✖</button>
@@ -332,13 +331,14 @@
         </div>
     </div>
 
-    <!-- 導覽教學按鈕（寬度與展開空間介紹同寬） -->
+    <!-- 繼續導覽教學按鈕（寬度與展開空間介紹同寬） -->
     <button id="restart-tutorial-trigger" onclick="startTutorial()">導覽教學</button>
 
-    <!-- 空間介紹彈跳視窗 -->
+    <!-- 空間介紹彈跳視窗（含語音按鈕） -->
     <div id="info-modal" onclick="checkInfoToggle(event)">
         <div class="modal-top-actions">
             <button class="close-btn" onclick="toggleInfoModal(event)">✖ 關閉介紹</button>
+            <button class="speak-btn" onclick="speakCurrentInfo(event)">🔊 播放語音</button>
         </div>
         <h3 id="modal-title">區域名稱</h3>
         <p id="modal-desc">區域介紹內容...</p>
@@ -529,6 +529,30 @@
             }
         });
 
+        // ================= 語音導覽核心邏輯 =================
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) {
+                alert("您的瀏覽器不支援語音播放功能！");
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-TW';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function speakCurrentInfo(event) {
+            if (event) event.stopPropagation();
+            const title = document.getElementById('modal-title').innerText;
+            const desc = document.getElementById('modal-desc').innerText;
+            speakText(title + "。" + desc);
+
+            if (currentTutorialStep === 2) {
+                nextTutorialStep();
+            }
+        }
+
         // ================= 教學模式核心邏輯 =================
         let currentTutorialStep = 1;
         let dragDistanceSum = 0;
@@ -597,14 +621,26 @@
         function closeTutorialManual() {
             document.getElementById('tutorial-banner').style.display = 'none';
             document.getElementById('drag-guide-overlay').style.display = 'none';
+            window.speechSynthesis.cancel();
         }
 
         function renderTutorialStep() {
             const stepData = tutorialSteps[currentTutorialStep];
             if (!stepData) return;
 
-            document.getElementById('tutorial-title').innerText = stepData.title;
+            const title = stepData.title;
+            const plainDesc = stepData.desc.replace(/<[^>]*>?/gm, '');
+
+            document.getElementById('tutorial-title').innerText = title;
             document.getElementById('tutorial-desc').innerHTML = stepData.desc;
+
+            if (currentTutorialStep === 1) {
+                setTimeout(() => {
+                    speakText(title + "。" + plainDesc);
+                }, 300);
+            } else {
+                speakText(title + "。" + plainDesc);
+            }
 
             const prevBtn = document.getElementById('tutorial-prev-btn');
             if (currentTutorialStep === 1) {
@@ -661,6 +697,7 @@
         function restartTutorialNo() {
             document.getElementById('tutorial-banner').style.display = 'none';
             viewer.loadScene("counter");
+            window.speechSynthesis.cancel();
         }
 
         function finishTutorial() {
@@ -874,13 +911,8 @@
             const modal = document.getElementById('info-modal');
             modal.classList.toggle('collapsed');
             
-            const spaceAudio = document.getElementById('space-audio');
-
             if (modal.classList.contains('collapsed')) {
-                // 收合時（關閉介紹）：暫停語音並歸零
-                spaceAudio.pause();
-                spaceAudio.currentTime = 0;
-
+                window.speechSynthesis.cancel();
                 if (currentTutorialStep === 3) {
                     nextTutorialStep(); // 步驟 3 完成
                 }
@@ -889,16 +921,12 @@
 
         function checkInfoToggle(event) {
             const modal = document.getElementById('info-modal');
-            const spaceAudio = document.getElementById('space-audio');
-
             if (modal.classList.contains('collapsed')) {
                 modal.classList.remove('collapsed');
-
-                // 展開時（點擊展開空間介紹）：自動播放語音檔
-                spaceAudio.currentTime = 0;
-                spaceAudio.play().catch(error => {
-                    console.log("語音自動播放受瀏覽器限制，需由使用者互動觸發：", error);
-                });
+                
+                const title = document.getElementById('modal-title').innerText;
+                const desc = document.getElementById('modal-desc').innerText;
+                speakText(title + "。" + desc);
 
                 if (currentTutorialStep === 1) {
                     nextTutorialStep(); // 步驟 1 完成
@@ -910,11 +938,6 @@
             currentSceneId = sceneId;
             updateMapMarker(sceneId);
             
-            // 切換場景時自動停止語音，避免重疊
-            const spaceAudio = document.getElementById('space-audio');
-            spaceAudio.pause();
-            spaceAudio.currentTime = 0;
-
             if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
                 navigationHistory.push(sceneId);
             }
