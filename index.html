@@ -96,7 +96,7 @@
         }
         .back-to-class-btn:hover { background: #c82333; }
 
-        /* 導覽教學按鈕（寬度與展開空間介紹同寬） */
+        /* 導覽教學按鈕 */
         #restart-tutorial-trigger {
             position: absolute; bottom: 95px; right: 20px; z-index: 30;
             background: #28a745; color: white; border: none; padding: 12px 10px;
@@ -119,21 +119,19 @@
         #info-modal p { margin: 0; font-size: calc(1.2rem + 10px); line-height: 1.6; color: #555; }
 
         .modal-top-actions {
-            display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; align-items: center;
+            display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;
         }
-        #info-modal .close-btn, .audio-btn {
-            font-size: calc(1.1rem + 5px);
-            padding: 6px 12px;
+        #info-modal .close-btn {
+            font-size: calc(1.1rem + 8px);
+            padding: 8px 12px;
             cursor: pointer;
             background: #f8f9fa;
             border: 1px solid #ccc;
             border-radius: 6px;
             font-weight: bold;
             color: #333;
-            transition: background 0.2s;
         }
-        #info-modal .close-btn:hover, .audio-btn:hover { background: #e2e6ea; }
-        .audio-btn.playing { background: #28a745; color: white; border-color: #28a745; }
+        #info-modal .close-btn:hover { background: #e2e6ea; }
 
         #info-modal.keep-original-size h3 { font-size: 1.7rem; }
         #info-modal.keep-original-size p { font-size: 1.2rem; }
@@ -331,14 +329,14 @@
         </div>
     </div>
 
-    <!-- 導覽教學按鈕（寬度與展開空間介紹同寬） -->
+    <!-- 導覽教學按鈕 -->
     <button id="restart-tutorial-trigger" onclick="startTutorial()">導覽教學</button>
 
-    <!-- 空間介紹彈跳視窗 -->
+    <!-- 空間介紹彈跳視窗（含語音播放按鈕） -->
     <div id="info-modal" onclick="checkInfoToggle(event)">
         <div class="modal-top-actions">
             <button class="close-btn" onclick="toggleInfoModal(event)">✖ 關閉介紹</button>
-            <button class="audio-btn" id="scene-audio-btn" onclick="toggleSceneAudio(event)">🔊 播放語音</button>
+            <button class="close-btn" id="play-scene-audio-btn" onclick="playCurrentSceneAudio(event)">🔊 播放語音</button>
         </div>
         <h3 id="modal-title">區域名稱</h3>
         <p id="modal-desc">區域介紹內容...</p>
@@ -351,100 +349,67 @@
         <img id="flat-image" src="廚房.jpg" alt="平面圖" onerror="this.src='https://placehold.co/800x600/333/fff?text=Flat+Image'">
 
         <div id="flat-detail-panel">
-            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
-                <h3 id="flat-detail-title" style="margin: 0;">區域名稱</h3>
-                <button class="audio-btn" id="flat-audio-btn" onclick="toggleSceneAudio(event)">🔊 播放語音</button>
-            </div>
+            <h3 id="flat-detail-title">區域名稱</h3>
             <p id="flat-detail-desc">詳細介紹內容...</p>
             <button class="back-to-class-btn" onclick="returnToClass()">返回教室區</button>
         </div>
     </div>
 
     <script>
-        // ================= 音訊播放核心邏輯 =================
-        const audioPlayer = new Audio();
-        let currentAudioType = null; // 'tutorial' 或 'scene'
-
+        // ================= 語音檔對應設定 =================
         // 導覽教學步驟語音檔對應
         const tutorialAudioFiles = {
-            1: "tutorial_step1.mp3",
-            2: "tutorial_step2.mp3",
-            3: "tutorial_step3.mp3",
-            4: "tutorial_step4.mp3",
-            5: "tutorial_step5.mp3",
-            6: "tutorial_step6.mp3",
-            7: "tutorial_step7.mp3",
-            8: "tutorial_step8.mp3",
-            9: "tutorial_step9.mp3",
+            1: "1.mp3",
+            2: "2.mp3",
+            3: "3.mp3",
+            4: "4.mp3",
+            5: "5.mp3",
+            6: "6.mp3",
+            7: "7.mp3",
+            8: "8.mp3",
+            9: "9.mp3",
             10: "tutorial_step10.mp3",
             11: "tutorial_step11.mp3"
         };
 
         // 各空間介紹語音檔對應
         const sceneAudioFiles = {
-            "counter": "audio_counter.mp3",
-            "shoes": "audio_shoes.mp3",
-            "locker": "audio_locker.mp3",
-            "safe_home": "audio_safe_home.mp3",
-            "happy": "audio_happy.mp3",
-            "accessible_toilet": "audio_accessible_toilet.mp3",
-            "toilet1": "audio_toilet1.mp3",
-            "toilet2": "audio_toilet2.mp3",
-            "Attend class": "audio_Attend_class.mp3",
-            "Perfect": "audio_Perfect.mp3",
-            "kitchen": "audio_kitchen.mp3",
-            "escape_wash": "audio_escape_wash.mp3",
-            "activity": "audio_activity.mp3"
+            "counter": "櫃台.mp3",
+            "shoes": "鞋櫃.mp3",
+            "locker": "置物櫃.mp3",
+            "safe_home": "平安.mp3",
+            "happy": "快樂.mp3",
+            "accessible_toilet": "無障礙.mp3",
+            "toilet1": "性別.mp3",
+            "toilet2": "無性別.mp3",
+            "Attend class": "教室.mp3",
+            "Perfect": "圓滿.mp3",
+            "kitchen": "廚房.mp3",
+            "escape_wash": "逃生.mp3",
+            "activity": "活動.mp3"
         };
 
-        function stopAudio() {
-            audioPlayer.pause();
-            audioPlayer.currentTime = 0;
-            updateAudioBtnUI(false);
-        }
-
-        function playAudioFile(src, type) {
-            if (!src) return;
-            stopAudio();
-            currentAudioType = type;
-            audioPlayer.src = src;
-            audioPlayer.play().catch(err => {
-                console.warn("語音播放受阻或找不到檔案:", err);
-            });
-            updateAudioBtnUI(true);
-        }
-
-        audioPlayer.onended = function() {
-            updateAudioBtnUI(false);
-        };
-
-        function updateAudioBtnUI(isPlaying) {
-            const sceneBtn = document.getElementById('scene-audio-btn');
-            const flatBtn = document.getElementById('flat-audio-btn');
-            
-            if (isPlaying && currentAudioType === 'scene') {
-                if (sceneBtn) { sceneBtn.innerText = "⏸️ 暫停語音"; sceneBtn.classList.add('playing'); }
-                if (flatBtn) { flatBtn.innerText = "⏸️ 暫停語音"; flatBtn.classList.add('playing'); }
-            } else {
-                if (sceneBtn) { sceneBtn.innerText = "🔊 播放語音"; sceneBtn.classList.remove('playing'); }
-                if (flatBtn) { flatBtn.innerText = "🔊 播放語音"; flatBtn.classList.remove('playing'); }
+        // 全域語音播放控制
+        let currentAudio = null;
+        function playAudio(filename) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            if (filename) {
+                currentAudio = new Audio(filename);
+                currentAudio.play().catch(e => console.log("音檔播放失敗或檔案不存在:", e));
             }
         }
 
-        function toggleSceneAudio(event) {
+        function playCurrentSceneAudio(event) {
             if (event) event.stopPropagation();
-            if (!audioPlayer.paused && currentAudioType === 'scene') {
-                stopAudio();
-            } else {
-                const audioSrc = sceneAudioFiles[currentSceneId];
-                if (audioSrc) {
-                    playAudioFile(audioSrc, 'scene');
-                    if (currentTutorialStep === 2) {
-                        nextTutorialStep(); // 步驟 2 完成
-                    }
-                } else {
-                    alert("尚無此區域的語音檔");
-                }
+            const audioFile = sceneAudioFiles[currentSceneId];
+            playAudio(audioFile);
+
+            // 若正處於教學步驟 2，點擊播放語音後自動進入下一步
+            if (currentTutorialStep === 2) {
+                nextTutorialStep();
             }
         }
 
@@ -619,22 +584,6 @@
             }
         });
 
-        const sceneCoordinates = {
-            "counter": { x: 86, y: 90 },
-            "shoes": { x: 86, y: 70 },
-            "locker": { x: 80, y: 58.5 },
-            "safe_home": { x: 65, y: 30 },
-            "happy": { x: 47.1, y: 30 },
-            "Perfect": { x: 30, y: 30 },
-            "Attend class": { x: 30, y: 64 },
-            "activity": { x: 83, y: 30 },
-            "accessible_toilet": { x: 60, y: 68 },
-            "toilet1": { x: 40, y: 85 },
-            "toilet2": { x: 57, y: 85 },
-            "kitchen": { x: 22, y: 90 },
-            "escape_wash": { x: 18, y: 30 }
-        };
-
         // ================= 教學模式核心邏輯 =================
         let currentTutorialStep = 1;
         let dragDistanceSum = 0;
@@ -701,23 +650,23 @@
         }
 
         function closeTutorialManual() {
-            stopAudio();
             document.getElementById('tutorial-banner').style.display = 'none';
             document.getElementById('drag-guide-overlay').style.display = 'none';
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
         }
 
         function renderTutorialStep() {
             const stepData = tutorialSteps[currentTutorialStep];
             if (!stepData) return;
 
+            // 播放對應的教學語音
+            playAudio(tutorialAudioFiles[currentTutorialStep]);
+
             document.getElementById('tutorial-title').innerText = stepData.title;
             document.getElementById('tutorial-desc').innerHTML = stepData.desc;
-
-            // 自動播放教學步驟錄音檔
-            const audioSrc = tutorialAudioFiles[currentTutorialStep];
-            if (audioSrc) {
-                playAudioFile(audioSrc, 'tutorial');
-            }
 
             const prevBtn = document.getElementById('tutorial-prev-btn');
             if (currentTutorialStep === 1) {
@@ -772,16 +721,22 @@
         }
 
         function restartTutorialNo() {
-            stopAudio();
             document.getElementById('tutorial-banner').style.display = 'none';
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
             viewer.loadScene("counter");
         }
 
         function finishTutorial() {
             renderTutorialStep();
             setTimeout(() => {
-                stopAudio();
                 document.getElementById('tutorial-banner').style.display = 'none';
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                }
                 viewer.loadScene("counter");
             }, 2500);
         }
@@ -834,10 +789,8 @@
 
         // ================= 原有功能函數 =================
         let navigationHistory = ["counter"];
-        let currentSceneId = "counter";
 
         function openKitchenFlatView(event) {
-            currentSceneId = "kitchen";
             const container = document.getElementById('flat-view-container');
             document.getElementById('flat-image').src = "廚房.jpg";
             container.style.display = 'flex';
@@ -862,11 +815,9 @@
                     panel.classList.remove('keep-original-size');
                 }
             }
-            stopAudio();
         }
 
         function openEscapeWashFlatView(event) {
-            currentSceneId = "escape_wash";
             const container = document.getElementById('flat-view-container');
             document.getElementById('flat-image').src = "逃生.jpg";
             container.style.display = 'flex';
@@ -891,7 +842,6 @@
                     panel.classList.remove('keep-original-size');
                 }
             }
-            stopAudio();
         }
 
         function closeFlatView() {
@@ -906,7 +856,6 @@
             document.getElementById('info-modal').style.pointerEvents = 'auto';
             document.getElementById('restart-tutorial-trigger').style.opacity = '1';
             document.getElementById('restart-tutorial-trigger').style.pointerEvents = 'auto';
-            stopAudio();
         }
 
         function returnToClass() {
@@ -988,6 +937,8 @@
             }
         }
 
+        let currentSceneId = "counter";
+
         function toggleInfoModal(event) {
             if (event) event.stopPropagation();
             const modal = document.getElementById('info-modal');
@@ -1014,7 +965,6 @@
         viewer.on('scenechange', function(sceneId) {
             currentSceneId = sceneId;
             updateMapMarker(sceneId);
-            stopAudio(); // 切換場景時停止語音
             
             if (navigationHistory[navigationHistory.length - 1] !== sceneId) {
                 navigationHistory.push(sceneId);
