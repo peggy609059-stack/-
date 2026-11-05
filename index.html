@@ -279,6 +279,7 @@
         <div id="tutorial-desc">載入中...</div>
         <div class="tutorial-btn-group" id="tutorial-btn-group">
             <button class="tutorial-btn secondary" id="tutorial-prev-btn" onclick="prevTutorialStep()">上一步</button>
+            <button class="tutorial-btn" id="tutorial-next-btn" onclick="nextTutorialStep()">下一步</button>
         </div>
     </div>
 
@@ -530,7 +531,6 @@
         let dragDistanceSum = 0;
         let isMouseDownOnViewer = false;
         let lastMouseX = 0;
-        let tutorialTimer = null;
 
         const tutorialSteps = {
             1: {
@@ -539,37 +539,37 @@
             },
             2: {
                 title: "導覽教學步驟 2",
-                desc: "如何關閉空間介紹。左上角隨時可以關閉空間介紹。請點擊『關閉介紹』將其收合！"
+                desc: "如何播放語音導覽。您可以點擊介紹視窗中的『🔊 播放語音』按鈕來聆聽介紹！請點擊播放語音！"
             },
             3: {
                 title: "導覽教學步驟 3",
-                desc: "如何環視周遭環境。請按住畫面左右滑動，進行 360 度旋轉觀察！",
-                onEnter: () => { document.getElementById('drag-guide-overlay').style.display = 'flex'; }
+                desc: "如何關閉空間介紹。左上角隨時可以關閉空間介紹。請點擊『關閉介紹』將其收合！"
             },
             4: {
                 title: "導覽教學步驟 4",
+                desc: "如何環視周遭環境。請按住畫面左右滑動，進行 360 度旋轉觀察！",
+                onEnter: () => { document.getElementById('drag-guide-overlay').style.display = 'flex'; }
+            },
+            5: {
+                title: "導覽教學步驟 5",
                 desc: "如何前往下一個地區。請點擊畫面中的箭頭引導按鈕⬆️前往下個地點！",
                 onEnter: () => {
                     document.getElementById('drag-guide-overlay').style.display = 'none';
                     viewer.setYaw(120);
                 }
             },
-            5: {
-                title: "導覽教學步驟 5",
-                desc: "如何使用快速導覽。請點擊右上角的『快速導覽』選單，並點選其中一個地點。"
-            },
             6: {
                 title: "導覽教學步驟 6",
-                desc: "如何使用地圖定位。請點擊左下角的小地圖將其放大！地圖點開後可以放大檢視"
+                desc: "如何使用快速導覽。請點擊右上角的『快速導覽』選單，並點選其中一個地點。"
             },
             7: {
                 title: "導覽教學步驟 7",
-                desc: "如何關閉地圖定位。請點擊地圖右上角的✖或點擊圖片外的區域"
+                desc: "如何使用地圖定位。請點擊左下角的小地圖將其放大！地圖點開後可以放大檢視"
             },
             8: {
                 title: "導覽教學步驟 8",
-                desc: "如何回到上一步。請點擊左上角的『回到上一步』按鈕！"
-            },
+                desc: "如何關閉地圖定位。請點擊地圖右上角的✖或點擊圖片外的區域"
+            }
         };
 
         function startTutorial() {
@@ -579,48 +579,41 @@
         }
 
         function closeTutorialManual() {
-            if (tutorialTimer) clearTimeout(tutorialTimer);
             document.getElementById('tutorial-banner').style.display = 'none';
             document.getElementById('drag-guide-overlay').style.display = 'none';
         }
 
         function renderTutorialStep() {
-            if (tutorialTimer) clearTimeout(tutorialTimer);
-
             const stepData = tutorialSteps[currentTutorialStep];
             if (!stepData) return;
 
             document.getElementById('tutorial-title').innerText = stepData.title;
             document.getElementById('tutorial-desc').innerHTML = stepData.desc;
 
-            const btnGroup = document.getElementById('tutorial-btn-group');
-            if (stepData.customButtons) {
-                btnGroup.innerHTML = `
-                    <button class="tutorial-btn secondary" id="tutorial-prev-btn" onclick="prevTutorialStep()">上一步</button>
-                    <button class="tutorial-btn" onclick="restartTutorialYes()">是，重新教學</button>
-                    <button class="tutorial-btn secondary" onclick="restartTutorialNo()">否，開始參訪</button>
-                `;
+            const prevBtn = document.getElementById('tutorial-prev-btn');
+            if (currentTutorialStep === 1) {
+                prevBtn.style.display = 'none';
             } else {
-                btnGroup.innerHTML = `
-                    <button class="tutorial-btn secondary" id="tutorial-prev-btn" onclick="prevTutorialStep()" ${currentTutorialStep === 1 ? 'style="display:none;"' : ''}>上一步</button>
-                `;
+                prevBtn.style.display = 'inline-block';
             }
 
-            if (currentTutorialStep !== 3) {
+            const btnGroup = document.getElementById('tutorial-btn-group');
+            btnGroup.innerHTML = `
+                <button class="tutorial-btn secondary" id="tutorial-prev-btn" onclick="prevTutorialStep()" ${currentTutorialStep === 1 ? 'style="display:none;"' : ''}>上一步</button>
+                <button class="tutorial-btn" id="tutorial-next-btn" onclick="nextTutorialStep()">${currentTutorialStep === 8 ? '完成' : '下一步'}</button>
+            `;
+
+            if (currentTutorialStep !== 4) {
                 document.getElementById('drag-guide-overlay').style.display = 'none';
             }
 
             if (stepData.onEnter) {
                 stepData.onEnter();
             }
-
-            if (currentTutorialStep === 10) {
-                finishTutorial();
-            }
         }
 
         function nextTutorialStep() {
-            if (currentTutorialStep < 10) {
+            if (currentTutorialStep < 8) {
                 currentTutorialStep++;
                 renderTutorialStep();
             } else {
@@ -635,25 +628,12 @@
             }
         }
 
-        function restartTutorialYes() {
-            viewer.loadScene("counter");
-            currentTutorialStep = 1;
-            renderTutorialStep();
-        }
-
-        function restartTutorialNo() {
+        function finishTutorial() {
             document.getElementById('tutorial-banner').style.display = 'none';
             viewer.loadScene("counter");
         }
 
-        function finishTutorial() {
-            tutorialTimer = setTimeout(() => {
-                document.getElementById('tutorial-banner').style.display = 'none';
-                viewer.loadScene("counter");
-            }, 2500);
-        }
-
-        // 監聽畫面的滑動事件以達成步驟 3 (原步驟 4)
+        // 監聽畫面的滑動事件以達成步驟 4
         const panoElement = document.getElementById('panorama');
         panoElement.addEventListener('mousedown', (e) => {
             isMouseDownOnViewer = true;
@@ -661,7 +641,7 @@
         });
         window.addEventListener('mousemove', (e) => {
             if (!isMouseDownOnViewer) return;
-            if (currentTutorialStep === 3) {
+            if (currentTutorialStep === 4) {
                 let diff = Math.abs(e.clientX - lastMouseX);
                 dragDistanceSum += diff;
                 if (dragDistanceSum > 150) {
@@ -684,7 +664,7 @@
         });
         window.addEventListener('touchmove', (e) => {
             if (!isMouseDownOnViewer) return;
-            if (currentTutorialStep === 3 && e.touches.length === 1) {
+            if (currentTutorialStep === 4 && e.touches.length === 1) {
                 let diff = Math.abs(e.touches[0].clientX - lastMouseX);
                 dragDistanceSum += diff;
                 if (dragDistanceSum > 150) {
@@ -782,9 +762,6 @@
         });
 
         function goBackStep() {
-            if (currentTutorialStep === 8) {
-                nextTutorialStep(); // 步驟 8 完成
-            }
             if (navigationHistory.length > 1) {
                 navigationHistory.pop();
                 const prevScene = navigationHistory[navigationHistory.length - 1];
@@ -797,8 +774,8 @@
         function quickJump(value) {
             if (!value) return;
 
-            if (currentTutorialStep === 5) {
-                nextTutorialStep(); // 步驟 5 完成
+            if (currentTutorialStep === 6) {
+                nextTutorialStep(); // 步驟 6 完成
             }
 
             if (value === "openKitchen") {
@@ -834,16 +811,16 @@
         }
 
         function openLargeMap() {
-            if (currentTutorialStep === 6) {
-                nextTutorialStep(); // 步驟 6 完成
+            if (currentTutorialStep === 7) {
+                nextTutorialStep(); // 步驟 7 完成
             }
             document.getElementById('map-modal').style.display = 'flex';
         }
 
         function closeLargeMap(event) {
             if (!event || event.target.id === 'map-modal' || event.target.classList.contains('close-map-btn')) {
-                if (currentTutorialStep === 7) {
-                    nextTutorialStep(); // 步驟 7 完成
+                if (currentTutorialStep === 8) {
+                    nextTutorialStep(); // 步驟 8 完成
                 }
                 document.getElementById('map-modal').style.display = 'none';
             }
@@ -857,8 +834,8 @@
             modal.classList.toggle('collapsed');
             
             if (modal.classList.contains('collapsed')) {
-                if (currentTutorialStep === 2) {
-                    nextTutorialStep(); // 步驟 2 完成
+                if (currentTutorialStep === 3) {
+                    nextTutorialStep(); // 步驟 3 完成
                 }
             }
         }
@@ -882,8 +859,8 @@
                 navigationHistory.push(sceneId);
             }
 
-            if (currentTutorialStep === 4 && sceneId === "shoes") {
-                nextTutorialStep(); // 步驟 4 完成
+            if (currentTutorialStep === 5 && sceneId === "shoes") {
+                nextTutorialStep(); // 步驟 5 完成
             }
 
             const info = sceneInfo[sceneId];
