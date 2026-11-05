@@ -96,7 +96,7 @@
         }
         .back-to-class-btn:hover { background: #c82333; }
 
-        /* 導覽教學按鈕 */
+        /* 導覽教學按鈕（寬度與展開空間介紹同寬） */
         #restart-tutorial-trigger {
             position: absolute; bottom: 95px; right: 20px; z-index: 30;
             background: #28a745; color: white; border: none; padding: 12px 10px;
@@ -119,9 +119,9 @@
         #info-modal p { margin: 0; font-size: calc(1.2rem + 10px); line-height: 1.6; color: #555; }
 
         .modal-top-actions {
-            display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; align-items: center;
+            display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;
         }
-        #info-modal .close-btn, #info-modal .tts-btn {
+        #info-modal .close-btn {
             font-size: calc(1.1rem + 8px);
             padding: 8px 12px;
             cursor: pointer;
@@ -131,9 +131,7 @@
             font-weight: bold;
             color: #333;
         }
-        #info-modal .close-btn:hover, #info-modal .tts-btn:hover { background: #e2e6ea; }
-        #info-modal .tts-btn { background: #e7f5ff; color: #007bff; border-color: #b3d7ff; }
-        #info-modal .tts-btn:hover { background: #d0ebff; }
+        #info-modal .close-btn:hover { background: #e2e6ea; }
 
         #info-modal.keep-original-size h3 { font-size: 1.7rem; }
         #info-modal.keep-original-size p { font-size: 1.2rem; }
@@ -281,7 +279,6 @@
         <div id="tutorial-desc">載入中...</div>
         <div class="tutorial-btn-group" id="tutorial-btn-group">
             <button class="tutorial-btn secondary" id="tutorial-prev-btn" onclick="prevTutorialStep()">上一步</button>
-            <button class="tutorial-btn" id="tutorial-next-btn" onclick="nextTutorialStep()">下一步</button>
         </div>
     </div>
 
@@ -331,14 +328,13 @@
         </div>
     </div>
 
-    <!-- 導覽教學按鈕 -->
+    <!-- 導覽教學按鈕（寬度與展開空間介紹同寬） -->
     <button id="restart-tutorial-trigger" onclick="startTutorial()">導覽教學</button>
 
-    <!-- 空間介紹彈跳視窗（含語音播放按鈕） -->
+    <!-- 空間介紹彈跳視窗 -->
     <div id="info-modal" onclick="checkInfoToggle(event)">
         <div class="modal-top-actions">
             <button class="close-btn" onclick="toggleInfoModal(event)">✖ 關閉介紹</button>
-            <button class="tts-btn" onclick="playCurrentAudio(event)">🔊 播放語音</button>
         </div>
         <h3 id="modal-title">區域名稱</h3>
         <p id="modal-desc">區域介紹內容...</p>
@@ -542,11 +538,11 @@
             },
             2: {
                 title: "導覽教學步驟 2",
-                desc: "如何播放語音導覽。您可以點擊介紹視窗中的『🔊 播放語音』按鈕來聆聽介紹！請點擊播放語音！"
+                desc: "如何播放語音導覽。您可以點擊介紹視窗中的『🔊 播放語音』按鈕來聆聽介紹！"
             },
             3: {
                 title: "導覽教學步驟 3",
-                desc: "如何關閉空間介紹。左上角隨時可以關閉空間介紹。請點擊『關閉介紹』將其收合！"
+                desc: "如何關閉空間介紹。左上角隨時可以關閉空間介紹。"
             },
             4: {
                 title: "導覽教學步驟 4",
@@ -606,24 +602,19 @@
             document.getElementById('tutorial-title').innerText = stepData.title;
             document.getElementById('tutorial-desc').innerHTML = stepData.desc;
 
-            const prevBtn = document.getElementById('tutorial-prev-btn');
-            if (currentTutorialStep === 1) {
-                prevBtn.style.display = 'none';
-            } else {
-                prevBtn.style.display = 'inline-block';
-            }
-
             const btnGroup = document.getElementById('tutorial-btn-group');
+            
             if (stepData.customButtons) {
                 btnGroup.innerHTML = `
                     <button class="tutorial-btn secondary" id="tutorial-prev-btn" onclick="prevTutorialStep()">上一步</button>
                     <button class="tutorial-btn" onclick="restartTutorialYes()">是，重新教學</button>
                     <button class="tutorial-btn secondary" onclick="restartTutorialNo()">否，開始參訪</button>
                 `;
+            } else if (currentTutorialStep === 11) {
+                btnGroup.innerHTML = '';
             } else {
                 btnGroup.innerHTML = `
                     <button class="tutorial-btn secondary" id="tutorial-prev-btn" onclick="prevTutorialStep()" ${currentTutorialStep === 1 ? 'style="display:none;"' : ''}>上一步</button>
-                    <button class="tutorial-btn" id="tutorial-next-btn" onclick="nextTutorialStep()">${currentTutorialStep === 11 ? '完成' : '下一步'}</button>
                 `;
             }
 
@@ -664,26 +655,11 @@
         }
 
         function finishTutorial() {
-            document.getElementById('tutorial-banner').style.display = 'none';
-            viewer.loadScene("counter");
-        }
-
-        // 語音播放功能函式 (TTS)
-        function playCurrentAudio(event) {
-            if (event) event.stopPropagation();
-            if (currentTutorialStep === 2) {
-                nextTutorialStep(); // 步驟 2 完成
-            }
-            const descText = document.getElementById('modal-desc').innerText;
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // 停止先前的語音
-                const utterance = new SpeechSynthesisUtterance(descText);
-                utterance.lang = 'zh-TW';
-                utterance.rate = 1.0;
-                window.speechSynthesis.speak(utterance);
-            } else {
-                alert("您的瀏覽器不支援語音朗讀功能。");
-            }
+            renderTutorialStep();
+            setTimeout(() => {
+                document.getElementById('tutorial-banner').style.display = 'none';
+                viewer.loadScene("counter");
+            }, 2500);
         }
 
         // 監聽畫面的滑動事件以達成步驟 4
@@ -934,7 +910,7 @@
 
         function showInfo(sceneId) {
             const info = sceneInfo[sceneId];
-            const modal = document.getElementById('info-modal'); // 已修正變數未定義錯誤
+            const modal = document.getElementById('info-modal');
             if (info) {
                 document.getElementById('modal-title').innerText = info.title;
                 document.getElementById('modal-desc').innerText = info.desc;
