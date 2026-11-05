@@ -55,6 +55,20 @@
             font-size: 2rem; animation: rotateRing 3s linear infinite;
         }
         @keyframes rotateRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+      /* 首次點擊解鎖音訊提示遮罩 */
+        #audio-unlock-overlay {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.4); z-index: 200; display: flex;
+            justify-content: center; align-items: center; cursor: pointer;
+        }
+        .unlock-box {
+            background: rgba(0, 123, 255, 0.95); color: white; padding: 25px 40px;
+            border-radius: 12px; font-size: calc(1.5rem + 5px); font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: center;
+            border: 2px solid white; animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
 
         /* 平面圖片檢視器容器樣式：垂直置中排列 */
         #flat-view-container {
@@ -272,6 +286,13 @@
 </head>
 <body>
 
+     <!-- 首次載入解鎖瀏覽器音訊限制遮罩 -->
+    <div id="audio-unlock-overlay" onclick="unlockAudioAndStart()">
+        <div class="unlock-box">
+            🔊 點擊此處開始參訪與語音導覽
+        </div>
+    </div>
+    
     <!-- 教學模式橫幅 -->
     <div id="tutorial-banner">
         <button class="close-tutorial-btn" onclick="closeTutorialManual()" title="關閉教學">✖</button>
@@ -328,13 +349,14 @@
         </div>
     </div>
 
-    <!-- 導覽教學按鈕 -->
+     <!-- 導覽教學按鈕 -->
     <button id="restart-tutorial-trigger" onclick="startTutorial()">導覽教學</button>
 
-    <!-- 空間介紹彈跳視窗 -->
+    <!-- 空間介紹彈跳視窗（含語音播放按鈕） -->
     <div id="info-modal" onclick="checkInfoToggle(event)">
         <div class="modal-top-actions">
             <button class="close-btn" onclick="toggleInfoModal(event)">✖ 關閉介紹</button>
+            <button class="close-btn" id="play-scene-audio-btn" onclick="playCurrentSceneAudio(event)">🔊 播放語音</button>
         </div>
         <h3 id="modal-title">區域名稱</h3>
         <p id="modal-desc">區域介紹內容...</p>
@@ -352,6 +374,63 @@
             <button class="back-to-class-btn" onclick="returnToClass()">返回教室區</button>
         </div>
     </div>
+
+    <script>
+        // ================= 語音檔對應設定 =================
+        const tutorialAudioFiles = {
+            1: "1.mp3",
+            2: "2.mp3",
+            3: "3.mp3",
+            4: "4.mp3",
+            5: "5.mp3",
+            6: "6.mp3",
+            7: "7.mp3",
+            8: "8.mp3",
+            9: "9.mp3",
+            10: "tutorial_step10.mp3",
+            11: "tutorial_step11.mp3"
+        };
+
+        const sceneAudioFiles = {
+            "counter": "櫃台.mp3",
+            "shoes": "鞋櫃.mp3",
+            "locker": "置物櫃.mp3",
+            "safe_home": "平安.mp3",
+            "happy": "快樂.mp3",
+            "accessible_toilet": "無障礙.mp3",
+            "toilet1": "性別.mp3",
+            "toilet2": "無性別.mp3",
+            "Attend class": "教室.mp3",
+            "Perfect": "圓滿.mp3",
+            "kitchen": "廚房.mp3",
+            "escape_wash": "逃生.mp3",
+            "activity": "活動.mp3"
+        };
+
+        // 全域語音播放控制
+        let currentAudio = null;
+        function playAudio(filename) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            if (filename) {
+                currentAudio = new Audio(filename);
+                currentAudio.play().catch(e => console.log("音檔播放失敗或檔案不存在:", e));
+            }
+        }
+
+        // 獨立的空間介紹語音播放函式（正確對應各空間名稱語音）
+        function playCurrentSceneAudio(event) {
+            if (event) event.stopPropagation();
+            const audioFile = sceneAudioFiles[currentSceneId];
+            playAudio(audioFile);
+
+            // 若正處於教學步驟 2，點擊播放語音後自動進入下一步
+            if (document.getElementById('tutorial-banner').style.display === 'block' && currentTutorialStep === 2) {
+                nextTutorialStep();
+            }
+        }
 
     <script>
         const sceneInfo = {
@@ -532,13 +611,13 @@
         let lastMouseX = 0;
 
         const tutorialSteps = {
-            1: {
+             1: {
                 title: "導覽教學步驟 1",
                 desc: "如何查看空間介紹。右下角隨時提供當前區域的詳細介紹。請點擊右下角的『展開空間介紹』！"
             },
             2: {
                 title: "導覽教學步驟 2",
-                desc: "如何查看空間介紹。您可以閱讀介紹視窗中的詳細說明！"
+                desc: "如何播放語音導覽。您可以點擊介紹視窗中的『🔊 播放語音』按鈕來聆聽介紹！請點擊播放語音！"
             },
             3: {
                 title: "導覽教學步驟 3",
@@ -571,8 +650,8 @@
             },
             9: {
                 title: "導覽教學步驟 9",
-                desc: "如何回到上一步。請點擊右上角的『回到上一步』按鈕完成教學！"
-            }
+                desc: "如何回到上一步。請點擊左上角的『回到上一步』按鈕！"
+            },
         };
 
         function startTutorial() {
