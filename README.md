@@ -2,7 +2,18 @@
 
 利用 360 度環景拍攝或數位標註工具，設計一套不需同仁全程帶看的網頁版導覽介面。
 
-本專案以蘆洲集賢社區長照機構為場域，將不同空間串接成可自行探索的線上參訪體驗。訪客可透過全景影像了解場域配置、服務空間與友善設施。
+## 目錄
+
+- [功能特色](#功能特色)
+- [使用技術](#使用技術)
+- [系統架構](#系統架構)
+- [專案檔案](#專案檔案)
+- [開始使用](#開始使用)
+- [部署至 GitHub Pages](#部署至-github-pages)
+
+
+
+本專案以蘆洲集賢社區長照機構為場域，將不同空間串接成可自行探索的線上參訪體驗。使用者可透過全景影像了解場域配置、服務空間與友善設施。
 
 ## 功能特色
 
@@ -19,6 +30,33 @@
 - HTML、CSS、JavaScript
 - [Pannellum 2.5.6](https://pannellum.org/) 全景檢視器，透過 jsDelivr CDN 載入
 
+## 系統架構
+
+本系統採用靜態網頁架構，由瀏覽器直接載入 HTML、場域影像與音訊資源；目前版本未設定後端 API 或資料庫。Pannellum 負責呈現 360° 全景，JavaScript 管理場景切換、互動熱點、地圖標記、空間介紹、語音播放及操作教學。
+
+```mermaid
+flowchart TD
+    Visitor[參訪者]
+    subgraph Client[使用者端：網頁瀏覽器]
+        UI[HTML 與 CSS 介面]
+        Logic[JavaScript 導覽邏輯]
+        Pannellum[Pannellum 全景檢視器]
+        Visitor --> UI
+        UI --> Logic
+        Logic --> Pannellum
+        Logic --> Content[場景資料與導覽設定<br/>sceneInfo、sceneCoordinates、tutorialSteps]
+    end
+    Pannellum --> Panorama[360° 全景影像]
+    UI --> Floorplan[平面圖片]
+    Logic --> Audio[場景介紹與教學語音]
+    UI -. CDN 載入 .-> CDN[jsDelivr：Pannellum CSS / JavaScript]
+    Hosting[靜態網站主機<br/>本機伺服器或 GitHub Pages] --> UI
+    Hosting --> Panorama
+    Hosting --> Floorplan
+    Hosting --> Audio
+```
+
+**資料流程**：瀏覽器從靜態網站主機取得網頁與媒體檔；參訪者操作介面後，JavaScript 依場景設定呼叫 Pannellum 切換全景，並更新地圖位置及空間介紹。需要語音時，瀏覽器播放對應的音檔。Pannellum 程式庫則由 jsDelivr CDN 提供。
 ## 專案檔案
 
 目前版本為單一 HTML 頁面，並以相對路徑載入場景影像、平面圖及語音檔。請將下列資源放在 HTML 檔同一層（或同步修改程式中的路徑）：
@@ -45,6 +83,7 @@
 3. 在儲存庫的 **Settings → Pages**，選擇部署來源分支及目錄（例如 `main` 與 `/ (root)`），並儲存設定。
 4. 等待 GitHub Pages 完成部署後，使用 Pages 提供的網址開啟導覽頁。
 
+請確認場景資產已納入儲存庫，且檔名大小寫、中文字及相對路徑完全相符。GitHub Pages 網址大小寫有別於本機 Windows 檔案系統。
 
 ## 調整場域內容
 
@@ -56,8 +95,5 @@
 
 新增場景時，請一併確認其介紹資料、地圖座標、音檔（如有）及相鄰場景的導覽熱點設定。
 
-## 無障礙與隱私提醒
-
-建議提供清楚的熱點文字、空間說明與替代文字，並在實際手機、平板及桌面瀏覽器檢視操作體驗。上傳場域影像前，請先確認已取得必要授權，並避免揭露服務對象或工作人員的個人資料。
 
 
